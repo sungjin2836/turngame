@@ -19,8 +19,20 @@ public class GoInTurnGame : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.CompareTag("Enemy"))
+        {
+            SceneManager.LoadScene("SampleScene");
+        }
+        if (other.CompareTag("Object"))
+        {
+            ObjectManager objectManager = other.gameObject.GetComponentInParent<ObjectManager>();
+            other.gameObject.SetActive(false);
+            objectManager.checkObject();
+            Debug.Log("æ∆¿Ã≈€ »πµÊ");
+        }
+
         //∆‰¿ÃµÂ¿Œ∆‰¿ÃµÂæ∆øÙ
-        SceneManager.LoadScene("SampleScene");
+        
     }
 
 

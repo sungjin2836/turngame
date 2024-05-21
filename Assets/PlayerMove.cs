@@ -1,18 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlayerMove : MonoBehaviour
 {
     float Speed = 5f;
     Rigidbody rbody;
+    Rotate rotate;
     [SerializeField]
     private GameObject targetRange;
 
     void Start()
     {
         rbody = GetComponent<Rigidbody>();
-        
+        //rotate = GetComponent<Rotate>();
         targetRange.SetActive(false);
 
     }
@@ -23,6 +25,7 @@ public class PlayerMove : MonoBehaviour
         float xMove = Input.GetAxis("Horizontal");
         float zMove = Input.GetAxis("Vertical");
 
+        
         Vector3 vector3 = new Vector3(xMove, 0, zMove) * Speed;
 
         this.rbody.velocity = vector3;
@@ -32,7 +35,6 @@ public class PlayerMove : MonoBehaviour
             targetRange.SetActive(true);
             Invoke("TargetActive", 1f);
         }
-
     }
 
 
