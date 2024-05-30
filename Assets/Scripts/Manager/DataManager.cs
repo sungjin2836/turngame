@@ -5,14 +5,14 @@ using UnityEngine;
 public class DataManager : MonoBehaviour
 {
     public static DataManager Instance { get; private set; }
-    
+
     private const string DATA_PATH = "Data";
     private const string PLAYER_JSON = "Player";
     private const string ENEMY_JSON = "Enemy";
 
     private Dictionary<int, Player> _players = new Dictionary<int, Player>();
     private Dictionary<int, Enemy> _enemies = new Dictionary<int, Enemy>();
-    
+
     [System.Serializable]
     public class Character : System.IComparable<Character>
     {
@@ -28,13 +28,13 @@ public class DataManager : MonoBehaviour
             return other.speed - speed;
         }
     }
-    
+
     [System.Serializable]
     public class Player : Character
     {
         public ElementType elem;
     }
-    
+
     [System.Serializable]
     public class Enemy : Character
     {
@@ -72,7 +72,7 @@ public class DataManager : MonoBehaviour
         foreach (var data in enemyList.enemy)
         {
             var enemy = data as Character;
-            _enemies.Add(enemy.id, data);
+            _enemies.Add(data.id, data);
         }
     }
 
@@ -86,7 +86,7 @@ public class DataManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        
+
         DontDestroyOnLoad(gameObject);
         InitPlayerData();
         InitEnemyData();
