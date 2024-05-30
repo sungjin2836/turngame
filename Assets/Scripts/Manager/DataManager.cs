@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DataManager : MonoBehaviour
 {
-    public static DataManager Instance;
+    public static DataManager Instance { get; private set; }
     
     private const string DATA_PATH = "Data";
     private const string PLAYER_JSON = "Player";
@@ -82,6 +82,7 @@ public class DataManager : MonoBehaviour
             Destroy(gameObject);
         }
         
+        DontDestroyOnLoad(gameObject);
         InitPlayerData();
         InitEnemyData();
     }
