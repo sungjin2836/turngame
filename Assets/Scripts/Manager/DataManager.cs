@@ -14,7 +14,7 @@ public class DataManager : MonoBehaviour
     private Dictionary<int, Enemy> _enemies = new Dictionary<int, Enemy>();
     
     [System.Serializable]
-    public class Character
+    public class Character : System.IComparable<Character>
     {
         public int id;
         public string charName;
@@ -22,6 +22,11 @@ public class DataManager : MonoBehaviour
         public int hp;
         public int speed;
         public int attackStat;
+
+        public int CompareTo(Character other)
+        {
+            return other.speed - speed;
+        }
     }
     
     [System.Serializable]
