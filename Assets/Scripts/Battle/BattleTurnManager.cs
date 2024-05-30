@@ -16,7 +16,16 @@ public class BattleTurnManager : MonoBehaviour
     private Queue<int> turn;
     void Start()
     {
-        
+        var playerData1 = DataManager.Instance.GetPlayerData(1001);
+        var playerData2 = DataManager.Instance.GetPlayerData(1002);
+        var playerData3 = DataManager.Instance.GetPlayerData(1003);
+        var playerData4 = DataManager.Instance.GetPlayerData(1004);
+
+        var enemyData1 = DataManager.Instance.GetEnemyData(2001);
+        var enemyData2 = DataManager.Instance.GetEnemyData(2002);
+        var enemyData3 = DataManager.Instance.GetEnemyData(2003);
+        var enemyData4 = DataManager.Instance.GetEnemyData(2004);
+
 
         for (int i = 0; i < players.Length; i++)
         {
@@ -28,22 +37,31 @@ public class BattleTurnManager : MonoBehaviour
 
         PlayerButton.SetActive(false);
 
-        playerCheck.Add(100);
-        playerCheck.Add(90);
-        playerCheck.Add(80);
-        playerCheck.Add(60);
+        playerCheck.Add(playerData1.speed);
+        playerCheck.Add(playerData2.speed);
+        playerCheck.Add(playerData3.speed);
+        playerCheck.Add(playerData4.speed);
 
 
-        turn.Enqueue(100);
-        turn.Enqueue(95);
-        turn.Enqueue(90);
-        turn.Enqueue(80);
-        turn.Enqueue(87);
-        turn.Enqueue(83);
-        turn.Enqueue(70);
-        turn.Enqueue(60);
+        turn.Enqueue(playerData1.speed);
+        turn.Enqueue(playerData2.speed);
+        turn.Enqueue(playerData3.speed);
+        turn.Enqueue(playerData4.speed);
+        turn.Enqueue(enemyData1.speed);
+        turn.Enqueue(enemyData2.speed);
+        turn.Enqueue(enemyData3.speed);
+        turn.Enqueue(enemyData4.speed);
+        Debug.Log((playerData1.speed));
+        Debug.Log((playerData2.speed));
+        Debug.Log((playerData3.speed));
+        Debug.Log((playerData4.speed));
+        Debug.Log((enemyData1.speed));
+        Debug.Log((enemyData2.speed));
+        Debug.Log((enemyData3.speed));
+        Debug.Log((enemyData4.speed));
 
         Turn();
+        
     }
 
 
