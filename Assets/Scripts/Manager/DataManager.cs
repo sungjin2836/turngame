@@ -14,7 +14,7 @@ public class DataManager : MonoBehaviour
     private Dictionary<int, Enemy> _enemies = new Dictionary<int, Enemy>();
     
     [System.Serializable]
-    public class Character
+    public abstract class Character
     {
         public int id;
         public string charName;
@@ -28,6 +28,10 @@ public class DataManager : MonoBehaviour
     public class Player : Character
     {
         public ElementType elem;
+
+        public Player()
+        {
+        }
     }
     
     [System.Serializable]

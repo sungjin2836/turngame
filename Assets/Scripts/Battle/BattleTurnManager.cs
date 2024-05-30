@@ -7,11 +7,11 @@ public class BattleTurnManager : MonoBehaviour
     private bool isplayer;
     public GameObject[] players; // 현재 플레이어 수
     public GameObject[] enemies; // 현재 몬스터 수
-
+    DataManager.Character turnPlayer;
+    
     public GameObject PlayerButton;
 
-    List<int> playerCheck = new List<int>();
-    int turnPlayer;
+    PriorityQueue<DataManager.Character> queue = new();
 
     private Queue<int> turn;
     void Start()
@@ -27,38 +27,21 @@ public class BattleTurnManager : MonoBehaviour
         var enemyData4 = DataManager.Instance.GetEnemyData(2004);
 
 
-        for (int i = 0; i < players.Length; i++)
-        {
-            players[i].GetComponent<Renderer>();
-        }
+        queue.Enqueue(playerData1);
+        queue.Enqueue(playerData2);
+        queue.Enqueue(playerData3);
+        queue.Enqueue(playerData4);
+        queue.Enqueue(enemyData1);
+        queue.Enqueue(enemyData2);
+        queue.Enqueue(enemyData3);
+        queue.Enqueue(enemyData4);
+
+
         turn = new Queue<int>();
         isplayer = false;
         //우선순위큐(); 호출 -> 순위 정렬
 
         PlayerButton.SetActive(false);
-
-        playerCheck.Add(playerData1.speed);
-        playerCheck.Add(playerData2.speed);
-        playerCheck.Add(playerData3.speed);
-        playerCheck.Add(playerData4.speed);
-
-
-        turn.Enqueue(playerData1.speed);
-        turn.Enqueue(playerData2.speed);
-        turn.Enqueue(playerData3.speed);
-        turn.Enqueue(playerData4.speed);
-        turn.Enqueue(enemyData1.speed);
-        turn.Enqueue(enemyData2.speed);
-        turn.Enqueue(enemyData3.speed);
-        turn.Enqueue(enemyData4.speed);
-        Debug.Log((playerData1.speed));
-        Debug.Log((playerData2.speed));
-        Debug.Log((playerData3.speed));
-        Debug.Log((playerData4.speed));
-        Debug.Log((enemyData1.speed));
-        Debug.Log((enemyData2.speed));
-        Debug.Log((enemyData3.speed));
-        Debug.Log((enemyData4.speed));
 
         Turn();
         
@@ -67,16 +50,19 @@ public class BattleTurnManager : MonoBehaviour
 
     void Update()
     {
+
     }
 
-    void MonsterAttack()
+    void MonsterAttack(DataManager.Character turnMonster)
     {
         int playerCount = players.Length;
 
         int randomCount = Random.Range(0, playerCount);
 
-        Debug.Log($"{randomCount+1} 번 플레이어 공격받음");
+        Debug.Log($"{turnMonster.charName}가 {randomCount+1} 번 플레이어 공격함");
         StartCoroutine(HitDamage(randomCount));
+        turnMonster.speed -= 10;
+        queue.Enqueue(turnMonster);
         Turn();
     }
 
@@ -95,25 +81,44 @@ public class BattleTurnManager : MonoBehaviour
 
     public void onClickNormal_Attack()
     {
-        Debug.Log("플레이어 일반 공격 버튼 이벤트");
+        Debug.Log($"{turnPlayer.charName}의 일반 공격 버튼 이벤트");
+        turnPlayer.speed -= 10;
+        queue.Enqueue(turnPlayer);
         Turn();
     }
 
     public void onClickSkill_Attack()
     {
-        Debug.Log($"플레이어 스킬 버튼 이벤트");
+        Debug.Log($"{turnPlayer.charName}의 스킬 버튼 이벤트");
+        turnPlayer.speed -= 10;
+        queue.Enqueue(turnPlayer);
         Turn();
     }
 
+    void PlayerTurn()
+    {
+        if (true)
+        {
+            onClickSkill_Attack();
+            onClickNormal_Attack();
+
+        }
+    }
+
+    private void OnMouseDown()
+    {
+        if()
+        {
+            Debug.Log
+        }
+    }
+
+
     void Turn()
     {
-        //조건을 만듬
-        // 우선순위큐.디큐 
-
-        if (turn.Count > 0)
+        if (queue.Count() > 0)
         {
-            turnPlayer = turn.Dequeue();
-            Debug.Log($"{turnPlayer} turn.Dequeue() 값");
+            turnPlayer = queue.Dequeue();
         }
         else
         {
@@ -121,43 +126,29 @@ public class BattleTurnManager : MonoBehaviour
             return;
         }
 
-        //dequeue 데이터 가져옴
-        for (int i = 0; i < playerCheck.Count; i++)
-        {
-            if (turnPlayer == playerCheck[i])
+        //플레이어 체크 데이터 들어오면 타입이 플레이어인지만 확인
+        
+            if (turnPlayer is DataManager.Player)
             {
                 isplayer = true;
-                Debug.Log($"isplayer는 {isplayer}");
-                break;
+                Debug.Log($"{turnPlayer.charName}의 차례");
             }
             else
             {
                 isplayer = false;
             }
-        }
 
         //턴 진행
         if (isplayer)
         {
             PlayerButton.SetActive(true);
             //ui 바꿔줌 몬스터 ui, 플레이어 ui
-            int turnPlayer = 0;
-            for (int i = 0; i < playerCheck.Count; i++)
-            {
-                if(playerCheck[i] == this.turnPlayer)
-                {
-                    turnPlayer = i + 1;
-                    break;
-                }
-            }
-
-            Debug.Log($"{turnPlayer} 플레이어 차례 버튼 setactive true");
         }
         else
         {
             PlayerButton.SetActive(false);
             Debug.Log($"몬스터 차례 버튼 setactive false");
-            MonsterAttack();
+            MonsterAttack(turnPlayer);
         }
     }
 
