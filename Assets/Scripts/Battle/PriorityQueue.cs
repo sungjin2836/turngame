@@ -4,11 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-
 // Game Manager Example
 public class BattleGameManager : MonoBehaviour
 {
-
     class PriorityQueue<T>
     {
         private List<T> queueList = new();
@@ -26,8 +24,8 @@ public class BattleGameManager : MonoBehaviour
                 throw new System.ArgumentOutOfRangeException("You cannot Dequeue at empty Queue. Please check Queue Count.");
             }
 
-            T returnValue = queueList[queueList.Count - 1];
-            queueList.RemoveAt(queueList.Count - 1);
+            T returnValue = queueList[0];
+            queueList.RemoveAt(0);
             return returnValue;
         }
 
@@ -43,7 +41,7 @@ public class BattleGameManager : MonoBehaviour
                 throw new System.ArgumentOutOfRangeException("You cannot Peek at empty Queue. Please check Queue count.");
             }
 
-            return queueList[queueList.Count - 1];
+            return queueList[0];
         }
 
         public List<T> InspectList()
@@ -52,8 +50,8 @@ public class BattleGameManager : MonoBehaviour
         }
     }
 
-    // Å×½ºÆ®¿ë ÅÏ GameManager //
-    // °£·«ÇÏ°Ô Ç¥½ÃÇÑ ´õ¹Ì Ä³¸¯ÅÍ Å¬·¡½º
+    // ï¿½×½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ GameManager //
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ Ç¥ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½
     class DummyCharacter : IComparable<DummyCharacter>
     {
         public enum CharacterType
@@ -72,7 +70,7 @@ public class BattleGameManager : MonoBehaviour
             this.name = name;
         }
 
-        // ¿ì¼±¼øÀ§ Å¥ ºñ±³¸¦ À§ÇØ ºñ±³ÇÒ °¢°¢ÀÇ Å¬·¡½º¿¡ Ãß°¡ÇØ¾ßµÊ (¸®½ºÆ®ÀÏ ¶§¸¸)
+        // ï¿½ì¼±ï¿½ï¿½ï¿½ï¿½ Å¥ ï¿½ñ±³¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ø¾ßµï¿½ (ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
         public int CompareTo(DummyCharacter other)
         {
             return other.speed - speed;
@@ -80,23 +78,23 @@ public class BattleGameManager : MonoBehaviour
     }
 
     DummyCharacter[] players = new DummyCharacter[4] { 
-        new DummyCharacter(DummyCharacter.CharacterType.Player, 30, "Å×½ºÆ®3"),
-        new DummyCharacter(DummyCharacter.CharacterType.Player, 20, "Å×½ºÆ®2"),
-        new DummyCharacter(DummyCharacter.CharacterType.Player, 10, "Å×½ºÆ®1"),
-        new DummyCharacter(DummyCharacter.CharacterType.Player, 40, "Å×½ºÆ®4")
+        new DummyCharacter(DummyCharacter.CharacterType.Player, 30, "ï¿½×½ï¿½Æ®3"),
+        new DummyCharacter(DummyCharacter.CharacterType.Player, 20, "ï¿½×½ï¿½Æ®2"),
+        new DummyCharacter(DummyCharacter.CharacterType.Player, 10, "ï¿½×½ï¿½Æ®1"),
+        new DummyCharacter(DummyCharacter.CharacterType.Player, 40, "ï¿½×½ï¿½Æ®4")
     };
     DummyCharacter[] enemies = new DummyCharacter[4] {
-        new DummyCharacter(DummyCharacter.CharacterType.Enemy, 20, "Àû Å×½ºÆ®2"),
-        new DummyCharacter(DummyCharacter.CharacterType.Enemy, 40, "Àû Å×½ºÆ®4"),
-        new DummyCharacter(DummyCharacter.CharacterType.Enemy, 30, "Àû Å×½ºÆ®3"),
-        new DummyCharacter(DummyCharacter.CharacterType.Enemy, 10, "Àû Å×½ºÆ®1"),
+        new DummyCharacter(DummyCharacter.CharacterType.Enemy, 20, "ï¿½ï¿½ ï¿½×½ï¿½Æ®2"),
+        new DummyCharacter(DummyCharacter.CharacterType.Enemy, 40, "ï¿½ï¿½ ï¿½×½ï¿½Æ®4"),
+        new DummyCharacter(DummyCharacter.CharacterType.Enemy, 30, "ï¿½ï¿½ ï¿½×½ï¿½Æ®3"),
+        new DummyCharacter(DummyCharacter.CharacterType.Enemy, 10, "ï¿½ï¿½ ï¿½×½ï¿½Æ®1"),
     };
     bool isPlayerFirst = true;
     PriorityQueue<DummyCharacter> turnQueue = new();
 
     void Start()
     {
-        // ¿ì¼±¼øÀ§ Å¥¿¡ ÇÃ·¹ÀÌ¾î¿Í Àû Å¬·¡½º Ãß°¡
+        // ï¿½ì¼±ï¿½ï¿½ï¿½ï¿½ Å¥ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
         foreach (DummyCharacter player in players)
         {
             turnQueue.Enqueue(player);
@@ -114,11 +112,11 @@ public class BattleGameManager : MonoBehaviour
         }
         Debug.Log("==== End of Initialized Data ====");
 
-        // µð¹ö±ë¿ë ÅÏ ÀÚµ¿ ½ÇÇà
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½
         StartCoroutine(StartTurn());
     }
 
-    // 2ÃÊ¸¶´Ù ÅÏ ÀÚµ¿½ÇÇà Ã³¸®
+    // 2ï¿½Ê¸ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
     IEnumerator StartTurn()
     {
         while (true)
