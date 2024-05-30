@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DataManager : MonoBehaviour
 {
-    public static DataManager Instance;
+    public static DataManager Instance { get; private set; }
     
     private const string DATA_PATH = "Data";
     private const string PLAYER_JSON = "Player";
@@ -14,7 +14,7 @@ public class DataManager : MonoBehaviour
     private Dictionary<int, Enemy> _enemies = new Dictionary<int, Enemy>();
     
     [System.Serializable]
-    public abstract class Character
+    public class Character : System.IComparable<Character>
     {
         public int id;
         public string charName;
@@ -22,16 +22,17 @@ public class DataManager : MonoBehaviour
         public int hp;
         public int speed;
         public int attackStat;
+
+        public int CompareTo(Character other)
+        {
+            return other.speed - speed;
+        }
     }
     
     [System.Serializable]
     public class Player : Character
     {
         public ElementType elem;
-
-        public Player()
-        {
-        }
     }
     
     [System.Serializable]
@@ -86,6 +87,7 @@ public class DataManager : MonoBehaviour
             Destroy(gameObject);
         }
         
+        DontDestroyOnLoad(gameObject);
         InitPlayerData();
         InitEnemyData();
     }
