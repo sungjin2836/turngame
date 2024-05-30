@@ -11,35 +11,62 @@ public class BattleTurnManager : MonoBehaviour
     
     public GameObject PlayerButton;
 
+    public GameObject basicTarget;
+
+    public int target;
+
+    DataManager.Character[] playersData;
+    DataManager.Character[] EnemysData;
+
     PriorityQueue<DataManager.Character> queue = new();
+    PriorityQueue<DataManager.Character> queue2 = new();
+
+    Dictionary<GameObject, DataManager.Character> MappingChar = new Dictionary<GameObject, DataManager.Character>();
 
     private Queue<int> turn;
     void Start()
     {
+        playersData = new DataManager.Character[players.Length];
+        EnemysData = new DataManager.Character[enemies.Length];
         var playerData1 = DataManager.Instance.GetPlayerData(1001);
         var playerData2 = DataManager.Instance.GetPlayerData(1002);
         var playerData3 = DataManager.Instance.GetPlayerData(1003);
         var playerData4 = DataManager.Instance.GetPlayerData(1004);
-
         var enemyData1 = DataManager.Instance.GetEnemyData(2001);
         var enemyData2 = DataManager.Instance.GetEnemyData(2002);
         var enemyData3 = DataManager.Instance.GetEnemyData(2003);
         var enemyData4 = DataManager.Instance.GetEnemyData(2004);
 
+        int Num1 = 1001;
+        int Num2 = 2001;
+        for (int i = 0; i < 4; i++)
+        {
+            playersData[i] = DataManager.Instance.GetPlayerData(Num1);
+            EnemysData[i] = DataManager.Instance.GetEnemyData(Num2);
+            Num1++;
+            Num2++;
+        }
 
-        queue.Enqueue(playerData1);
-        queue.Enqueue(playerData2);
-        queue.Enqueue(playerData3);
-        queue.Enqueue(playerData4);
-        queue.Enqueue(enemyData1);
-        queue.Enqueue(enemyData2);
-        queue.Enqueue(enemyData3);
-        queue.Enqueue(enemyData4);
+        for (int i = 0;i < 4;i++)
+        {
+            MappingChar.Add(players[i], playersData[i]);
+            MappingChar.Add(enemies[i], EnemysData[i]);
+            queue.Enqueue(playersData[i]);
+            queue.Enqueue(EnemysData[i]);
+        }
 
+        
 
-        turn = new Queue<int>();
+        //queue.Enqueue(playerData1);
+        //queue.Enqueue(playerData2);
+        //queue.Enqueue(playerData3);
+        //queue.Enqueue(playerData4);
+        //queue.Enqueue(enemyData1);
+        //queue.Enqueue(enemyData2);
+        //queue.Enqueue(enemyData3);
+        //queue.Enqueue(enemyData4);
+
         isplayer = false;
-        //우선순위큐(); 호출 -> 순위 정렬
 
         PlayerButton.SetActive(false);
 
@@ -47,19 +74,36 @@ public class BattleTurnManager : MonoBehaviour
         
     }
 
+    //씬에 배치된 GameObject와 DB의 데이터 매칭시켜야 함
+
 
     void Update()
     {
-
+        if(Input.GetMouseButtonDown(0))
+        {
+            RaycastHit rayHit;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); //마우스 위치
+            if (Physics.Raycast(ray, out rayHit))
+            {
+                if(rayHit.collider != null)
+                {
+                    if (rayHit.collider.gameObject.CompareTag("Enemy"))
+                    {
+                        basicTarget = rayHit.collider.gameObject;
+                    }
+                }
+            }
+        }
     }
 
     void MonsterAttack(DataManager.Character turnMonster)
     {
         int playerCount = players.Length;
-
         int randomCount = Random.Range(0, playerCount);
 
-        Debug.Log($"{turnMonster.charName}가 {randomCount+1} 번 플레이어 공격함");
+        MappingChar.TryGetValue(players[randomCount], out DataManager.Character targetPlayer);
+
+        Debug.Log($"{turnMonster.charName}가 {targetPlayer.charName}을(를) 공격함");
         StartCoroutine(HitDamage(randomCount));
         turnMonster.speed -= 10;
         queue.Enqueue(turnMonster);
@@ -73,7 +117,6 @@ public class BattleTurnManager : MonoBehaviour
         {
             yield return new WaitForSeconds(1f);
             players[playerCount].GetComponent<Renderer>().enabled = !players[playerCount].GetComponent<Renderer>().enabled;
-            Debug.Log($"{playerCount+1}번 플레이어 깜빡임");
             count++;
         }
         players[playerCount].GetComponent<Renderer>().enabled = true;
@@ -81,17 +124,24 @@ public class BattleTurnManager : MonoBehaviour
 
     public void onClickNormal_Attack()
     {
-        Debug.Log($"{turnPlayer.charName}의 일반 공격 버튼 이벤트");
+        MappingChar.TryGetValue(basicTarget, out DataManager.Character targetmonster);
+
+        Debug.Log($"{turnPlayer.charName}이 {targetmonster.charName}을 대상으로 일반 공격");
         turnPlayer.speed -= 10;
         queue.Enqueue(turnPlayer);
+        //basicTarget이 죽으면 다른 타겟 대상 설정해야함
+        
         Turn();
     }
 
     public void onClickSkill_Attack()
     {
-        Debug.Log($"{turnPlayer.charName}의 스킬 버튼 이벤트");
+        MappingChar.TryGetValue(basicTarget, out DataManager.Character targetmonster);
+        Debug.Log($"{turnPlayer.charName}이 {targetmonster.charName}을 대상으로 스킬 공격");
+
         turnPlayer.speed -= 10;
         queue.Enqueue(turnPlayer);
+        //basicTarget이 죽으면 다른 타겟 대상 설정해야함
         Turn();
     }
 
@@ -107,10 +157,7 @@ public class BattleTurnManager : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if()
-        {
-            Debug.Log
-        }
+        
     }
 
 
