@@ -31,7 +31,7 @@ public class Enemy : Character
         finalAttackStat = attackStat;
         shield = maxShield;
         
-        Debug.Log(JsonUtility.ToJson(this));
+        //Debug.Log(JsonUtility.ToJson(this));
     }
 
     public bool ContainsElement(ElementType element)
@@ -53,4 +53,5 @@ public class Enemy : Character
     {
         shield = maxShield;
     }
+
 }
