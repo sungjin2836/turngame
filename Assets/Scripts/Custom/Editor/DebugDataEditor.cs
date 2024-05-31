@@ -7,10 +7,7 @@ public class DebugDataEditor : Editor
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
-        DebugData character = (DebugData)target;
-        if (GUILayout.Button("Attack"))
-        {
-            character.Attack();
-        }
+        var character = (DebugData)target;
+        if (GUILayout.Button("Attack")) character.Attack();
     }
 }
