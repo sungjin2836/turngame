@@ -10,12 +10,13 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
     public int maxHP;
     public int speed;
     public int attackStat;
+    public int _hp;
+
     
     public bool isDead { get; private set; }
 
     private Animator _animator;
 
-    private int _hp;
 
     public int hp
     {
@@ -38,20 +39,28 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
         return other.speed - speed;
     }
 
-    public virtual void NormalAttack(Character target, float value = 1f)
+    public virtual int NormalAttack(Character target, float value = 1f)
     {
-        target.GetDamage(Mathf.FloorToInt(finalAttackStat * value));
+        
+        int dam = target.GetDamage(Mathf.FloorToInt(finalAttackStat * value));
         Debug.Log($"{target.charName}의 체력은 {target.hp}/{target.maxHP}");
+        return dam;
     }
 
-    public void GetDamage(int damage, bool hasShield = false)
+    public int GetDamage(int damage, bool hasShield = false)
     {
+        int finaldam = Mathf.FloorToInt(damage * 0.9f);
         if (hasShield)
-            hp -= Mathf.FloorToInt(damage * 0.9f);
+        {
+            hp -= finaldam;
+            return finaldam;
+        }
         else
+        {
             hp -= damage;
-
+        }
         if (hp == 0) Die();
+        return damage;
     }
 
     public void HealSelf(int value)
