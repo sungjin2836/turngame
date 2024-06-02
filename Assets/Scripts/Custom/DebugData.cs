@@ -10,11 +10,14 @@ public class DebugData : MonoBehaviour
         if (characterID < 2000)
         {
             GetComponent<Player>().Initialize(characterID);
+
         }
         else
         {
             GetComponent<Enemy>().Initialize(characterID);
         }
+
+
     }
 
     public void Attack()

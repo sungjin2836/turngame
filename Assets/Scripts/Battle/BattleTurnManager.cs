@@ -122,9 +122,21 @@ public class BattleTurnManager : MonoBehaviour
 
     public void OnClickNormalAttack()
     {
+        UIManager uIManager = FindObjectOfType<UIManager>();
         Player p = new Player();
+
         Character charTarget = basicTarget.GetComponent<Character>();
+
+        Enemy enemy = basicTarget.GetComponent<Enemy>();
         p.NormalAttack(charTarget, turnPlayer.attackStat);
+
+        int _hp = enemy.hp;
+        int _shield = enemy.shield;
+
+        Debug.Log($"체력바 테스트 {enemy.name} 체력 : {enemy.hp} 실드 : {enemy.shield}");
+        enemy.SetHealth();
+        enemy.SetShield();
+
         turnPlayer.speed -= 100;
         queue2.Enqueue(turnPlayer);
         if (charTarget.hp == 0)
@@ -137,6 +149,7 @@ public class BattleTurnManager : MonoBehaviour
                 }
             }
             basicTarget.SetActive(false);
+            
 
             if (isAllFalse(isCheckDie))
             {
@@ -161,7 +174,6 @@ public class BattleTurnManager : MonoBehaviour
         //basicTarget이 죽으면 다른 타겟 대상 설정해야함
         Turn();
 
-        //Debug.Log("이미 사망한 캐릭터입니다.");
     }
 
     public static bool isAllFalse(bool[] array)
@@ -200,7 +212,6 @@ public class BattleTurnManager : MonoBehaviour
         else
         {
             PlayerButton.SetActive(false);
-            Debug.Log($"몬스터 차례 버튼 setactive false");
             //이벤트 발생 -> 이벤트에서 MonsterAttack 실행
 
             MonsterAttack(turnPlayer);
