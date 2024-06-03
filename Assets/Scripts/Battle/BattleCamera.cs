@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
@@ -6,11 +7,12 @@ public class BattleCamera : MonoBehaviour
 {
     private const float Duration = 0.2f;
 
+    public Transform startPosition;
     public CinemachineVirtualCamera startCamera;
     public float startAngle = -50;
     public float eachAngle = 4;
 
-    private Enemy[] _enemies;
+    public Enemy[] enemies;
 
     private readonly Dictionary<Transform, float> _targets = new();
 
@@ -30,14 +32,14 @@ public class BattleCamera : MonoBehaviour
             _camera.m_Priority = 100;
             _orbital = m_Camera.GetCinemachineComponent<CinemachineOrbitalTransposer>();
             
-            if (_enemies == null) return;
+            if (enemies == null) return;
 
             UpdateEnemyList();
 
             if (_orbital)
             {
-                _orbital.m_XAxis.m_MinValue = _targets[_enemies[0].transform];
-                _orbital.m_XAxis.m_MaxValue = _targets[_enemies[^1].transform];
+                _orbital.m_XAxis.m_MinValue = _targets[enemies[0].transform];
+                _orbital.m_XAxis.m_MaxValue = _targets[enemies[^1].transform];
             }
         }
     }
@@ -76,13 +78,14 @@ public class BattleCamera : MonoBehaviour
     private void Awake()
     {
         m_Camera = startCamera;
+    }
 
-        m_Player = FindObjectOfType<Player>().transform;
-        _enemies = FindObjectsOfType<Enemy>();
-        
+    private void Start()
+    {
         UpdateEnemyList();
 
-        m_Enemy = _enemies[0].transform;
+        m_Player = startPosition;
+        m_Enemy = enemies[0].transform;
     }
 
     private void Update()
@@ -106,9 +109,9 @@ public class BattleCamera : MonoBehaviour
     {
         _targets.Clear();
         
-        for (int i = 0; i < _enemies.Length; i++)
+        for (int i = 0; i < enemies.Length; i++)
         {
-            _targets.Add(_enemies[i].transform, startAngle + i * eachAngle);
+            _targets.Add(enemies[i].transform, startAngle + i * eachAngle);
         }
     }
 }

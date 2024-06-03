@@ -3,12 +3,24 @@ using UnityEngine;
 
 public class DebugBattleCamera : MonoBehaviour
 {
+    [Header("캐릭터 목록")]
+    public Player player;
+    public Enemy[] enemies;
+    
+    [Header("카메라 설정")]
     public BattleCamera cam;
     public CinemachineVirtualCamera normalReady;
     public CinemachineVirtualCamera normalAttack;
     public CinemachineVirtualCamera skillReady;
     public CinemachineVirtualCamera skillUse;
-    
+
+    private void Awake()
+    {
+        cam.startCamera = normalReady;
+        cam.m_Player = player.transform;
+        cam.enemies = enemies;
+    }
+
     private void NormalReady()
     {
         cam.m_Camera = normalReady;

@@ -249,6 +249,7 @@ MonoBehaviour:
   attackStat: 0
   _hp: 0
   maxShield: 0
+  normalAttack: {fileID: 0}
   weakElements: 
 --- !u!114 &6903128
 MonoBehaviour:
@@ -289,7 +290,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 33514391}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.03507815, y: -0.25844514, z: 0.009391247, w: 0.9653432}
+  m_LocalRotation: {x: 0.035078153, y: -0.25844514, z: 0.009391246, w: 0.9653432}
   m_LocalPosition: {x: 2.608517, y: 0.5226617, z: -1.3415413}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -462,6 +463,8 @@ MonoBehaviour:
   attackStat: 0
   _hp: 0
   element: 0
+  normalAttack: {fileID: 0}
+  battleSkill: {fileID: 0}
 --- !u!114 &110004415
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -485,7 +488,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 244298196}
-  - component: {fileID: 244298197}
   m_Layer: 0
   m_Name: Player Character
   m_TagString: Untagged
@@ -513,23 +515,6 @@ Transform:
   - {fileID: 1402111211}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &244298197
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 244298195}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ab434ea7d5642a74bac33faca5f924d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cam: {fileID: 7921734487556819016}
-  normalReady: {fileID: 53654566774759322}
-  normalAttack: {fileID: 33514393}
-  skillReady: {fileID: 822535275}
-  skillUse: {fileID: 1402111212}
 --- !u!1 &259765272
 GameObject:
   m_ObjectHideFlags: 0
@@ -835,8 +820,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1068618964}
   - component: {fileID: 1068618963}
+  - component: {fileID: 1068618965}
+  - component: {fileID: 1068618966}
   m_Layer: 0
-  m_Name: DataManager
+  m_Name: DebugTest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -869,6 +856,39 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1068618965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1068618962}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 989ef7079c45242dc92d688f0cfeee18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1068618966
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1068618962}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab434ea7d5642a74bac33faca5f924d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 110004414}
+  enemies:
+  - {fileID: 6903127}
+  - {fileID: 1449475979}
+  cam: {fileID: 7737212164350684985}
+  normalReady: {fileID: 53654566774759322}
+  normalAttack: {fileID: 33514393}
+  skillReady: {fileID: 822535275}
+  skillUse: {fileID: 1402111212}
 --- !u!1 &1402111210
 GameObject:
   m_ObjectHideFlags: 0
@@ -981,6 +1001,7 @@ MonoBehaviour:
   attackStat: 0
   _hp: 0
   maxShield: 0
+  normalAttack: {fileID: 0}
   weakElements: 
 --- !u!114 &1449475980
 MonoBehaviour:
@@ -1328,7 +1349,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1812843232289888588}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.014165295, y: -0.2803722, z: 0.0041379933, w: 0.95977795}
+  m_LocalRotation: {x: 0.014165328, y: -0.2803722, z: 0.004138003, w: 0.95977795}
   m_LocalPosition: {x: 2.3280945, y: 0.24, z: -4.7493777}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1406,7 +1427,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7005035347889223722}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.014165295, y: -0.2803722, z: 0.0041379933, w: 0.95977795}
+  m_LocalRotation: {x: 0.014165328, y: -0.2803722, z: 0.004138003, w: 0.95977795}
   m_LocalPosition: {x: 2.6580944, y: 0.24, z: -1.4993777}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1426,8 +1447,8 @@ GameObject:
   - component: {fileID: 4461834706658062858}
   - component: {fileID: 5800919665234231213}
   - component: {fileID: 7737212164350684984}
-  - component: {fileID: 7921734487556819016}
   - component: {fileID: 452326402972863468}
+  - component: {fileID: 7737212164350684985}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1599,7 +1620,7 @@ MonoBehaviour:
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &7921734487556819016
+--- !u!114 &7737212164350684985
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1611,9 +1632,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ac7af98cd78c254fa5528de1cfe1492, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startPosition: {fileID: 110004413}
   startCamera: {fileID: 53654566774759322}
   startAngle: -50
   eachAngle: 4
+  enemies:
+  - {fileID: 6903127}
+  - {fileID: 1449475979}
 --- !u!114 &8938475604410167131
 MonoBehaviour:
   m_ObjectHideFlags: 3
