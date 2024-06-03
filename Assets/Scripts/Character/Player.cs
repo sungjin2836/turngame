@@ -48,33 +48,43 @@ public class Player : Character
         Debug.Log("NormalAttack의 공격력" + finalAttackStat);
         var enemy = target as Enemy;
         if (enemy.ContainsElement(element)) enemy.DamageToShield(30);
-        int dam = enemy.GetDamage(Mathf.FloorToInt(finalAttackStat * value), enemy.HasShield());
+        int dam = enemy.GetDamage(Mathf.FloorToInt(finalAttackStat * normalAttack.damageAttr1[0] * 0.9f), enemy.HasShield());
         Debug.Log($"{enemy.charName}의 체력은 {enemy.hp}/{enemy.maxHP}, 실드는 {enemy.shield}/{enemy.maxShield}");
 
         return dam;
     }
 
-    public int NormalAttack(Character target, int _attack, float value = 0.5f)
+
+    public virtual void BattleSkill(Character target)
     {
-        Debug.Log("NormalAttack의 공격력" + finalAttackStat);
-        Debug.Log(_attack);
+        // 스킬
         var enemy = target as Enemy;
-        if (enemy.ContainsElement(element)) enemy.DamageToShield(30);
-        int dam = enemy.GetDamage(Mathf.FloorToInt(_attack * value), enemy.HasShield());
-        Debug.Log($"{enemy.charName}의 체력은 {enemy.hp}/{enemy.maxHP}, 실드는 {enemy.shield}/{enemy.maxShield}");
+        if (enemy.ContainsElement(element)) enemy.DamageToShield(60);
+        int dam = enemy.GetDamage(Mathf.FloorToInt(attackStat * battleSkill.damageAttr1[0]), enemy.HasShield());
+        enemy.speed -= 10;
+        Debug.Log($"스킬 사용 {enemy.charName}의 체력은 {enemy.hp}/{enemy.maxHP}, 실드는 {enemy.shield}/{enemy.maxShield}");
 
-        return dam;
+
     }
 
-
-    public virtual void BattleSkill(Character target, float value)
+    public virtual void BattleSkill(Character[] target)
     {
         // 스킬
-        Debug.Log($"{target.charName}에게 배틀스킬 사용");
+        for (int i = 0; i < target.Length; i++)
+        {
+            var enemy = target[i] as Enemy;
+            if (enemy.ContainsElement(element)) enemy.DamageToShield(60);
+            int dam = enemy.GetDamage(Mathf.FloorToInt(attackStat * battleSkill.damageAttr1[0]), enemy.HasShield());
+            Debug.Log($"광역스킬 사용 {enemy.charName}의 체력은 {enemy.hp}/{enemy.maxHP}, 실드는 {enemy.shield}/{enemy.maxShield}");
+        }
     }
 
-    public virtual void BattleSkill(Character[] target, float value)
+    public virtual void BattleSkill(Player target)
     {
-        // 스킬
+        target.hp += attackStat;
+        Debug.Log($"{charName}이 {target.charName}을 {attackStat}만큼 회복 시켜 {target.hp}가 됐다.");
+
     }
+
+
 }

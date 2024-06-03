@@ -12,6 +12,7 @@ public class BattleTurnManager : MonoBehaviour
     Character turnPlayer;
     public GameObject PlayerButton;
     public GameObject basicTarget;
+    public GameObject healTarget;
     [SerializeField]
     private Camera Camera;
 
@@ -21,9 +22,10 @@ public class BattleTurnManager : MonoBehaviour
 
     Player[] testPlayersData;
     Enemy[] testEnemysData;
-
+    
     private List<string> CharNames;
 
+    private Character[] targets;
 
     //PriorityQueue<Character> queue1 = new(); 
     PriorityQueue<Character> queue = new(); 
@@ -63,6 +65,13 @@ public class BattleTurnManager : MonoBehaviour
     }
     void Update()
     {
+        TargetRayCast();
+
+        SetTurnOrder();
+    }
+
+    private void TargetRayCast()
+    {
         if (Input.GetMouseButtonDown(0))
         {
             RaycastHit rayHit;
@@ -74,16 +83,18 @@ public class BattleTurnManager : MonoBehaviour
                     if (rayHit.collider.gameObject.CompareTag("Enemy"))
                     {
                         List<string> textName = new List<string>();
-                        
+
                         basicTarget = rayHit.collider.gameObject;
-                        
+
                         SetTurnOrder();
+                    }
+                    else if (rayHit.collider.gameObject.CompareTag("Player"))
+                    {
+                        healTarget = rayHit.collider.gameObject;
                     }
                 }
             }
         }
-
-        SetTurnOrder();
     }
 
     void SetTurnOrder()
@@ -125,13 +136,13 @@ public class BattleTurnManager : MonoBehaviour
         if (randomResult > compareNum)
         {
             turnPlayer = turnPlayer1;
-            Debug.Log($"턴 플레이어 : {turnPlayer1.charName}, {turnPlayer2.charName}, 랜덤값 : {randomResult}, 속도차이 :{turnPlayer1.speed} - {turnPlayer2.speed} = {compSpeed}, 밀린 턴 플레이어 : {turnPlayer2.charName}, 현재 턴의 플레이어 {turnPlayer1.charName}");
+            //Debug.Log($"턴 플레이어 : {turnPlayer1.charName}, {turnPlayer2.charName}, 랜덤값 : {randomResult}, 속도차이 :{turnPlayer1.speed} - {turnPlayer2.speed} = {compSpeed}, 밀린 턴 플레이어 : {turnPlayer2.charName}, 현재 턴의 플레이어 {turnPlayer1.charName}");
 
             queue.Enqueue(turnPlayer2);
         }
         else
         {
-            Debug.Log($"턴 플레이어 : {turnPlayer1.charName}, {turnPlayer2.charName}, 랜덤값 : {randomResult}, 속도차이 :{turnPlayer1.speed} - {turnPlayer2.speed} = {compSpeed}, 밀린 턴 플레이어 : {turnPlayer1.charName}, 현재 턴의 플레이어 {turnPlayer2.charName}");
+            //Debug.Log($"턴 플레이어 : {turnPlayer1.charName}, {turnPlayer2.charName}, 랜덤값 : {randomResult}, 속도차이 :{turnPlayer1.speed} - {turnPlayer2.speed} = {compSpeed}, 밀린 턴 플레이어 : {turnPlayer1.charName}, 현재 턴의 플레이어 {turnPlayer2.charName}");
             turnPlayer = turnPlayer2;
             queue.Enqueue(turnPlayer1);
         }
@@ -145,17 +156,6 @@ public class BattleTurnManager : MonoBehaviour
             turnPlayer = queue.Dequeue();
             CheckDeadCharacter(turnPlayer);
         }
-
-        //if(CharNames.Count > 0)
-        //{
-        //    for (int i = 0; i < CharNames.Count; i++)
-        //    {
-        //        if (turnPlayer.charName == CharNames[i])
-        //        {
-        //            turnPlayer = queue.Dequeue();
-        //        }
-        //    }
-        //}
     }
 
 
@@ -174,12 +174,13 @@ public class BattleTurnManager : MonoBehaviour
 
     public void OnClickNormalAttack()
     {
-        Player p = new Player();
-
+        Player p = turnPlayer.GetComponent<Player>();
         Character charTarget = basicTarget.GetComponent<Character>();
-
         Enemy enemy = basicTarget.GetComponent<Enemy>();
-        p.NormalAttack(charTarget, turnPlayer.attackStat);
+
+        float finalAttack = turnPlayer.attackStat * p.normalAttack.damageAttr1[0];
+
+        p.NormalAttack(charTarget, finalAttack);
 
         Debug.Log($"체력바 테스트 {enemy.name} 체력 : {enemy.hp} 실드 : {enemy.shield}");
         enemy.SetHealth();
@@ -214,19 +215,42 @@ public class BattleTurnManager : MonoBehaviour
 
     public void OnClickSkillAttack()
     {
-        Player p = new Player();
+        Player p = turnPlayer.GetComponent<Player>();
+
         Character charTarget = basicTarget.GetComponent<Character>();
 
-        
+        Debug.Log(p.normalAttack.skillName);
 
-        p.BattleSkill(charTarget, 2f);
+        if(p.battleSkill.damageAttr1Type == SkillDataManager.DamageType.heal)
+        {
+            TargetRayCast();
+            Player healCharTarget = healTarget.GetComponent<Player>();
+            p.BattleSkill(healCharTarget);
+        }
+
+
+        targets = new Character[enemies.Length];
+        if (p.battleSkill.range == SkillDataManager.Range.single)
+        {
+            p.BattleSkill(charTarget);
+        }
+        else if (p.battleSkill.range == SkillDataManager.Range.all)
+        {
+            for(int i = 0;i < enemies.Length; i++)
+            {
+                targets[i] = enemies[i].GetComponent<Character>();
+            }
+            p.BattleSkill(targets);
+            Debug.Log($"광역공격 {turnPlayer.charName}");
+        }
+
         turnPlayer.speed -= 100;
         queue.Enqueue(turnPlayer);
         //basicTarget이 죽으면 다른 타겟 대상 설정해야함
         Turn();
 
     }
-
+     
     public static bool isAllFalse(bool[] array)
     {
         return array.All(item => !item);
