@@ -41,4 +41,23 @@ class PriorityQueue<T>
     {
         return queueList;
     }
+
+    public List<T> ToList()
+    {
+        List<T> toListResult = new();
+
+        foreach (T element in queueList)
+        {
+            toListResult.Add(element);
+        }
+
+        return toListResult;
+    }
+
+    public void Clear()
+    {
+        queueList.Clear();
+    }
+
+
 }

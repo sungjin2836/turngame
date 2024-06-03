@@ -647,10 +647,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13360a2f31194864d873076e0c3b0cc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  turnOrderPanel: {fileID: 946402015}
   enemyShieldBar: {fileID: 1368659595}
   enemyHpBar: {fileID: 541336006}
-  _hp: 0
-  _shield: 0
+  turnOrderText: {fileID: 1762661589417801987, guid: 84bca38fbfbf3104aaeb1ddffd82b346, type: 3}
 --- !u!4 &255679483
 Transform:
   m_ObjectHideFlags: 0
@@ -881,7 +881,7 @@ MonoBehaviour:
   _hp: 0
   maxShield: 0
   weakElements: 
-  BarPosition: {fileID: 7039663186468659764, guid: 8875e96b1f9ff6c419a15382401ec458, type: 3}
+  BarPosition: {fileID: 194202878}
   enemyShieldBar: {fileID: 600140203}
   enemyHpBar: {fileID: 1989786997}
 --- !u!1 &430505510
@@ -1489,6 +1489,11 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &607433636 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7039663186468659764, guid: 8875e96b1f9ff6c419a15382401ec458, type: 3}
+  m_PrefabInstance: {fileID: 2358502852924676778}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &620173944
 GameObject:
   m_ObjectHideFlags: 0
@@ -1862,7 +1867,7 @@ MonoBehaviour:
   _hp: 0
   maxShield: 0
   weakElements: 
-  BarPosition: {fileID: 7039663186468659764, guid: 8875e96b1f9ff6c419a15382401ec458, type: 3}
+  BarPosition: {fileID: 359838278}
   enemyShieldBar: {fileID: 1433651398}
   enemyHpBar: {fileID: 164253151}
 --- !u!114 &689441031
@@ -2337,9 +2342,126 @@ MonoBehaviour:
   _hp: 0
   maxShield: 0
   weakElements: 
-  BarPosition: {fileID: 7039663186468659764, guid: 8875e96b1f9ff6c419a15382401ec458, type: 3}
+  BarPosition: {fileID: 607433636}
   enemyShieldBar: {fileID: 1368659595}
   enemyHpBar: {fileID: 541336006}
+--- !u!1 &946402015
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 946402016}
+  - component: {fileID: 946402020}
+  - component: {fileID: 946402019}
+  - component: {fileID: 946402018}
+  - component: {fileID: 946402017}
+  m_Layer: 5
+  m_Name: TurnOrderPanel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &946402016
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946402015}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1338691712}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 120, y: -250}
+  m_SizeDelta: {x: 240, y: 500}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &946402017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946402015}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 0
+  m_VerticalFit: 0
+--- !u!114 &946402018
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946402015}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 10
+    m_Bottom: 10
+  m_ChildAlignment: 1
+  m_Spacing: 20
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
+--- !u!114 &946402019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946402015}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &946402020
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946402015}
+  m_CullTransparentMesh: 1
 --- !u!1 &990658873
 GameObject:
   m_ObjectHideFlags: 0
@@ -2877,6 +2999,7 @@ MonoBehaviour:
   - {fileID: 1625361561}
   PlayerButton: {fileID: 502283410}
   basicTarget: {fileID: 919753524}
+  Camera: {fileID: 1899186608}
 --- !u!4 &1131915462
 Transform:
   m_ObjectHideFlags: 0
@@ -3245,6 +3368,7 @@ RectTransform:
   - {fileID: 359838279}
   - {fileID: 194202879}
   - {fileID: 1477087664}
+  - {fileID: 946402016}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3969,7 +4093,7 @@ MonoBehaviour:
   _hp: 0
   maxShield: 0
   weakElements: 
-  BarPosition: {fileID: 7039663186468659764, guid: 8875e96b1f9ff6c419a15382401ec458, type: 3}
+  BarPosition: {fileID: 1477087663}
   enemyShieldBar: {fileID: 855008337}
   enemyHpBar: {fileID: 1439753417}
 --- !u!114 &1625361567

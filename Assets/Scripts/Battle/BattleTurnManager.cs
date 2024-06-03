@@ -12,40 +12,51 @@ public class BattleTurnManager : MonoBehaviour
     Character turnPlayer;
     public GameObject PlayerButton;
     public GameObject basicTarget;
+    [SerializeField]
+    private Camera Camera;
+
+    private UIManager uIManager;
 
     private bool[] isCheckDie;
 
     Player[] testPlayersData;
     Enemy[] testEnemysData;
 
+    private List<string> CharNames;
 
-    PriorityQueue<Character> queue2 = new();
+
+    //PriorityQueue<Character> queue1 = new(); 
+    PriorityQueue<Character> queue = new(); 
+    // 큐 -> 리스트 
 
     void Start()
     {
+        CharNames = new List<string>();
         testPlayersData = new Player[players.Length];
         testEnemysData = new Enemy[enemies.Length];
 
         isCheckDie = new bool[enemies.Length];
         MaxRandom = 100;
-        for(int i = 0; i < players.Length; i++)
+        for (int i = 0; i < players.Length; i++)
         {
             Player playerData = players[i].GetComponent<Player>();
             testPlayersData[i] = playerData;
-            queue2.Enqueue(testPlayersData[i]);
+            queue.Enqueue(testPlayersData[i]);
         }
         for (int i = 0; i < enemies.Length; i++)
         {
             Enemy enemyData = enemies[i].GetComponent<Enemy>();
             testEnemysData[i] = enemyData;
-            queue2.Enqueue(testEnemysData[i]);
+            queue.Enqueue(testEnemysData[i]);
         }
 
-        Debug.Log(Mathf.FloorToInt(21 * 1));
-
+        uIManager = FindObjectOfType<UIManager>();
         isplayer = false;
 
         PlayerButton.SetActive(false);
+
+        uIManager.InitTurnText(queue.Count());
+
 
         Turn();
 
@@ -62,10 +73,26 @@ public class BattleTurnManager : MonoBehaviour
                 {
                     if (rayHit.collider.gameObject.CompareTag("Enemy"))
                     {
+                        List<string> textName = new List<string>();
+                        
                         basicTarget = rayHit.collider.gameObject;
+                        
+                        SetTurnOrder();
                     }
                 }
             }
+        }
+
+        SetTurnOrder();
+    }
+
+    void SetTurnOrder()
+    {
+        List<Character> toList = queue.ToList();
+
+        for (int i = 0; i < toList.Count; i++)
+        {
+            uIManager.TurnTextPrint(i, toList[i].charName);
         }
     }
 
@@ -78,13 +105,18 @@ public class BattleTurnManager : MonoBehaviour
         Debug.Log($"{turnMonster.charName}가 {players[randomCount].name}을(를) 공격함");
         StartCoroutine(HitDamage(randomCount));
         turnMonster.speed -= 100;
-        queue2.Enqueue(turnMonster);
+        queue.Enqueue(turnMonster);
         Turn();
     }
     void CompareSpeed()
     {
-        Character turnPlayer1 = queue2.Dequeue();
-        Character turnPlayer2 = queue2.Dequeue();
+        Character turnPlayer1 = queue.Dequeue();
+
+        CheckDeadCharacter(turnPlayer1);
+
+        Character turnPlayer2 = queue.Dequeue();
+
+        CheckDeadCharacter(turnPlayer2);
 
         int compSpeed = turnPlayer1.speed - turnPlayer2.speed;
 
@@ -95,15 +127,35 @@ public class BattleTurnManager : MonoBehaviour
             turnPlayer = turnPlayer1;
             Debug.Log($"턴 플레이어 : {turnPlayer1.charName}, {turnPlayer2.charName}, 랜덤값 : {randomResult}, 속도차이 :{turnPlayer1.speed} - {turnPlayer2.speed} = {compSpeed}, 밀린 턴 플레이어 : {turnPlayer2.charName}, 현재 턴의 플레이어 {turnPlayer1.charName}");
 
-            queue2.Enqueue(turnPlayer2);
+            queue.Enqueue(turnPlayer2);
         }
         else
         {
             Debug.Log($"턴 플레이어 : {turnPlayer1.charName}, {turnPlayer2.charName}, 랜덤값 : {randomResult}, 속도차이 :{turnPlayer1.speed} - {turnPlayer2.speed} = {compSpeed}, 밀린 턴 플레이어 : {turnPlayer1.charName}, 현재 턴의 플레이어 {turnPlayer2.charName}");
             turnPlayer = turnPlayer2;
-            queue2.Enqueue(turnPlayer1);
+            queue.Enqueue(turnPlayer1);
         }
 
+    }
+
+    void CheckDeadCharacter(Character turnPlayer)
+    {
+        if (turnPlayer.hp == 0)
+        {
+            turnPlayer = queue.Dequeue();
+            CheckDeadCharacter(turnPlayer);
+        }
+
+        //if(CharNames.Count > 0)
+        //{
+        //    for (int i = 0; i < CharNames.Count; i++)
+        //    {
+        //        if (turnPlayer.charName == CharNames[i])
+        //        {
+        //            turnPlayer = queue.Dequeue();
+        //        }
+        //    }
+        //}
     }
 
 
@@ -122,7 +174,6 @@ public class BattleTurnManager : MonoBehaviour
 
     public void OnClickNormalAttack()
     {
-        UIManager uIManager = FindObjectOfType<UIManager>();
         Player p = new Player();
 
         Character charTarget = basicTarget.GetComponent<Character>();
@@ -130,15 +181,11 @@ public class BattleTurnManager : MonoBehaviour
         Enemy enemy = basicTarget.GetComponent<Enemy>();
         p.NormalAttack(charTarget, turnPlayer.attackStat);
 
-        int _hp = enemy.hp;
-        int _shield = enemy.shield;
-
         Debug.Log($"체력바 테스트 {enemy.name} 체력 : {enemy.hp} 실드 : {enemy.shield}");
         enemy.SetHealth();
         enemy.SetShield();
-
         turnPlayer.speed -= 100;
-        queue2.Enqueue(turnPlayer);
+        queue.Enqueue(turnPlayer);
         if (charTarget.hp == 0)
         {
             for (int i = 0; i < enemies.Length; i++)
@@ -148,9 +195,10 @@ public class BattleTurnManager : MonoBehaviour
                     isCheckDie[i] = false;
                 }
             }
+
+            //CharNames.Add(charTarget.charName);
             basicTarget.SetActive(false);
             
-
             if (isAllFalse(isCheckDie))
             {
                 Debug.Log("모든 몬스터가 죽었습니다.");
@@ -168,9 +216,12 @@ public class BattleTurnManager : MonoBehaviour
     {
         Player p = new Player();
         Character charTarget = basicTarget.GetComponent<Character>();
+
+        
+
         p.BattleSkill(charTarget, 2f);
         turnPlayer.speed -= 100;
-        queue2.Enqueue(turnPlayer);
+        queue.Enqueue(turnPlayer);
         //basicTarget이 죽으면 다른 타겟 대상 설정해야함
         Turn();
 
@@ -184,7 +235,9 @@ public class BattleTurnManager : MonoBehaviour
 
     void Turn()
     {
-        if (queue2.Count() > 0)
+        SetTurnOrder();
+
+        if (queue.Count() > 0)
         {
             CompareSpeed();
         }
@@ -202,6 +255,9 @@ public class BattleTurnManager : MonoBehaviour
         {
             isplayer = false;
         }
+
+        
+
 
         //턴 진행
         if (isplayer)

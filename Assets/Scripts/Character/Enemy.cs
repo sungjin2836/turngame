@@ -17,6 +17,8 @@ public class Enemy : Character
 
     private int _shield;
 
+    private int speedDebuff = 10;
+
     private Camera mainCamera;
 
     public int Hp
@@ -104,20 +106,24 @@ public class Enemy : Character
     public void SetShield()
     {
         enemyShieldBar.value = shield;
+        if(shield == 0)
+        {
+            speed -= speedDebuff;
+            Debug.Log($"속성 실드가 파괴되어 속도가 {speedDebuff}만큼 느려져서 {speed}가 됨");
+        }
     }
 
     private void CreateBar()
     {
         enemyHpBar = BarPosition.transform.Find("EnemyHp").GetComponent<Slider>();
         enemyShieldBar = BarPosition.transform.Find("EnemyShield").GetComponent<Slider>();
-
     }
 
     private void SetBarPosition()
     {
         Vector3 screenPosition = mainCamera.WorldToScreenPoint(transform.position + Vector3.up * 2.0f);
-        Debug.Log($" {charName} bar 포지션1 : {screenPosition}");
-        Debug.Log($" {charName} bar 포지션2 : {mainCamera.transform.position}");
+        //Debug.Log($" {charName} bar 포지션1 : {screenPosition}");
+        //Debug.Log($" {charName} bar 포지션2 : {transform.position}");
         BarPosition.transform.position = screenPosition;
     }
 
