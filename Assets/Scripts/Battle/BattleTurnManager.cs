@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static DataManager;
 
 public class BattleTurnManager : MonoBehaviour
 {
@@ -76,22 +77,19 @@ public class BattleTurnManager : MonoBehaviour
         {
             RaycastHit rayHit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); //마우스 위치
-            if (Physics.Raycast(ray, out rayHit))
+            if (Physics.Raycast(ray, out rayHit) && rayHit.collider != null)
             {
-                if (rayHit.collider != null)
+                if (rayHit.collider.gameObject.CompareTag("Enemy"))
                 {
-                    if (rayHit.collider.gameObject.CompareTag("Enemy"))
-                    {
-                        List<string> textName = new List<string>();
+                    List<string> textName = new List<string>();
 
-                        basicTarget = rayHit.collider.gameObject;
+                    basicTarget = rayHit.collider.gameObject;
 
-                        SetTurnOrder();
-                    }
-                    else if (rayHit.collider.gameObject.CompareTag("Player"))
-                    {
-                        healTarget = rayHit.collider.gameObject;
-                    }
+                    SetTurnOrder();
+                }
+                else if (rayHit.collider.gameObject.CompareTag("Player"))
+                {
+                    healTarget = rayHit.collider.gameObject;
                 }
             }
         }
@@ -218,21 +216,20 @@ public class BattleTurnManager : MonoBehaviour
         Player p = turnPlayer.GetComponent<Player>();
 
         Character charTarget = basicTarget.GetComponent<Character>();
+        Enemy EnemyTarget = basicTarget.GetComponent<Enemy>();
 
-        Debug.Log(p.normalAttack.skillName);
+        Debug.Log(p.battleSkill.skillName);
+        targets = new Character[enemies.Length];
 
-        if(p.battleSkill.damageAttr1Type == SkillDataManager.DamageType.heal)
+        if(p.battleSkill.damageAttr1Type == SkillDataManager.DamageType.heal && healTarget != null)
         {
-            TargetRayCast();
             Player healCharTarget = healTarget.GetComponent<Player>();
             p.BattleSkill(healCharTarget);
-        }
-
-
-        targets = new Character[enemies.Length];
-        if (p.battleSkill.range == SkillDataManager.Range.single)
+        }else if (p.battleSkill.range == SkillDataManager.Range.single)
         {
             p.BattleSkill(charTarget);
+            EnemyTarget.SetHealth();
+            EnemyTarget.SetShield();
         }
         else if (p.battleSkill.range == SkillDataManager.Range.all)
         {
@@ -241,6 +238,7 @@ public class BattleTurnManager : MonoBehaviour
                 targets[i] = enemies[i].GetComponent<Character>();
             }
             p.BattleSkill(targets);
+
             Debug.Log($"광역공격 {turnPlayer.charName}");
         }
 

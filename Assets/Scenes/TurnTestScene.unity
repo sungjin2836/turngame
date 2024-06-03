@@ -880,6 +880,7 @@ MonoBehaviour:
   attackStat: 0
   _hp: 0
   maxShield: 0
+  normalAttack: {fileID: 0}
   weakElements: 
   BarPosition: {fileID: 194202878}
   enemyShieldBar: {fileID: 600140203}
@@ -1033,7 +1034,7 @@ GameObject:
   - component: {fileID: 461978072}
   m_Layer: 0
   m_Name: "\uAC1C\uCC99\uC790"
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1143,6 +1144,8 @@ MonoBehaviour:
   attackStat: 0
   _hp: 0
   element: 0
+  normalAttack: {fileID: 0}
+  battleSkill: {fileID: 0}
 --- !u!114 &461978072
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1866,6 +1869,7 @@ MonoBehaviour:
   attackStat: 0
   _hp: 0
   maxShield: 0
+  normalAttack: {fileID: 0}
   weakElements: 
   BarPosition: {fileID: 359838278}
   enemyShieldBar: {fileID: 1433651398}
@@ -2341,6 +2345,7 @@ MonoBehaviour:
   attackStat: 0
   _hp: 0
   maxShield: 0
+  normalAttack: {fileID: 0}
   weakElements: 
   BarPosition: {fileID: 607433636}
   enemyShieldBar: {fileID: 1368659595}
@@ -2478,7 +2483,7 @@ GameObject:
   - component: {fileID: 990658880}
   m_Layer: 0
   m_Name: "\uB2E8\uD56D"
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2588,6 +2593,8 @@ MonoBehaviour:
   attackStat: 0
   _hp: 0
   element: 0
+  normalAttack: {fileID: 0}
+  battleSkill: {fileID: 0}
 --- !u!114 &990658880
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2958,6 +2965,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1071005431}
   m_CullTransparentMesh: 1
+--- !u!1 &1079104155
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1079104157}
+  - component: {fileID: 1079104156}
+  m_Layer: 0
+  m_Name: SkillDataManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1079104156
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1079104155}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 989ef7079c45242dc92d688f0cfeee18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1079104157
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1079104155}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1, y: 1, z: -5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1131915460
 GameObject:
   m_ObjectHideFlags: 0
@@ -2999,6 +3050,7 @@ MonoBehaviour:
   - {fileID: 1625361561}
   PlayerButton: {fileID: 502283410}
   basicTarget: {fileID: 919753524}
+  healTarget: {fileID: 461978065}
   Camera: {fileID: 1899186608}
 --- !u!4 &1131915462
 Transform:
@@ -3031,7 +3083,7 @@ GameObject:
   - component: {fileID: 1162076388}
   m_Layer: 0
   m_Name: "\uD788\uBA54\uCF54"
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3141,6 +3193,8 @@ MonoBehaviour:
   attackStat: 0
   _hp: 0
   element: 0
+  normalAttack: {fileID: 0}
+  battleSkill: {fileID: 0}
 --- !u!114 &1162076388
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3840,7 +3894,7 @@ GameObject:
   - component: {fileID: 1506497505}
   m_Layer: 0
   m_Name: "\uC0BC\uCE60\uC774"
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3950,6 +4004,8 @@ MonoBehaviour:
   attackStat: 0
   _hp: 0
   element: 0
+  normalAttack: {fileID: 0}
+  battleSkill: {fileID: 0}
 --- !u!114 &1506497505
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4092,6 +4148,7 @@ MonoBehaviour:
   attackStat: 0
   _hp: 0
   maxShield: 0
+  normalAttack: {fileID: 0}
   weakElements: 
   BarPosition: {fileID: 1477087663}
   enemyShieldBar: {fileID: 855008337}
@@ -5032,3 +5089,4 @@ SceneRoots:
   - {fileID: 1625361565}
   - {fileID: 1060788260}
   - {fileID: 255679483}
+  - {fileID: 1079104157}

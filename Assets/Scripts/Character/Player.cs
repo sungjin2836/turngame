@@ -75,6 +75,8 @@ public class Player : Character
             var enemy = target[i] as Enemy;
             if (enemy.ContainsElement(element)) enemy.DamageToShield(60);
             int dam = enemy.GetDamage(Mathf.FloorToInt(attackStat * battleSkill.damageAttr1[0]), enemy.HasShield());
+            enemy.SetHealth();
+            enemy.SetShield();
             Debug.Log($"광역스킬 사용 {enemy.charName}의 체력은 {enemy.hp}/{enemy.maxHP}, 실드는 {enemy.shield}/{enemy.maxShield}");
         }
     }
