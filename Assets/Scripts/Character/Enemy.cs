@@ -5,7 +5,6 @@ public class Enemy : Character
 {
     [Header("적 캐릭터 정보")] public int maxShield;
 
-    [SerializeField]
     public Skill normalAttack;
 
     public ElementType[] weakElements;

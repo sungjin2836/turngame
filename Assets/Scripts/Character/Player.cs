@@ -5,9 +5,7 @@ public class Player : Character
 {
     [Header("플레이어 캐릭터 정보")] public ElementType element;
 
-    [SerializeField]
     public Skill normalAttack;
-    [SerializeField]
     public Skill battleSkill;
 
     public override void Initialize(int id)
