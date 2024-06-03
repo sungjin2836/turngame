@@ -5,6 +5,8 @@ public class Enemy : Character
 {
     [Header("적 캐릭터 정보")] public int maxShield;
 
+    public Skill normalAttack;
+
     public ElementType[] weakElements;
     
     private int _shield;
@@ -30,7 +32,17 @@ public class Enemy : Character
         finalSpeed = speed;
         finalAttackStat = attackStat;
         shield = maxShield;
-        
+
+        SkillDataManager.Skill normalAttackData = SkillDataManager.Instance.GetSkillData($"{id}001");
+
+        normalAttack = gameObject.AddComponent<Skill>();
+        normalAttack.skillName = normalAttackData.name;
+        normalAttack.range = normalAttackData.range;
+        normalAttack.damageAttr1 = normalAttackData.damageAttr1;
+        normalAttack.damageAttr2 = normalAttackData.damageAttr2;
+        normalAttack.damageAttr1Type = normalAttackData.damageAttr1Type;
+        normalAttack.damageAttr2Type = normalAttackData.damageAttr2Type;
+
         //Debug.Log(JsonUtility.ToJson(this));
     }
 
