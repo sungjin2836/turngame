@@ -1,8 +1,12 @@
 using UnityEngine;
+using static SkillDataManager;
 
 public class Player : Character
 {
     [Header("플레이어 캐릭터 정보")] public ElementType element;
+
+    public Skill normalAttack;
+    public Skill battleSkill;
 
     public override void Initialize(int id)
     {
@@ -14,11 +18,29 @@ public class Player : Character
         attackStat = playerData.attackStat;
         element = playerData.elem;
 
+        SkillDataManager.Skill normalAttackData = SkillDataManager.Instance.GetSkillData($"{id}001");
+        SkillDataManager.Skill battleSkillData = SkillDataManager.Instance.GetSkillData($"{id}002");
+
+        normalAttack = gameObject.AddComponent<Skill>();
+        normalAttack.skillName = normalAttackData.name;
+        normalAttack.range = normalAttackData.range;
+        normalAttack.damageAttr1 = normalAttackData.damageAttr1;
+        normalAttack.damageAttr2 = normalAttackData.damageAttr2;
+        normalAttack.damageAttr1Type = normalAttackData.damageAttr1Type;
+        normalAttack.damageAttr2Type = normalAttackData.damageAttr2Type;
+
+        battleSkill = gameObject.AddComponent<Skill>();
+        battleSkill.skillName = battleSkillData.name;
+        battleSkill.range = battleSkillData.range;
+        battleSkill.damageAttr1 = battleSkillData.damageAttr1;
+        battleSkill.damageAttr2 = battleSkillData.damageAttr2;
+        battleSkill.damageAttr1Type = battleSkillData.damageAttr1Type;
+        battleSkill.damageAttr2Type = battleSkillData.damageAttr2Type;
+
         hp = maxHP;
         finalSpeed = speed;
         finalAttackStat = attackStat;
         Debug.Log("파이널 어택"+finalAttackStat);
-        //Debug.Log(JsonUtility.ToJson(this));
     }
 
     public override int NormalAttack(Character target, float value = 0.5f)
