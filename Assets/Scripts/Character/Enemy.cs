@@ -1,5 +1,7 @@
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
+using static UnityEditor.Rendering.FilterWindow;
 
 public class Enemy : Character
 {
@@ -8,14 +10,34 @@ public class Enemy : Character
     public Skill normalAttack;
 
     public ElementType[] weakElements;
-    
+
+    [SerializeField]
+    private GameObject BarPosition;
+    [SerializeField]
+    private Slider enemyShieldBar;
+    [SerializeField]
+    private Slider enemyHpBar;
+
     private int _shield;
+
+    private int speedDebuff = 10;
+
+    private Camera mainCamera;
+
+    public int hp
+    {
+        get => _hp;
+
+        private set => _hp = Mathf.Clamp(value, 0, maxHP);
+    }
 
     public int shield
     {
         get => _shield;
         private set => _shield = Mathf.Clamp(value, 0, maxShield);
     }
+
+
 
     public override void Initialize(int id)
     {
@@ -33,16 +55,14 @@ public class Enemy : Character
         finalAttackStat = attackStat;
         shield = maxShield;
 
-        SkillDataManager.Skill normalAttackData = SkillDataManager.Instance.GetSkillData($"{id}001");
+        mainCamera = Camera.main;
 
-        normalAttack = gameObject.AddComponent<Skill>();
-        normalAttack.skillName = normalAttackData.name;
-        normalAttack.range = normalAttackData.range;
-        normalAttack.damageAttr1 = normalAttackData.damageAttr1;
-        normalAttack.damageAttr2 = normalAttackData.damageAttr2;
-        normalAttack.damageAttr1Type = normalAttackData.damageAttr1Type;
-        normalAttack.damageAttr2Type = normalAttackData.damageAttr2Type;
+        //CreateBar();
 
+        SetMaxHealth();
+        SetMaxShield();
+
+        SetBarPosition();
         //Debug.Log(JsonUtility.ToJson(this));
     }
 
@@ -53,7 +73,7 @@ public class Enemy : Character
 
     public bool HasShield()
     {
-        return shield > 0;
+        return shield > 0; // 
     }
 
     public void DamageToShield(int damage)
@@ -64,6 +84,74 @@ public class Enemy : Character
     public void RegenShield()
     {
         shield = maxShield;
+    }
+    
+    public void SetMaxHealth()
+    {
+        enemyHpBar.maxValue = maxHP;
+        enemyHpBar.value = hp;
+    }
+    public void SetHealth()
+    {
+        Debug.Log($"sethealth 매개변수 : {hp}, 실제 체력 {_hp}");
+        enemyHpBar.value = hp;
+        if(hp == 0)
+        {
+            enemyHpBar.gameObject.SetActive(false);
+            enemyShieldBar.gameObject.SetActive(false);
+        }
+    }
+    public void SetMaxShield()
+    {
+        enemyShieldBar.maxValue = maxShield;
+        enemyShieldBar.value = shield;
+    }
+    public void SetShield()
+    {
+        enemyShieldBar.value = shield;
+        if(shield == 0)
+        {
+            speed -= speedDebuff;
+            Debug.Log($"속성 실드가 파괴되어 속도가 {speedDebuff}만큼 느려져서 {speed}가 됨");
+        }
+    }
+
+    private void CreateBar()
+    {
+        enemyHpBar = BarPosition.transform.Find("EnemyHp").GetComponent<Slider>();
+        enemyShieldBar = BarPosition.transform.Find("EnemyShield").GetComponent<Slider>();
+    }
+
+    private void SetBarPosition()
+    {
+        Vector3 screenPosition = mainCamera.WorldToScreenPoint(transform.position + Vector3.up * 2.0f);
+        //Debug.Log($" {charName} bar 포지션1 : {screenPosition}");
+        //Debug.Log($" {charName} bar 포지션2 : {transform.position}");
+        BarPosition.transform.position = screenPosition;
+    }
+    
+    public int NormalAttack(Player target, float value = 0.5f)
+    {
+        Debug.Log($" {charName}의 NormalAttack의 공격력 {attackStat}");
+        var player = target as Player;
+        int dam = player.GetDamage(Mathf.FloorToInt(attackStat));
+        Debug.Log($"{player.charName}의 체력은 {player.hp}/{player.maxHP}");
+        return dam;
+    }
+
+    public void SetPrevHpAndShield(int prevShieldAttack , int prevAttack)
+    {
+        enemyHpBar.value -= prevAttack;
+        enemyShieldBar.value -= prevShieldAttack;
+    }
+
+    public void SetPrevFinalSpeed()
+    {
+        if(enemyShieldBar.value == 0)finalSpeed -= speedDebuff;
+    }
+    public void ReturnPrevFinalSpeed()
+    {
+        finalSpeed = speed;
     }
 
 }

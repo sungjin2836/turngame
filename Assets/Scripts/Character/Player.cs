@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using static SkillDataManager;
 
 public class Player : Character
@@ -7,6 +8,10 @@ public class Player : Character
 
     public Skill normalAttack;
     public Skill battleSkill;
+
+    public Slider playerHpBar;
+
+    private Camera mainCamera;
 
     public override void Initialize(int id)
     {
@@ -40,7 +45,20 @@ public class Player : Character
         hp = maxHP;
         finalSpeed = speed;
         finalAttackStat = attackStat;
-        Debug.Log("파이널 어택"+finalAttackStat);
+        //Debug.Log("파이널 어택"+finalAttackStat);
+
+        mainCamera = Camera.main;
+
+        SetMaxHealth();
+        SetHpBarPosition();
+
+    }
+
+    public int hp
+    {
+        get => _hp;
+
+        private set => _hp = Mathf.Clamp(value, 0, maxHP);
     }
 
     public override int NormalAttack(Character target, float value = 0.5f)
@@ -48,33 +66,95 @@ public class Player : Character
         Debug.Log("NormalAttack의 공격력" + finalAttackStat);
         var enemy = target as Enemy;
         if (enemy.ContainsElement(element)) enemy.DamageToShield(30);
-        int dam = enemy.GetDamage(Mathf.FloorToInt(finalAttackStat * value), enemy.HasShield());
+        int dam = enemy.GetDamage(Mathf.FloorToInt(finalAttackStat * normalAttack.damageAttr1[0] * 0.9f), enemy.HasShield());
         Debug.Log($"{enemy.charName}의 체력은 {enemy.hp}/{enemy.maxHP}, 실드는 {enemy.shield}/{enemy.maxShield}");
 
         return dam;
     }
 
-    public int NormalAttack(Character target, int _attack, float value = 0.5f)
+
+    public virtual void BattleSkill(Character target)
     {
-        Debug.Log("NormalAttack의 공격력" + finalAttackStat);
-        Debug.Log(_attack);
+        // 스킬
         var enemy = target as Enemy;
-        if (enemy.ContainsElement(element)) enemy.DamageToShield(30);
-        int dam = enemy.GetDamage(Mathf.FloorToInt(_attack * value), enemy.HasShield());
-        Debug.Log($"{enemy.charName}의 체력은 {enemy.hp}/{enemy.maxHP}, 실드는 {enemy.shield}/{enemy.maxShield}");
+        if (enemy.ContainsElement(element)) enemy.DamageToShield(60);
+        int dam = enemy.GetDamage(Mathf.FloorToInt(attackStat * battleSkill.damageAttr1[0]), enemy.HasShield());
+        enemy.speed -= 10;
+        Debug.Log($"스킬 사용 {enemy.charName}의 체력은 {enemy.hp}/{enemy.maxHP}, 실드는 {enemy.shield}/{enemy.maxShield}");
+
+
+    }
+
+    public virtual void BattleSkill(Character[] target)
+    {
+        // 스킬
+        for (int i = 0; i < target.Length; i++)
+        {
+            var enemy = target[i] as Enemy;
+            if (enemy.ContainsElement(element)) enemy.DamageToShield(60);
+            int dam = enemy.GetDamage(Mathf.FloorToInt(attackStat * battleSkill.damageAttr1[0]), enemy.HasShield());
+            enemy.SetHealth();
+            enemy.SetShield();
+            Debug.Log($"광역스킬 사용 {enemy.charName}의 체력은 {enemy.hp}/{enemy.maxHP}, 실드는 {enemy.shield}/{enemy.maxShield}");
+        }
+    }
+
+    public int PrevNormalSkill(bool isSameElement)
+    {
+        int dam;
+        if (isSameElement)
+        {
+            dam = Mathf.FloorToInt(attackStat * normalAttack.damageAttr1[0]);
+            
+        }
+        else
+        {
+            dam = Mathf.FloorToInt(attackStat * normalAttack.damageAttr1[0] * 0.9f);
+        }
 
         return dam;
     }
 
-
-    public virtual void BattleSkill(Character target, float value)
+    public int PrevBattleSkill()
     {
-        // 스킬
-        Debug.Log($"{target.charName}에게 배틀스킬 사용");
+        int dam = Mathf.FloorToInt(attackStat * battleSkill.damageAttr1[0] * 0.9f);
+        return dam;
     }
 
-    public virtual void BattleSkill(Character[] target, float value)
+    public virtual void BattleSkill(Player target)
     {
-        // 스킬
+        int healamount = Mathf.FloorToInt(maxHP * battleSkill.damageAttr1[0]);
+
+        target.hp += Mathf.FloorToInt(healamount);
+        target.SetHealth();
+        Debug.Log($"{charName}이 {target.charName}을 {healamount}만큼 회복 시켜 {target.hp}가 됐다.");
     }
+
+    public void SetMaxHealth()
+    {
+        playerHpBar.maxValue = maxHP;
+        playerHpBar.value = hp;
+    }
+    public void SetHealth()
+    {
+        Debug.Log($"sethealth 매개변수 : {hp}, 실제 체력 {_hp}");
+        playerHpBar.value = hp;
+        if (hp == 0)
+        {
+            playerHpBar.gameObject.SetActive(false);
+            playerHpBar.gameObject.SetActive(false);
+        }
+    }
+
+    private void SetHpBarPosition()
+    {
+        Vector3 screenPosition = mainCamera.WorldToScreenPoint(transform.position + Vector3.up * 1.2f);
+        playerHpBar.transform.position = screenPosition;
+    }
+
+    public void ReturnPrevFinalSpeed()
+    {
+        finalSpeed = speed;
+    }
+
 }

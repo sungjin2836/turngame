@@ -14,9 +14,9 @@
       "name": "개척자 스킬 공격",
       "damageAttr1": [1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8],
       "damageAttr1Type": 1,
-      "damageAttr2": [],
-      "damageAttr2Type": 0,
-      "range": 0
+      "damageAttr2": [0.5],
+      "damageAttr2Type": 1,
+      "range": 1
     },
     {
       "id": 1002001,
@@ -30,8 +30,8 @@
     {
       "id": 1002002,
       "name": "삼칠이 스킬 공격",
-      "damageAttr1": [1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8],
-      "damageAttr1Type": 1,
+      "damageAttr1": [0.38, 0.4, 0.42, 0.44, 0.46, 0.48, 0.5, 0.52, 0.54, 0.56],
+      "damageAttr1Type": 2,
       "damageAttr2": [],
       "damageAttr2Type": 0,
       "range": 0
@@ -68,9 +68,9 @@
       "name": "히메코 스킬 공격",
       "damageAttr1": [1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8],
       "damageAttr1Type": 1,
-      "damageAttr2": [],
-      "damageAttr2Type": 0,
-      "range": 0
+      "damageAttr2": [1],
+      "damageAttr2Type": 1,
+      "range": 1
     },
     {
       "id": 2001001,
