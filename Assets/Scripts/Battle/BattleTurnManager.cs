@@ -2,18 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 using static DataManager;
 
+[DefaultExecutionOrder(100)]
 public class BattleTurnManager : MonoBehaviour
 {
     private bool isplayer;
     private int MaxRandom;
-    public GameObject[] players; // 현재 플레이어 수
-    public GameObject[] enemies; // 현재 몬스터 수
+    public List<GameObject> players; // 현재 플레이어 수
+    public List<GameObject> enemies; // 현재 몬스터 수
     Character turnPlayer;
     public GameObject PlayerButton;
     public GameObject basicTarget;
     public GameObject healTarget;
+
     [SerializeField]
     private Camera Camera;
 
@@ -23,30 +26,27 @@ public class BattleTurnManager : MonoBehaviour
 
     Player[] testPlayersData;
     Enemy[] testEnemysData;
-    
-    private List<string> CharNames;
 
     private Character[] targets;
 
-    //PriorityQueue<Character> queue1 = new(); 
-    PriorityQueue<Character> queue = new(); 
-    // 큐 -> 리스트 
+    PriorityQueue<Character> queue = new();
 
     void Start()
     {
-        CharNames = new List<string>();
-        testPlayersData = new Player[players.Length];
-        testEnemysData = new Enemy[enemies.Length];
+        testPlayersData = new Player[players.Count];
+        testEnemysData = new Enemy[enemies.Count];
 
-        isCheckDie = new bool[enemies.Length];
+        isCheckDie = new bool[enemies.Count];
+
         MaxRandom = 100;
-        for (int i = 0; i < players.Length; i++)
+
+        for (int i = 0; i < players.Count; i++)
         {
             Player playerData = players[i].GetComponent<Player>();
             testPlayersData[i] = playerData;
             queue.Enqueue(testPlayersData[i]);
         }
-        for (int i = 0; i < enemies.Length; i++)
+        for (int i = 0; i < enemies.Count; i++)
         {
             Enemy enemyData = enemies[i].GetComponent<Enemy>();
             testEnemysData[i] = enemyData;
@@ -60,15 +60,11 @@ public class BattleTurnManager : MonoBehaviour
 
         uIManager.InitTurnText(queue.Count());
 
-
         Turn();
-
     }
     void Update()
     {
         TargetRayCast();
-
-        SetTurnOrder();
     }
 
     private void TargetRayCast()
@@ -79,12 +75,14 @@ public class BattleTurnManager : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); //마우스 위치
             if (Physics.Raycast(ray, out rayHit) && rayHit.collider != null)
             {
-                if (rayHit.collider.gameObject.CompareTag("Enemy"))
+                if (rayHit.collider.gameObject.CompareTag("Enemy") && basicTarget != null)
                 {
-                    List<string> textName = new List<string>();
-
+                    Enemy prevTarget = basicTarget.GetComponent<Enemy>();
+                    prevTarget.SetHealth();
+                    prevTarget.SetShield();
+                    prevTarget.ReturnPrevFinalSpeed();
                     basicTarget = rayHit.collider.gameObject;
-
+                    CheckElementChose(basicTarget);
                     SetTurnOrder();
                 }
                 else if (rayHit.collider.gameObject.CompareTag("Player"))
@@ -95,28 +93,39 @@ public class BattleTurnManager : MonoBehaviour
         }
     }
 
-    void SetTurnOrder()
+    void CheckElementChose(GameObject basicTarget)
     {
-        List<Character> toList = queue.ToList();
+        Enemy enemy = basicTarget.GetComponent<Enemy>();
+        Player player = turnPlayer.GetComponent<Player>();
 
-        for (int i = 0; i < toList.Count; i++)
+        if ((enemy.ContainsElement(player.element)))
         {
-            uIManager.TurnTextPrint(i, toList[i].charName);
+            enemy.SetPrevHpAndShield(30, player.PrevNormalSkill(true));
+            enemy.SetPrevFinalSpeed();
+        }
+        else
+        {
+            enemy.SetPrevHpAndShield(0, player.PrevNormalSkill(false));
         }
     }
 
-    void MonsterAttack(Character turnMonster)
+    void SetTurnOrder()
     {
+        List<Character> toList = queue.ToList();
+        var sortedCharacters = toList.OrderByDescending(c => c.finalSpeed).ToList();
 
-        int playerCount = players.Length;
-        int randomCount = Random.Range(0, playerCount);
+        uIManager.TurnTextClear();
+        for (int i = 0; i < sortedCharacters.Count; i++)
+        {
 
-        Debug.Log($"{turnMonster.charName}가 {players[randomCount].name}을(를) 공격함");
-        StartCoroutine(HitDamage(randomCount));
-        turnMonster.speed -= 100;
-        queue.Enqueue(turnMonster);
-        Turn();
+            uIManager.TurnTextPrint(i, sortedCharacters[i].charName);
+            Debug.Log($"{sortedCharacters[i].charName}의 속도는 {sortedCharacters[i].finalSpeed}");
+        }
+        Debug.Log("------------------------");
     }
+
+
+
     void CompareSpeed()
     {
         Character turnPlayer1 = queue.Dequeue();
@@ -134,17 +143,13 @@ public class BattleTurnManager : MonoBehaviour
         if (randomResult > compareNum)
         {
             turnPlayer = turnPlayer1;
-            //Debug.Log($"턴 플레이어 : {turnPlayer1.charName}, {turnPlayer2.charName}, 랜덤값 : {randomResult}, 속도차이 :{turnPlayer1.speed} - {turnPlayer2.speed} = {compSpeed}, 밀린 턴 플레이어 : {turnPlayer2.charName}, 현재 턴의 플레이어 {turnPlayer1.charName}");
-
             queue.Enqueue(turnPlayer2);
         }
         else
         {
-            //Debug.Log($"턴 플레이어 : {turnPlayer1.charName}, {turnPlayer2.charName}, 랜덤값 : {randomResult}, 속도차이 :{turnPlayer1.speed} - {turnPlayer2.speed} = {compSpeed}, 밀린 턴 플레이어 : {turnPlayer1.charName}, 현재 턴의 플레이어 {turnPlayer2.charName}");
             turnPlayer = turnPlayer2;
             queue.Enqueue(turnPlayer1);
         }
-
     }
 
     void CheckDeadCharacter(Character turnPlayer)
@@ -156,20 +161,6 @@ public class BattleTurnManager : MonoBehaviour
         }
     }
 
-
-
-    IEnumerator HitDamage(int playerCount)
-    {
-        int count = 0;
-        while (count < 5)
-        {
-            yield return new WaitForSeconds(1f);
-            players[playerCount].GetComponent<Renderer>().enabled = !players[playerCount].GetComponent<Renderer>().enabled;
-            count++;
-        }
-        players[playerCount].GetComponent<Renderer>().enabled = true;
-    }
-
     public void OnClickNormalAttack()
     {
         Player p = turnPlayer.GetComponent<Player>();
@@ -179,37 +170,20 @@ public class BattleTurnManager : MonoBehaviour
         float finalAttack = turnPlayer.attackStat * p.normalAttack.damageAttr1[0];
 
         p.NormalAttack(charTarget, finalAttack);
+        turnPlayer.speed -= 100;
+        p.ReturnPrevFinalSpeed();
+        queue.Enqueue(turnPlayer);
+        SetTurnOrder();
 
         Debug.Log($"체력바 테스트 {enemy.name} 체력 : {enemy.hp} 실드 : {enemy.shield}");
+
         enemy.SetHealth();
         enemy.SetShield();
-        turnPlayer.speed -= 100;
-        queue.Enqueue(turnPlayer);
-        if (charTarget.hp == 0)
-        {
-            for (int i = 0; i < enemies.Length; i++)
-            {
-                if (enemies[i] == basicTarget)
-                {
-                    isCheckDie[i] = false;
-                }
-            }
 
-            //CharNames.Add(charTarget.charName);
-            basicTarget.SetActive(false);
-            
-            if (isAllFalse(isCheckDie))
-            {
-                Debug.Log("모든 몬스터가 죽었습니다.");
-                return;
-            }
 
-        }
-        //basicTarget이 죽으면 다른 타겟 대상 설정해야함
+        CheckDeadChar(charTarget);
         Turn();
     }
-
-
 
     public void OnClickSkillAttack()
     {
@@ -219,13 +193,14 @@ public class BattleTurnManager : MonoBehaviour
         Enemy EnemyTarget = basicTarget.GetComponent<Enemy>();
 
         Debug.Log(p.battleSkill.skillName);
-        targets = new Character[enemies.Length];
+        targets = new Character[enemies.Count];
 
-        if(p.battleSkill.damageAttr1Type == SkillDataManager.DamageType.heal && healTarget != null)
+        if (p.battleSkill.damageAttr1Type == SkillDataManager.DamageType.heal && healTarget != null)
         {
             Player healCharTarget = healTarget.GetComponent<Player>();
             p.BattleSkill(healCharTarget);
-        }else if (p.battleSkill.range == SkillDataManager.Range.single)
+        }
+        else if (p.battleSkill.range == SkillDataManager.Range.single)
         {
             p.BattleSkill(charTarget);
             EnemyTarget.SetHealth();
@@ -233,22 +208,75 @@ public class BattleTurnManager : MonoBehaviour
         }
         else if (p.battleSkill.range == SkillDataManager.Range.all)
         {
-            for(int i = 0;i < enemies.Length; i++)
+            for (int i = 0; i < enemies.Count; i++)
             {
                 targets[i] = enemies[i].GetComponent<Character>();
+                if (targets[i].isDead)
+                {
+                    //enemies[i].SetActive(false);
+                }
             }
             p.BattleSkill(targets);
+            turnPlayer.speed -= 100;
+            p.ReturnPrevFinalSpeed();
+            queue.Enqueue(turnPlayer);
+            SetTurnOrder();
 
             Debug.Log($"광역공격 {turnPlayer.charName}");
         }
 
-        turnPlayer.speed -= 100;
-        queue.Enqueue(turnPlayer);
-        //basicTarget이 죽으면 다른 타겟 대상 설정해야함
-        Turn();
+        for (int i = 0; i < targets.Length; i++)
+        {
+            //CheckDeadChar(targets[i]);
+        }
+        StartCoroutine(waitOneSec());
 
     }
-     
+    void MonsterAttack(Character turnMonster)
+    {
+        Enemy e = turnMonster.GetComponent<Enemy>();
+        int playerCount = players.Count;
+        int randomCount = Random.Range(0, playerCount);
+
+        Player targetPlayerType = players[randomCount].GetComponent<Player>();
+
+        Debug.Log($"{turnMonster.charName}가 {targetPlayerType.charName}을(를) 공격함");
+        e.NormalAttack(targetPlayerType);
+
+        targetPlayerType.SetHealth();
+        if (targetPlayerType.hp == 0)
+        {
+            targetPlayerType.SetHealth();
+        }
+        turnMonster.speed -= 100;
+        e.ReturnPrevFinalSpeed();
+        queue.Enqueue(turnMonster);
+        SetTurnOrder();
+        StartCoroutine(waitOneSec());
+    }
+
+    private void CheckDeadChar(Character charTarget)
+    {
+        if (charTarget.hp == 0)
+        {
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                if (enemies[i] == basicTarget)
+                {
+                    isCheckDie[i] = false;
+                }
+            }
+            basicTarget.SetActive(false);
+
+            if (isAllFalse(isCheckDie))
+            {
+                Debug.Log("모든 몬스터가 죽었습니다.");
+                return;
+            }
+
+        }
+    }
+
     public static bool isAllFalse(bool[] array)
     {
         return array.All(item => !item);
@@ -278,21 +306,22 @@ public class BattleTurnManager : MonoBehaviour
             isplayer = false;
         }
 
-        
-
-
         //턴 진행
         if (isplayer)
         {
             PlayerButton.SetActive(true);
-            //ui 바꿔줌 몬스터 ui, 플레이어 ui
         }
         else
         {
             PlayerButton.SetActive(false);
-            //이벤트 발생 -> 이벤트에서 MonsterAttack 실행
-
             MonsterAttack(turnPlayer);
         }
     }
+
+    IEnumerator waitOneSec()
+    {
+        yield return new WaitForSeconds(1);
+        Turn();
+    }
+
 }

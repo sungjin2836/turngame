@@ -44,7 +44,6 @@ public class UIManager : MonoBehaviour
     public void InitTurnText(int num)
     {
         turnTexts = new Text[num];
-
         for (int i = 0; i < num; i++)
         {
             turnTexts[i] = Instantiate(turnOrderText, turnOrderPanel.transform.position, Quaternion.identity);
@@ -52,6 +51,13 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void TurnTextClear()
+    {
+        for (int i = 0;i < turnTexts.Length; i++)
+        {
+            turnTexts[i].text = "";
+        }
+    }
     public void TurnTextPrint(int num, string Name)
     {
         turnTexts[num].text = Name;

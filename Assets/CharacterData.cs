@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[DefaultExecutionOrder(-100)]
 public class CharacterData : MonoBehaviour
 {
     public int CharacterID = 1001;

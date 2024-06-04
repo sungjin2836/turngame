@@ -17,11 +17,11 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
 
     private Animator _animator;
 
-
     public int hp
     {
         get => _hp;
-        protected set => _hp = Mathf.Clamp(value, 0, maxHP);
+
+        private set => _hp = Mathf.Clamp(value, 0, maxHP);
     }
 
     public int finalSpeed { get; protected set; }
@@ -38,6 +38,8 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
     {
         return other.speed - speed;
     }
+
+    
 
     public virtual int NormalAttack(Character target, float value = 1f)
     {
@@ -72,6 +74,7 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
     {
         isDead = true;
         Debug.Log($"{charName}은 죽었다!");
+        
     }
 
     public virtual void TurnEnd()

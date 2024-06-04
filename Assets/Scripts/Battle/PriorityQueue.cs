@@ -19,6 +19,7 @@ class PriorityQueue<T>
 
         T returnValue = queueList[0];
         queueList.RemoveAt(0);
+        queueList.Sort();
         return returnValue;
     }
 

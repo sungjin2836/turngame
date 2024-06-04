@@ -1,6 +1,7 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.Rendering.FilterWindow;
 
 public class Enemy : Character
 {
@@ -23,7 +24,7 @@ public class Enemy : Character
 
     private Camera mainCamera;
 
-    public int Hp
+    public int hp
     {
         get => _hp;
 
@@ -72,7 +73,7 @@ public class Enemy : Character
 
     public bool HasShield()
     {
-        return shield > 0;
+        return shield > 0; // 
     }
 
     public void DamageToShield(int damage)
@@ -84,7 +85,7 @@ public class Enemy : Character
     {
         shield = maxShield;
     }
-
+    
     public void SetMaxHealth()
     {
         enemyHpBar.maxValue = maxHP;
@@ -128,7 +129,29 @@ public class Enemy : Character
         //Debug.Log($" {charName} bar 포지션2 : {transform.position}");
         BarPosition.transform.position = screenPosition;
     }
+    
+    public int NormalAttack(Player target, float value = 0.5f)
+    {
+        Debug.Log($" {charName}의 NormalAttack의 공격력 {attackStat}");
+        var player = target as Player;
+        int dam = player.GetDamage(Mathf.FloorToInt(attackStat));
+        Debug.Log($"{player.charName}의 체력은 {player.hp}/{player.maxHP}");
+        return dam;
+    }
 
+    public void SetPrevHpAndShield(int prevShieldAttack , int prevAttack)
+    {
+        enemyHpBar.value -= prevAttack;
+        enemyShieldBar.value -= prevShieldAttack;
+    }
 
+    public void SetPrevFinalSpeed()
+    {
+        if(enemyShieldBar.value == 0)finalSpeed -= speedDebuff;
+    }
+    public void ReturnPrevFinalSpeed()
+    {
+        finalSpeed = speed;
+    }
 
 }
