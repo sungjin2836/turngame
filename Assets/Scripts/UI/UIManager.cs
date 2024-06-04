@@ -1,7 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +5,19 @@ public class UIManager : MonoBehaviour
 {
     [SerializeField]
     private GameObject turnOrderPanel;
+
+    [SerializeField]
+    private GameObject resultWindow;
+
+    [SerializeField]
+    private Image[] itemIndex;
+
+    private Image[] items;
+
+    [SerializeField]
+    private GameObject ItemPanel;
+
+    private int itemCount = 5;
 
 
     [SerializeField]
@@ -25,20 +34,20 @@ public class UIManager : MonoBehaviour
     {
         get => _hp;
 
-        private set => _hp = Math.Clamp(value, 0, _hp);
+        private set => _hp = Mathf.Clamp(value, 0, _hp);
     }
 
     public int Shield
     {
         get => _shield;
 
-        private set => _shield = Math.Clamp(value, 0, _shield);
+        private set => _shield = Mathf.Clamp(value, 0, _shield);
     }
 
 
     void Start()
     {
-        
+        resultWindow.SetActive(false);
     }
 
     public void InitTurnText(int num)
@@ -83,5 +92,29 @@ public class UIManager : MonoBehaviour
     {
         enemyShieldBar.value = shield;
     }
+
+    public void InitItem()
+    {
+        Debug.Log("InitItem");
+        items = new Image[itemCount]; 
+        for (int i = 0; i < items.Length; i++)
+        {
+            int itemNum = Random.Range(0, itemIndex.Length);
+
+            items[i] = Instantiate(itemIndex[itemNum], ItemPanel.transform.position, Quaternion.identity);
+            items[i].transform.SetParent(ItemPanel.transform);
+            Debug.Log($"¾ÆÀÌÅÛ{i} {items[i]}");
+        }
+    }
+
+    public void FinishGame()
+    {
+        Debug.Log("finish");
+        resultWindow.SetActive(true);
+        InitItem();
+    }
+    
+
+
 
 }

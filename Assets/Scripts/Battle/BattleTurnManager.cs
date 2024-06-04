@@ -60,6 +60,14 @@ public class BattleTurnManager : MonoBehaviour
 
         uIManager.InitTurnText(queue.Count());
 
+        isCheckDie = new bool[enemies.Count];
+
+        for (int i = 0; i < isCheckDie.Length; i++)
+        {
+            isCheckDie[i] = false;
+        }
+
+
         Turn();
     }
     void Update()
@@ -119,7 +127,7 @@ public class BattleTurnManager : MonoBehaviour
         {
 
             uIManager.TurnTextPrint(i, sortedCharacters[i].charName);
-            Debug.Log($"{sortedCharacters[i].charName}의 속도는 {sortedCharacters[i].finalSpeed}");
+            //Debug.Log($"{sortedCharacters[i].charName}의 속도는 {sortedCharacters[i].finalSpeed}");
         }
         Debug.Log("------------------------");
     }
@@ -180,8 +188,12 @@ public class BattleTurnManager : MonoBehaviour
         enemy.SetHealth();
         enemy.SetShield();
 
+        if (enemy.hp == 0)
+        {
+            basicTarget.SetActive(false);
+        }
 
-        CheckDeadChar(charTarget);
+        CheckDeadChar();
         Turn();
     }
 
@@ -211,15 +223,20 @@ public class BattleTurnManager : MonoBehaviour
             for (int i = 0; i < enemies.Count; i++)
             {
                 targets[i] = enemies[i].GetComponent<Character>();
-                if (targets[i].isDead)
-                {
-                    //enemies[i].SetActive(false);
-                }
             }
             p.BattleSkill(targets);
             turnPlayer.speed -= 100;
             p.ReturnPrevFinalSpeed();
             queue.Enqueue(turnPlayer);
+
+            for(int i = 0;i < enemies.Count; i++)
+            {
+                if (targets[i].hp == 0 && enemies[i] != null)
+                {
+                    enemies[i].SetActive(false);
+                }
+            }
+
             SetTurnOrder();
 
             Debug.Log($"광역공격 {turnPlayer.charName}");
@@ -255,26 +272,20 @@ public class BattleTurnManager : MonoBehaviour
         StartCoroutine(waitOneSec());
     }
 
-    private void CheckDeadChar(Character charTarget)
+    private void CheckDeadChar()
     {
-        if (charTarget.hp == 0)
+        for (int i = 0; i < enemies.Count; i++)
         {
-            for (int i = 0; i < enemies.Count; i++)
+            if(enemies[i] == null)
             {
-                if (enemies[i] == basicTarget)
-                {
-                    isCheckDie[i] = false;
-                }
+                isCheckDie[i] = true;
             }
-            basicTarget.SetActive(false);
-
-            if (isAllFalse(isCheckDie))
-            {
-                Debug.Log("모든 몬스터가 죽었습니다.");
-                return;
-            }
-
         }
+        if(isCheckDie.All(x => x))
+        {
+            uIManager.FinishGame();
+        }
+
     }
 
     public static bool isAllFalse(bool[] array)
