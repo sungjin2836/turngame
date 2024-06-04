@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
@@ -29,9 +28,10 @@ public class BattleCamera : MonoBehaviour
             }
 
             _camera = value;
+            _camera.LookAt = m_Enemy;
             _camera.m_Priority = 100;
             _orbital = m_Camera.GetCinemachineComponent<CinemachineOrbitalTransposer>();
-            
+
             if (enemies == null) return;
 
             UpdateEnemyList();
@@ -62,7 +62,7 @@ public class BattleCamera : MonoBehaviour
     private Transform _enemy;
 
 
-    public Transform m_Enemy
+    private Transform m_Enemy
     {
         get => _enemy;
         set
@@ -73,7 +73,7 @@ public class BattleCamera : MonoBehaviour
     }
 
     private float _lastTime;
-    private float _lastPosition;
+    private float _lastXAxisValue;
 
     private void Awake()
     {
@@ -95,20 +95,23 @@ public class BattleCamera : MonoBehaviour
             m_Enemy = _enemy;
             return;
         }
-        _orbital.m_XAxis.Value = Mathf.Lerp(_lastPosition, _targets[m_Enemy], (Time.time - _lastTime) / Duration);
 
-        if (!Input.GetMouseButtonDown(0)) return;
-        if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out var hit)) return;
-        if (!hit.collider.CompareTag("Enemy")) return;
-        m_Enemy = hit.transform;
-        _lastPosition = _orbital.m_XAxis.Value;
+        _orbital.m_XAxis.Value = Mathf.Lerp(_lastXAxisValue, _targets[m_Enemy], (Time.time - _lastTime) / Duration);
+    }
+
+    public void LookAt(Collider target)
+    {
+        if (!_orbital) return;
+        if (!target.CompareTag("Enemy")) return;
+        m_Enemy = target.transform;
+        _lastXAxisValue = _orbital.m_XAxis.Value;
         _lastTime = Time.time;
     }
 
     private void UpdateEnemyList()
     {
         _targets.Clear();
-        
+
         for (int i = 0; i < enemies.Length; i++)
         {
             _targets.Add(enemies[i].transform, startAngle + i * eachAngle);

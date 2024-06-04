@@ -1,3 +1,4 @@
+using System;
 using Cinemachine;
 using UnityEngine;
 
@@ -14,11 +15,11 @@ public class DebugBattleCamera : MonoBehaviour
     public CinemachineVirtualCamera skillReady;
     public CinemachineVirtualCamera skillUse;
 
-    private void Awake()
+    private void Update()
     {
-        cam.startCamera = normalReady;
-        cam.m_Player = player.transform;
-        cam.enemies = enemies;
+        if (!Input.GetMouseButtonDown(0)) return;
+        if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit)) return;
+        cam.LookAt(hit.collider);
     }
 
     private void NormalReady()
