@@ -125,13 +125,13 @@ public class BattleTurnManager : MonoBehaviour
             Debug.Log($"{toList[i].charName}은 {i}번 째이고 속도는 {toList[i].speed}이다.");
         }
         Debug.Log("-----------끝------------");
-        //for (int i = 0; i < toList.Count; i++)
-        //{
-        //    if(toList[i].hp == 0)
-        //    {
-        //        toList.Remove(toList[i]);
-        //    }
-        //}
+        for (int i = 0; i < toList.Count; i++)
+        {
+            if (toList[i].hp == 0)
+            {
+                toList.Remove(toList[i]);
+            }
+        }
         var sortedCharacters = toList.OrderByDescending(c => c.finalSpeed).ToList();
 
         uIManager.TurnTextClear();
