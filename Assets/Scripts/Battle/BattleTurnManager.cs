@@ -66,9 +66,6 @@ public class BattleTurnManager : MonoBehaviour
         {
             isCheckDie[i] = false;
         }
-
-        uIManager.FinishGame();
-
         Turn();
     }
     void Update()
@@ -137,11 +134,11 @@ public class BattleTurnManager : MonoBehaviour
     {
         Character turnPlayer1 = queue.Dequeue();
 
-        CheckDeadCharacter(turnPlayer1);
+        //CheckDeadCharacter(turnPlayer1);
 
         Character turnPlayer2 = queue.Dequeue();
 
-        CheckDeadCharacter(turnPlayer2);
+        //CheckDeadCharacter(turnPlayer2);
 
         int compSpeed = turnPlayer1.speed - turnPlayer2.speed;
 
@@ -233,12 +230,14 @@ public class BattleTurnManager : MonoBehaviour
                 }
             }
             turnPlayer.speed -= 100;
-            p.ReturnPrevFinalSpeed();
             queue.Enqueue(turnPlayer);
             SetTurnOrder();
+            p.ReturnPrevFinalSpeed();
+            
 
             Debug.Log($"광역공격 {turnPlayer.charName}");
         }
+        
         StartCoroutine(waitOneSec());
 
     }
@@ -265,7 +264,7 @@ public class BattleTurnManager : MonoBehaviour
         StartCoroutine(waitOneSec());
     }
 
-    private void CheckDeadChar()
+    private bool CheckDeadChar()
     {
         for (int i = 0; i < enemies.Count; i++)
         {
@@ -275,10 +274,8 @@ public class BattleTurnManager : MonoBehaviour
                 Debug.Log($"몬스터 죽은거 체크 {enemies[i].activeSelf}");
             }
         }
-        if(isCheckDie.All(x => x))
-        {
-            uIManager.FinishGame();
-        }
+
+        return isCheckDie.All(x => x);
     }
 
     public static bool isAllFalse(bool[] array)
@@ -289,20 +286,24 @@ public class BattleTurnManager : MonoBehaviour
 
     void Turn()
     {
-        CheckDeadChar();
+        if (CheckDeadChar())
+        {
+            uIManager.FinishGame();
+            return;
+        }
 
         SetTurnOrder();
 
-        turnPlayer = queue.Dequeue();
-        //if (queue.Count() > 0)
-        //{
-        //    CompareSpeed();
-        //}
-        //else
-        //{
-        //    Debug.Log("turn에 저장된 데이터가 없음");
-        //    return;
-        //}
+        //turnPlayer = queue.Dequeue();
+        if (queue.Count() > 0)
+        {
+            CompareSpeed();
+        }
+        else
+        {
+            Debug.Log("turn에 저장된 데이터가 없음");
+            return;
+        }
         if (turnPlayer is Player)
         {
             isplayer = true;
