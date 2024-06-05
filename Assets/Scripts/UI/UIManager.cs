@@ -97,12 +97,12 @@ public class UIManager : MonoBehaviour
     {
         Debug.Log("InitItem");
         items = new Image[itemCount]; 
-        for (int i = 0; i < items.Length; i++)
+        for (int i = 0; i < itemCount; i++)
         {
             int itemNum = Random.Range(0, itemIndex.Length);
 
             items[i] = Instantiate(itemIndex[itemNum], ItemPanel.transform.position, Quaternion.identity);
-            items[i].transform.SetParent(ItemPanel.transform);
+            items[i].transform.SetParent(ItemPanel.transform); // ItemPanel = 전투결과창
             Debug.Log($"아이템{i} {items[i]}");
         }
     }

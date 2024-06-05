@@ -81,4 +81,11 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
     {
         OnTurnEnd?.Invoke();
     }
+
+    private void CorrectionSpeed()
+    {
+        int CorrectionValue = UnityEngine.Random.Range( 0, 5);
+
+
+    }
 }
