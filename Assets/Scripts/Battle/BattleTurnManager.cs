@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
+using UnityEngine.UI;
 using static DataManager;
 
 [DefaultExecutionOrder(100)]
@@ -10,12 +11,12 @@ public class BattleTurnManager : MonoBehaviour
 {
     private bool isplayer;
     private int MaxRandom;
-    public List<GameObject> players; // 현재 플레이어 수
-    public List<GameObject> enemies; // 현재 몬스터 수
+    [SerializeField]private List<GameObject> players; // 현재 플레이어 수
+    [SerializeField]private List<GameObject> enemies; // 현재 몬스터 수
     Character turnPlayer;
-    public GameObject PlayerButton;
-    public GameObject basicTarget;
-    public GameObject healTarget;
+    [SerializeField]private GameObject PlayerButton;
+    [SerializeField]private GameObject basicTarget;
+    [SerializeField]private GameObject healTarget;
 
     [SerializeField]
     private Camera Camera;
@@ -118,6 +119,19 @@ public class BattleTurnManager : MonoBehaviour
     void SetTurnOrder()
     {
         List<Character> toList = queue.ToList();
+        Debug.Log("----------시작-------------");
+        for (int i = 0; i < toList.Count; i++)
+        {
+            Debug.Log($"{toList[i].charName}은 {i}번 째이고 속도는 {toList[i].speed}이다.");
+        }
+        Debug.Log("-----------끝------------");
+        //for (int i = 0; i < toList.Count; i++)
+        //{
+        //    if(toList[i].hp == 0)
+        //    {
+        //        toList.Remove(toList[i]);
+        //    }
+        //}
         var sortedCharacters = toList.OrderByDescending(c => c.finalSpeed).ToList();
 
         uIManager.TurnTextClear();
@@ -229,17 +243,13 @@ public class BattleTurnManager : MonoBehaviour
                     enemies[i].SetActive(false);
                 }
             }
-            turnPlayer.speed -= 100;
-            queue.Enqueue(turnPlayer);
-            SetTurnOrder();
-            p.ReturnPrevFinalSpeed();
-            
-
             Debug.Log($"광역공격 {turnPlayer.charName}");
         }
-        
+        turnPlayer.speed -= 100;
+        queue.Enqueue(turnPlayer);
+        SetTurnOrder();
+        p.ReturnPrevFinalSpeed();
         StartCoroutine(waitOneSec());
-
     }
     void MonsterAttack(Character turnMonster)
     {
@@ -308,6 +318,7 @@ public class BattleTurnManager : MonoBehaviour
         {
             isplayer = true;
             Debug.Log($"{turnPlayer.charName}의 차례");
+
         }
         else
         {
@@ -318,6 +329,7 @@ public class BattleTurnManager : MonoBehaviour
         if (isplayer)
         {
             PlayerButton.SetActive(true);
+            SetButtonName();
         }
         else
         {
@@ -338,4 +350,13 @@ public class BattleTurnManager : MonoBehaviour
         yield return new WaitForSeconds(1);
         Turn();
     }
+
+    public void SetButtonName()
+    {
+        Player playerButton = turnPlayer.GetComponent<Player>();
+        PlayerButton.GetComponentsInChildren<Text>()[0].text = playerButton.normalAttack.skillName;
+        PlayerButton.GetComponentsInChildren<Text>()[1].text = playerButton.battleSkill.skillName;
+    }
+
+
 }
