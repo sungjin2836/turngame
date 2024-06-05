@@ -1,0 +1,120 @@
+using UnityEngine;
+using UnityEngine.UI;
+
+public class UIManager : MonoBehaviour
+{
+    [SerializeField]
+    private GameObject turnOrderPanel;
+
+    [SerializeField]
+    private GameObject resultWindow;
+
+    [SerializeField]
+    private Image[] itemIndex;
+
+    private Image[] items;
+
+    [SerializeField]
+    private GameObject ItemPanel;
+
+    private int itemCount = 5;
+
+
+    [SerializeField]
+    private Slider enemyShieldBar;
+    [SerializeField]
+    private Slider enemyHpBar;
+    [SerializeField]
+    private Text turnOrderText;
+
+    Text[] turnTexts;
+    private int _hp;
+    private int _shield;
+    public int Hp
+    {
+        get => _hp;
+
+        private set => _hp = Mathf.Clamp(value, 0, _hp);
+    }
+
+    public int Shield
+    {
+        get => _shield;
+
+        private set => _shield = Mathf.Clamp(value, 0, _shield);
+    }
+
+
+    void Start()
+    {
+        resultWindow.SetActive(false);
+    }
+
+    public void InitTurnText(int num)
+    {
+        turnTexts = new Text[num];
+        for (int i = 0; i < num; i++)
+        {
+            turnTexts[i] = Instantiate(turnOrderText, turnOrderPanel.transform.position, Quaternion.identity);
+            turnTexts[i].transform.SetParent(turnOrderPanel.transform);
+        }
+    }
+
+    public void TurnTextClear()
+    {
+        for (int i = 0;i < turnTexts.Length; i++)
+        {
+            turnTexts[i].text = "";
+        }
+    }
+    public void TurnTextPrint(int num, string Name)
+    {
+        turnTexts[num].text = Name;
+    }
+
+    public void SetMaxHealth(int health)
+    {
+        enemyHpBar.maxValue = health;
+        enemyHpBar.value = health;
+    }
+
+    public void SetHealth(int health)
+    {
+        enemyHpBar.value = health;
+    }
+
+    public void SetMaxShield(int shield)
+    {
+        enemyShieldBar.maxValue = shield;
+        enemyShieldBar.value = shield;
+    }
+    public void SetShield(int shield)
+    {
+        enemyShieldBar.value = shield;
+    }
+
+    public void InitItem()
+    {
+        Debug.Log("InitItem");
+        items = new Image[itemCount]; 
+        for (int i = 0; i < items.Length; i++)
+        {
+            int itemNum = Random.Range(0, itemIndex.Length);
+
+            items[i] = Instantiate(itemIndex[itemNum], ItemPanel.transform.position, Quaternion.identity);
+            items[i].transform.SetParent(ItemPanel.transform);
+            Debug.Log($"¾ÆÀÌÅÛ{i} {items[i]}");
+        }
+    }
+
+    public void FinishGame()
+    {
+        Debug.Log("finish");
+        resultWindow.SetActive(true);
+        InitItem();
+    }
+    
+
+
+
+}

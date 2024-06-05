@@ -19,6 +19,7 @@ class PriorityQueue<T>
 
         T returnValue = queueList[0];
         queueList.RemoveAt(0);
+        queueList.Sort();
         return returnValue;
     }
 
@@ -41,4 +42,23 @@ class PriorityQueue<T>
     {
         return queueList;
     }
+
+    public List<T> ToList()
+    {
+        List<T> toListResult = new();
+
+        foreach (T element in queueList)
+        {
+            toListResult.Add(element);
+        }
+
+        return toListResult;
+    }
+
+    public void Clear()
+    {
+        queueList.Clear();
+    }
+
+
 }
