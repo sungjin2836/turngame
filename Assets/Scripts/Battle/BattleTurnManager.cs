@@ -60,6 +60,15 @@ public class BattleTurnManager : MonoBehaviour
 
         uIManager.InitTurnText(queue.Count());
 
+        isCheckDie = new bool[enemies.Count];
+
+        for (int i = 0; i < isCheckDie.Length; i++)
+        {
+            isCheckDie[i] = false;
+        }
+
+        uIManager.FinishGame();
+
         Turn();
     }
     void Update()
@@ -119,9 +128,7 @@ public class BattleTurnManager : MonoBehaviour
         {
 
             uIManager.TurnTextPrint(i, sortedCharacters[i].charName);
-            Debug.Log($"{sortedCharacters[i].charName}의 속도는 {sortedCharacters[i].finalSpeed}");
         }
-        Debug.Log("------------------------");
     }
 
 
@@ -170,6 +177,12 @@ public class BattleTurnManager : MonoBehaviour
         float finalAttack = turnPlayer.attackStat * p.normalAttack.damageAttr1[0];
 
         p.NormalAttack(charTarget, finalAttack);
+        enemy.SetHealth();
+        enemy.SetShield();
+        if (enemy.hp == 0)
+        {
+            basicTarget.SetActive(false);
+        }
         turnPlayer.speed -= 100;
         p.ReturnPrevFinalSpeed();
         queue.Enqueue(turnPlayer);
@@ -177,11 +190,6 @@ public class BattleTurnManager : MonoBehaviour
 
         Debug.Log($"체력바 테스트 {enemy.name} 체력 : {enemy.hp} 실드 : {enemy.shield}");
 
-        enemy.SetHealth();
-        enemy.SetShield();
-
-
-        CheckDeadChar(charTarget);
         Turn();
     }
 
@@ -205,29 +213,31 @@ public class BattleTurnManager : MonoBehaviour
             p.BattleSkill(charTarget);
             EnemyTarget.SetHealth();
             EnemyTarget.SetShield();
+            if (EnemyTarget.hp == 0)
+            {
+                basicTarget.SetActive(false);
+            }
         }
         else if (p.battleSkill.range == SkillDataManager.Range.all)
         {
             for (int i = 0; i < enemies.Count; i++)
             {
                 targets[i] = enemies[i].GetComponent<Character>();
-                if (targets[i].isDead)
+                p.BattleSkill(targets[i]);
+                EnemyTarget = enemies[i].GetComponent<Enemy>();
+                EnemyTarget.SetHealth();
+                EnemyTarget.SetShield();
+                if(EnemyTarget.hp == 0)
                 {
-                    //enemies[i].SetActive(false);
+                    enemies[i].SetActive(false);
                 }
             }
-            p.BattleSkill(targets);
             turnPlayer.speed -= 100;
             p.ReturnPrevFinalSpeed();
             queue.Enqueue(turnPlayer);
             SetTurnOrder();
 
             Debug.Log($"광역공격 {turnPlayer.charName}");
-        }
-
-        for (int i = 0; i < targets.Length; i++)
-        {
-            //CheckDeadChar(targets[i]);
         }
         StartCoroutine(waitOneSec());
 
@@ -255,25 +265,19 @@ public class BattleTurnManager : MonoBehaviour
         StartCoroutine(waitOneSec());
     }
 
-    private void CheckDeadChar(Character charTarget)
+    private void CheckDeadChar()
     {
-        if (charTarget.hp == 0)
+        for (int i = 0; i < enemies.Count; i++)
         {
-            for (int i = 0; i < enemies.Count; i++)
+            if(!enemies[i].activeSelf)
             {
-                if (enemies[i] == basicTarget)
-                {
-                    isCheckDie[i] = false;
-                }
+                isCheckDie[i] = true;
+                Debug.Log($"몬스터 죽은거 체크 {enemies[i].activeSelf}");
             }
-            basicTarget.SetActive(false);
-
-            if (isAllFalse(isCheckDie))
-            {
-                Debug.Log("모든 몬스터가 죽었습니다.");
-                return;
-            }
-
+        }
+        if(isCheckDie.All(x => x))
+        {
+            uIManager.FinishGame();
         }
     }
 
@@ -285,17 +289,20 @@ public class BattleTurnManager : MonoBehaviour
 
     void Turn()
     {
+        CheckDeadChar();
+
         SetTurnOrder();
 
-        if (queue.Count() > 0)
-        {
-            CompareSpeed();
-        }
-        else
-        {
-            Debug.Log("turn에 저장된 데이터가 없음");
-            return;
-        }
+        turnPlayer = queue.Dequeue();
+        //if (queue.Count() > 0)
+        //{
+        //    CompareSpeed();
+        //}
+        //else
+        //{
+        //    Debug.Log("turn에 저장된 데이터가 없음");
+        //    return;
+        //}
         if (turnPlayer is Player)
         {
             isplayer = true;
@@ -314,7 +321,14 @@ public class BattleTurnManager : MonoBehaviour
         else
         {
             PlayerButton.SetActive(false);
+            if(turnPlayer.hp > 0)
+            {
             MonsterAttack(turnPlayer);
+            }
+            else
+            {
+                Turn();
+            }
         }
     }
 
@@ -323,5 +337,4 @@ public class BattleTurnManager : MonoBehaviour
         yield return new WaitForSeconds(1);
         Turn();
     }
-
 }
