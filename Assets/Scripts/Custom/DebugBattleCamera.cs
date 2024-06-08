@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Cinemachine;
 using UnityEngine;
 
@@ -15,11 +16,38 @@ public class DebugBattleCamera : MonoBehaviour
     public CinemachineVirtualCamera skillReady;
     public CinemachineVirtualCamera skillUse;
 
+    private PlayerInput _input;
+    private int _targetIndex = 0;
+
+    private void Awake()
+    {
+        _input = gameObject.AddComponent<PlayerInput>();
+        _input.OnNormalAttack += NormalReady;
+        _input.OnBattleSkill += SkillReady;
+    }
+
+    private void OnDestroy()
+    {
+        _input.OnNormalAttack -= NormalReady;
+        _input.OnBattleSkill -= SkillReady;
+    }
+
     private void Update()
     {
+        _input.ChangeIndex(enemies, ref _targetIndex);
+        cam.LookAt(enemies[_targetIndex].transform);
+        
         if (!Input.GetMouseButtonDown(0)) return;
         if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit)) return;
-        cam.LookAt(hit.collider);
+
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            if (hit.transform == enemies[i].transform)
+            {
+                _targetIndex = i;
+                break;
+            }
+        }
     }
 
     private void NormalReady()
