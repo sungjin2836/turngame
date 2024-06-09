@@ -25,6 +25,8 @@ public class BattleTurnManager : MonoBehaviour
 
     private bool[] isCheckDie;
 
+    private FieldCharDataManager fieldCharDataManager;
+
     Player[] testPlayersData;
     Enemy[] testEnemysData;
 
@@ -67,6 +69,11 @@ public class BattleTurnManager : MonoBehaviour
         {
             isCheckDie[i] = false;
         }
+
+        fieldCharDataManager = FindObjectOfType<FieldCharDataManager>();
+
+        Debug.Log($" 약점 공격을 했는지?{fieldCharDataManager.isWeakElement}");
+        fieldCharDataManager.DebugIdTest();
         Turn();
     }
     void Update()

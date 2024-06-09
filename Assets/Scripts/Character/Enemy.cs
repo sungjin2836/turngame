@@ -57,12 +57,13 @@ public class Enemy : Character
 
         mainCamera = Camera.main;
 
-        //CreateBar();
+        if(enemyHpBar != null && enemyShieldBar != null)
+        {
+            SetMaxHealth();
+            SetMaxShield();
+            SetBarPosition();
+        }
 
-        SetMaxHealth();
-        SetMaxShield();
-
-        SetBarPosition();
         //Debug.Log(JsonUtility.ToJson(this));
     }
 

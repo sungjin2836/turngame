@@ -13,6 +13,8 @@ public class Player : Character
 
     private Camera mainCamera;
 
+
+
     public override void Initialize(int id)
     {
         var playerData = DataManager.Instance.GetPlayerData(id);
@@ -51,6 +53,11 @@ public class Player : Character
 
         SetMaxHealth();
         SetHpBarPosition();
+
+    }
+
+    private void Update()
+    {
 
     }
 
