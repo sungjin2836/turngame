@@ -99,11 +99,11 @@ public class BattleCamera : MonoBehaviour
         _orbital.m_XAxis.Value = Mathf.Lerp(_lastXAxisValue, _targets[m_Enemy], (Time.time - _lastTime) / Duration);
     }
 
-    public void LookAt(Collider target)
+    public void LookAt(Transform target)
     {
         if (!_orbital) return;
         if (!target.CompareTag("Enemy")) return;
-        m_Enemy = target.transform;
+        m_Enemy = target;
         _lastXAxisValue = _orbital.m_XAxis.Value;
         _lastTime = Time.time;
     }
