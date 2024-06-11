@@ -22,6 +22,7 @@ public class Player : Character
         speed = playerData.speed;
         attackStat = playerData.attackStat;
         element = playerData.elem;
+        actionGauge = Mathf.FloorToInt(10000 / playerData.speed);
 
         SkillDataManager.Skill normalAttackData = SkillDataManager.Instance.GetSkillData($"{id}001");
         SkillDataManager.Skill battleSkillData = SkillDataManager.Instance.GetSkillData($"{id}002");
@@ -45,12 +46,14 @@ public class Player : Character
         hp = maxHP;
         finalSpeed = speed;
         finalAttackStat = attackStat;
+        currentActionGauge = 1;
         //Debug.Log("파이널 어택"+finalAttackStat);
 
         mainCamera = Camera.main;
 
         SetMaxHealth();
         SetHpBarPosition();
+        Debug.Log($"{currentActionGauge} / {actionGauge}");
 
     }
 

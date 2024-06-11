@@ -25,6 +25,8 @@ public class BattleTurnManager : MonoBehaviour
 
     private bool[] isCheckDie;
 
+    private FieldCharDataManager fieldCharDataManager;
+
     Player[] testPlayersData;
     Enemy[] testEnemysData;
 
@@ -67,6 +69,7 @@ public class BattleTurnManager : MonoBehaviour
         {
             isCheckDie[i] = false;
         }
+
         Turn();
 
         // 아이템 매니저 테스트용

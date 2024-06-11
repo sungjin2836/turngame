@@ -2,14 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static UnityEditor.Rendering.FilterWindow;
 
 public class GoInTurnGame : MonoBehaviour
 {
-    
+    private Player player;
+    private Enemy enemy;
+    private CharacterData enemyIDData;
+    private FieldCharDataManager fieldCharDataManager;
     
     void Start()
     {
-        
+        player = GetComponentInParent<Player>();
+        fieldCharDataManager = FindObjectOfType<FieldCharDataManager>();
     }
 
     void Update()
@@ -21,7 +26,12 @@ public class GoInTurnGame : MonoBehaviour
     {
         if (other.CompareTag("Enemy"))
         {
-            SceneManager.LoadScene("SampleScene");
+
+            enemy = other.GetComponent<Enemy>();
+            enemyIDData = other.GetComponent<CharacterData>();
+            fieldCharDataManager.GetEnemyID(enemyIDData.CharacterID);
+            if (enemy.ContainsElement(player.element)) fieldCharDataManager.isWeakElement = true;
+                SceneManager.LoadScene("TurnTestScene");
         }
         if (other.CompareTag("Object"))
         {
