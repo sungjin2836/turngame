@@ -10,6 +10,7 @@ using static DataManager;
 public class BattleTurnManager : MonoBehaviour
 {
     bool isplayer;
+    bool IsFinishGame;
     int MaxRandom;
     [SerializeField]
     List<GameObject> players; // 현재 플레이어 수
@@ -44,6 +45,7 @@ public class BattleTurnManager : MonoBehaviour
 
     void Start()
     {
+        IsFinishGame = false;
         testPlayersData = new Player[players.Count];
         testEnemysData = new Enemy[enemies.Count];
 
@@ -333,6 +335,7 @@ public class BattleTurnManager : MonoBehaviour
     {
         if (CheckDeadChar())
         {
+            IsFinishGame = true;
             uIManager.FinishGame();
             return;
         }
@@ -340,25 +343,30 @@ public class BattleTurnManager : MonoBehaviour
         SetTurnOrder();
 
         //turnPlayer = queue.Dequeue();
-        if (queue.Count() > 0)
-        {
-            CompareSpeed();
-        }
-        else
-        {
-            Debug.Log("turn에 저장된 데이터가 없음");
-            return;
-        }
+        //if (queue.Count() > 0) // 20240611 바뀌는 행동게이지에서는 비교할 필요 없이 둘 다 실행
+        //{
+        //    CompareSpeed();
+        //}
+        //else
+        //{
+        //    Debug.Log("turn에 저장된 데이터가 없음");
+        //    return;
+        //}
         if (turnPlayer is Player)
         {
             isplayer = true;
             Debug.Log($"{turnPlayer.charName}의 차례");
-
         }
         else
         {
             isplayer = false;
         }
+
+        // turnPlayers 리스트의 갯수를 확인하여 2개면 협동기 버튼 활성화
+        
+        
+
+
 
         //턴 진행
         if (isplayer)
@@ -416,7 +424,7 @@ public class BattleTurnManager : MonoBehaviour
 
         if (turnPlayer is Player)
         {
-            TurnPlayers.Add(character);
+            if(TurnPlayers.Count < 2 && !TurnPlayers.Contains(turnPlayer)) TurnPlayers.Add(character);
             queue.Enqueue(turnPlayer); // 플레이어 행동 구현시 빠지고 플레이어 행동 후에 들어가게 됨
         }
         else
@@ -443,7 +451,7 @@ public class BattleTurnManager : MonoBehaviour
 
         if (turnPlayer2 is Player)
         {
-            TurnPlayers.Add(character2);
+            if (TurnPlayers.Count < 2 && !TurnPlayers.Contains(turnPlayer2)) TurnPlayers.Add(character2);
             queue.Enqueue(turnPlayer2);
         }
         else
@@ -453,5 +461,15 @@ public class BattleTurnManager : MonoBehaviour
 
         Debug.Log($"deq1 {turnPlayer.charName} {turnPlayer.currentActionGauge}");
         Debug.Log($"deq2 {turnPlayer2.charName} {turnPlayer2.currentActionGauge}");
+    }
+
+
+    IEnumerator AutoTurn()
+    {
+        while (!IsFinishGame)
+        {
+            Turn();
+            yield return new WaitForSeconds(3.0f);
+        }
     }
 }
