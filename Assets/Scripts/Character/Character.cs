@@ -38,7 +38,7 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
 
     public int CompareTo(Character other)
     {
-        return other.speed - speed;
+        return (actionGauge - currentActionGauge) - (other.actionGauge - other.currentActionGauge);
     }
 
     public virtual void GetActionGauge()
@@ -90,7 +90,16 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
     private void CorrectionSpeed()
     {
         int CorrectionValue = UnityEngine.Random.Range( 0, 5);
-
-
     }
+
+    public void AddGauge(int num)
+    {
+        currentActionGauge += num;
+    }
+
+    public void InitGauge()
+    {
+        currentActionGauge = currentActionGauge - actionGauge;
+    }
+
 }

@@ -9,26 +9,34 @@ using static DataManager;
 [DefaultExecutionOrder(100)]
 public class BattleTurnManager : MonoBehaviour
 {
-    private bool isplayer;
-    private int MaxRandom;
-    [SerializeField]private List<GameObject> players; // 현재 플레이어 수
-    [SerializeField]private List<GameObject> enemies; // 현재 몬스터 수
+    bool isplayer;
+    int MaxRandom;
+    [SerializeField]
+    List<GameObject> players; // 현재 플레이어 수
+    [SerializeField]
+    List<GameObject> enemies; // 현재 몬스터 수
     Character turnPlayer;
-    [SerializeField]private GameObject PlayerButton;
-    [SerializeField]private GameObject basicTarget;
-    [SerializeField]private GameObject healTarget;
+    Character turnPlayer2;
+    [SerializeField]
+    GameObject PlayerButton;
+    [SerializeField]
+    GameObject basicTarget;
+    [SerializeField]
+    GameObject healTarget;
 
     [SerializeField]
-    private Camera Camera;
+    Camera Camera;
 
-    private UIManager uIManager;
+    UIManager uIManager;
 
-    private bool[] isCheckDie;
+    bool[] isCheckDie;
 
-    private FieldCharDataManager fieldCharDataManager;
+    FieldCharDataManager fieldCharDataManager;
 
     Player[] testPlayersData;
     Enemy[] testEnemysData;
+
+    List<Character> TurnPlayers;
 
     private Character[] targets;
 
@@ -38,6 +46,8 @@ public class BattleTurnManager : MonoBehaviour
     {
         testPlayersData = new Player[players.Count];
         testEnemysData = new Enemy[enemies.Count];
+
+        TurnPlayers = new List<Character>();
 
         isCheckDie = new bool[enemies.Count];
 
@@ -69,20 +79,29 @@ public class BattleTurnManager : MonoBehaviour
         {
             isCheckDie[i] = false;
         }
-
-        Turn();
-
-        // 아이템 매니저 테스트용
-        ItemDataManager.Item item = ItemDataManager.Instance.GetItemData("1");
-        Debug.Log($"item name: {item.name}");
-        foreach (ItemDataManager.Attribute attribute in item.attributes)
+        for (int i = 0; i < 10; i++)
         {
-            Debug.Log($"attribute: {attribute.itemType}");
-            Debug.Log($"range: {attribute.scope}");
-            Debug.Log($"add type: {attribute.changeType}");
-            Debug.Log($"item value: {attribute.value}");
+            Deq();
+            Debug.Log("-----------------");
+            List<Character> toList = queue.ToList();
+            Debug.Log("----------시작-------------");
+            for (int j = 0; j < toList.Count; j++)
+            {
+                Debug.Log($"{toList[j].charName}은 {j}번 째이고 현재 행동게이지는 {toList[j].actionGauge - toList[j].currentActionGauge} / {toList[j].actionGauge}이다.");
+            }
         }
-        
+
+        for (int i = 0; i < 10; i++)
+        {
+            Deq();
+        }
+
+        foreach (Character item in TurnPlayers)
+        {
+            Debug.Log(item.charName);
+        }
+
+        //Turn();
     }
     void Update()
     {
@@ -146,6 +165,7 @@ public class BattleTurnManager : MonoBehaviour
             {
                 toList.Remove(toList[i]);
             }
+        
         }
         var sortedCharacters = toList.OrderByDescending(c => c.finalSpeed).ToList();
 
@@ -215,7 +235,7 @@ public class BattleTurnManager : MonoBehaviour
         SetTurnOrder();
 
         Debug.Log($"체력바 테스트 {enemy.name} 체력 : {enemy.hp} 실드 : {enemy.shield}");
-
+        
         Turn();
     }
 
@@ -373,5 +393,65 @@ public class BattleTurnManager : MonoBehaviour
         PlayerButton.GetComponentsInChildren<Text>()[1].text = playerButton.battleSkill.skillName;
     }
 
+    void Deq()
+    {
+        //turnPlayer1
+        turnPlayer = queue.Dequeue();
 
+        int needGauge = 0;
+
+        Character character = turnPlayer.GetComponent<Character>();
+
+        needGauge = character.actionGauge - character.currentActionGauge;
+
+        for (int i = 0; i < testPlayersData.Length; i++)
+        {
+            testPlayersData[i].AddGauge(needGauge);
+        }
+        for (int i = 0; i < testEnemysData.Length; i++)
+        {
+            testEnemysData[i].AddGauge(needGauge);
+        }
+        turnPlayer.InitGauge();
+
+        if (turnPlayer is Player)
+        {
+            TurnPlayers.Add(character);
+            queue.Enqueue(turnPlayer); // 플레이어 행동 구현시 빠지고 플레이어 행동 후에 들어가게 됨
+        }
+        else
+        {
+            queue.Enqueue(turnPlayer);
+        }
+
+        // turnPlayer2
+        turnPlayer2 = queue.Dequeue();
+
+        Character character2 = turnPlayer2.GetComponent<Character>();
+
+        needGauge = character2.actionGauge - character2.currentActionGauge;
+
+        for (int i = 0; i < testPlayersData.Length; i++)
+        {
+            testPlayersData[i].AddGauge(needGauge);
+        }
+        for (int i = 0; i < testEnemysData.Length; i++)
+        {
+            testEnemysData[i].AddGauge(needGauge);
+        }
+        turnPlayer2.InitGauge();
+
+        if (turnPlayer2 is Player)
+        {
+            TurnPlayers.Add(character2);
+            queue.Enqueue(turnPlayer2);
+        }
+        else
+        {
+            queue.Enqueue(turnPlayer2);
+        }
+
+        Debug.Log($"deq1 {turnPlayer.charName} {turnPlayer.currentActionGauge}");
+        Debug.Log($"deq2 {turnPlayer2.charName} {turnPlayer2.currentActionGauge}");
+    }
 }
