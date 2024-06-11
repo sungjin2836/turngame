@@ -1,0 +1,82 @@
+{
+  "username": "ForestLee",
+  "ownedCharacter": [
+    {
+      "characterID": 1001,
+      "currentHP": 168,
+      "currentLevel": 1,
+      "exp": 0,
+      "skillLevel": [1, 1, 1, 1, 1]
+    },
+    {
+      "characterID": 1002,
+      "currentHP": 144,
+      "currentLevel": 1,
+      "exp": 0,
+      "skillLevel": [1, 1, 1, 1, 1]
+    },
+    {
+      "characterID": 1003,
+      "currentHP": 120,
+      "currentLevel": 1,
+      "exp": 0,
+      "skillLevel": [1, 1, 1, 1, 1]
+    },
+    {
+      "characterID": 1004,
+      "currentHP": 142,
+      "currentLevel": 1,
+      "exp": 0,
+      "skillLevel": [1, 1, 1, 1, 1]
+    },
+    {
+      "characterID": 1005,
+      "currentHP": 100,
+      "currentLevel": 1,
+      "exp": 0,
+      "skillLevel": [1, 1, 1, 1, 1]
+    },
+    {
+      "characterID": 1006,
+      "currentHP": 100,
+      "currentLevel": 1,
+      "exp": 0,
+      "skillLevel": [1, 1, 1, 1, 1]
+    },
+    {
+      "characterID": 1007,
+      "currentHP": 100,
+      "currentLevel": 1,
+      "exp": 0,
+      "skillLevel": [1, 1, 1, 1, 1]
+    },
+    {
+      "characterID": 1008,
+      "currentHP": 100,
+      "currentLevel": 1,
+      "exp": 0,
+      "skillLevel": [1, 1, 1, 1, 1]
+    }
+  ],
+  "partyPreset": [
+    {
+      "partyName": "Party 1",
+      "preset": [1001, 1002, 1003, 1004]
+    },
+    {
+      "partyName": "Party 2",
+      "preset": [1005, 1006, 1007, 1008]
+    }
+  ],
+  "currentPartyIndex": 0,
+  "inventory": [
+    {
+      "id": 1,
+      "count": 1
+    },
+    {
+      "id": 2,
+      "count": 1
+    }
+  ]
+}
