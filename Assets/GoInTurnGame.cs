@@ -8,6 +8,7 @@ public class GoInTurnGame : MonoBehaviour
 {
     private Player player;
     private Enemy enemy;
+    private CharacterData enemyIDData;
     private FieldCharDataManager fieldCharDataManager;
     
     void Start()
@@ -25,7 +26,10 @@ public class GoInTurnGame : MonoBehaviour
     {
         if (other.CompareTag("Enemy"))
         {
+
             enemy = other.GetComponent<Enemy>();
+            enemyIDData = other.GetComponent<CharacterData>();
+            fieldCharDataManager.GetEnemyID(enemyIDData.CharacterID);
             if (enemy.ContainsElement(player.element)) fieldCharDataManager.isWeakElement = true;
                 SceneManager.LoadScene("TurnTestScene");
         }

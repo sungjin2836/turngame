@@ -7,18 +7,29 @@ using UnityEngine;
 [DefaultExecutionOrder(200)]
 public class FieldCharDataManager : MonoBehaviour
 {
-
-    private GameObject[] characterDatas;
+    public static FieldCharDataManager instance;
     private CharacterData[] playerDataIDs;
+    private int enemyDataID;
     [SerializeField]
     private GameObject players;
-    private Enemy enemy;
     public bool isWeakElement;
+
+    void Awake()
+    {
+        if (instance != null)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            instance = this;
+        }
+        DontDestroyOnLoad(gameObject);
+    }
 
     void Start()
     {
         playerDataIDs = players.GetComponentsInChildren<CharacterData>();
-        //playerDataIDs = new CharacterData[players.transform.childCount];
     }
 
     public void DebugIdTest()
@@ -27,13 +38,27 @@ public class FieldCharDataManager : MonoBehaviour
         {
             Debug.Log($"아이디는 {playerDataIDs[i].CharacterID}");
         }
+        Debug.Log($"공격당한 몬스터의 아이디는 {enemyDataID}");
     }
 
-    // Update is called once per frame
     void Update()
     {
         
     }
 
+    public int GetCharacterID(int num)
+    {
+        return playerDataIDs[num].CharacterID;
+    }
+
+    public void GetEnemyID(int num)
+    {
+        enemyDataID = num;
+    }
+
+    public int SetEnemyID()
+    {
+        return enemyDataID;
+    }
 
 }

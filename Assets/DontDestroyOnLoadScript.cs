@@ -9,7 +9,14 @@ public class DontDestroyOnLoadScript : MonoBehaviour
 
     void Start()
     {
+        if(instance != null)
+        {
+            Destroy(instance);
+        }
+        else
+        {
         DontDestroyOnLoad(instance);
+        }
     }
 
     // Update is called once per frame

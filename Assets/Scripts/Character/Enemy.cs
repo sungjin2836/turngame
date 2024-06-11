@@ -5,10 +5,9 @@ using static UnityEditor.Rendering.FilterWindow;
 
 public class Enemy : Character
 {
-    [Header("적 캐릭터 정보")] public int maxShield;
-
+    [Header("적 캐릭터 정보")] 
+    public int maxShield;
     public Skill normalAttack;
-
     public ElementType[] weakElements;
 
     [SerializeField]
@@ -37,8 +36,6 @@ public class Enemy : Character
         private set => _shield = Mathf.Clamp(value, 0, maxShield);
     }
 
-
-
     public override void Initialize(int id)
     {
         var enemyData = DataManager.Instance.GetEnemyData(id);
@@ -49,11 +46,13 @@ public class Enemy : Character
         attackStat = enemyData.attackStat;
         weakElements = enemyData.elem;
         maxShield = enemyData.shield;
+        actionGauge = Mathf.FloorToInt(10000 / enemyData.speed);
 
         hp = maxHP;
         finalSpeed = speed;
         finalAttackStat = attackStat;
         shield = maxShield;
+        currentActionGauge = 1;
 
         mainCamera = Camera.main;
 
@@ -64,7 +63,7 @@ public class Enemy : Character
             SetBarPosition();
         }
 
-        //Debug.Log(JsonUtility.ToJson(this));
+        Debug.Log($"{currentActionGauge} / {actionGauge}");
     }
 
     public bool ContainsElement(ElementType element)
