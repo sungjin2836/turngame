@@ -71,6 +71,18 @@ public class BattleTurnManager : MonoBehaviour
         }
 
         Turn();
+
+        // 아이템 매니저 테스트용
+        ItemDataManager.Item item = ItemDataManager.Instance.GetItemData("1");
+        Debug.Log($"item name: {item.name}");
+        foreach (ItemDataManager.Attribute attribute in item.attributes)
+        {
+            Debug.Log($"attribute: {attribute.itemType}");
+            Debug.Log($"range: {attribute.scope}");
+            Debug.Log($"add type: {attribute.changeType}");
+            Debug.Log($"item value: {attribute.value}");
+        }
+        
     }
     void Update()
     {
