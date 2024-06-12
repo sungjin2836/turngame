@@ -70,7 +70,7 @@ public class Player : Character
         var enemy = target as Enemy;
         if (enemy.ContainsElement(element)) enemy.DamageToShield(30);
         int dam = enemy.GetDamage(Mathf.FloorToInt(finalAttackStat * normalAttack.damageAttr1[0] * 0.9f), enemy.HasShield());
-        Debug.Log($"{enemy.charName}의 체력은 {enemy.hp}/{enemy.maxHP}, 실드는 {enemy.shield}/{enemy.maxShield}");
+        //Debug.Log($"{enemy.charName}의 체력은 {enemy.hp}/{enemy.maxHP}, 실드는 {enemy.shield}/{enemy.maxShield}");
 
         return dam;
     }
@@ -133,6 +133,11 @@ public class Player : Character
         Debug.Log($"{charName}이 {target.charName}을 {healamount}만큼 회복 시켜 {target.hp}가 됐다.");
     }
 
+    public void CooperativeSkill(Character[] _players)
+    {
+        // _players[0].skill.attr~~ _players[1].skill.attr~~ 이면 ~~~~ 
+    }
+
     public void SetMaxHealth()
     {
         playerHpBar.maxValue = maxHP;
@@ -145,7 +150,7 @@ public class Player : Character
         if (hp == 0)
         {
             playerHpBar.gameObject.SetActive(false);
-            playerHpBar.gameObject.SetActive(false);
+            gameObject.SetActive(false);
         }
     }
 

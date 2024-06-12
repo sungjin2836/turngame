@@ -3,7 +3,7 @@
     {
       "id": 1001001,
       "name": "개척자 기본 공격",
-      "damageAttr1": [0.5, 0.7, 0.8, 0.9, 1.0],
+      "damageAttr1": [ 0.5, 0.7, 0.8, 0.9, 1.0 ],
       "damageAttr1Type": 1,
       "damageAttr2": [],
       "damageAttr2Type": 0,
@@ -12,16 +12,16 @@
     {
       "id": 1001002,
       "name": "개척자 스킬 공격",
-      "damageAttr1": [1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8],
+      "damageAttr1": [ 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8 ],
       "damageAttr1Type": 1,
-      "damageAttr2": [0.5],
+      "damageAttr2": [ 0.5 ],
       "damageAttr2Type": 1,
       "range": 1
     },
     {
       "id": 1002001,
       "name": "삼칠이 기본 공격",
-      "damageAttr1": [0.5, 0.7, 0.8, 0.9, 1.0],
+      "damageAttr1": [ 0.5, 0.7, 0.8, 0.9, 1.0 ],
       "damageAttr1Type": 1,
       "damageAttr2": [],
       "damageAttr2Type": 0,
@@ -30,7 +30,7 @@
     {
       "id": 1002002,
       "name": "삼칠이 스킬 공격",
-      "damageAttr1": [0.38, 0.4, 0.42, 0.44, 0.46, 0.48, 0.5, 0.52, 0.54, 0.56],
+      "damageAttr1": [ 0.38, 0.4, 0.42, 0.44, 0.46, 0.48, 0.5, 0.52, 0.54, 0.56 ],
       "damageAttr1Type": 2,
       "damageAttr2": [],
       "damageAttr2Type": 0,
@@ -39,7 +39,7 @@
     {
       "id": 1003001,
       "name": "단항 기본 공격",
-      "damageAttr1": [0.5, 0.7, 0.8, 0.9, 1.0],
+      "damageAttr1": [ 0.5, 0.7, 0.8, 0.9, 1.0 ],
       "damageAttr1Type": 1,
       "damageAttr2": [],
       "damageAttr2Type": 0,
@@ -48,7 +48,7 @@
     {
       "id": 1003002,
       "name": "단항 스킬 공격",
-      "damageAttr1": [1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8],
+      "damageAttr1": [ 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8 ],
       "damageAttr1Type": 1,
       "damageAttr2": [],
       "damageAttr2Type": 0,
@@ -57,7 +57,7 @@
     {
       "id": 1004001,
       "name": "히메코 기본 공격",
-      "damageAttr1": [0.5, 0.7, 0.8, 0.9, 1.0],
+      "damageAttr1": [ 0.5, 0.7, 0.8, 0.9, 1.0 ],
       "damageAttr1Type": 1,
       "damageAttr2": [],
       "damageAttr2Type": 0,
@@ -66,16 +66,16 @@
     {
       "id": 1004002,
       "name": "히메코 스킬 공격",
-      "damageAttr1": [1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8],
+      "damageAttr1": [ 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8 ],
       "damageAttr1Type": 1,
-      "damageAttr2": [1],
+      "damageAttr2": [ 1 ],
       "damageAttr2Type": 1,
       "range": 1
     },
     {
       "id": 2001001,
       "name": "중입자 기본공격",
-      "damageAttr1": [1.0],
+      "damageAttr1": [ 1.0 ],
       "damageAttr1Type": 1,
       "damageAttr2": [],
       "damageAttr2Type": 0,
@@ -84,7 +84,7 @@
     {
       "id": 2002001,
       "name": "반중입자 기본공격",
-      "damageAttr1": [1.0],
+      "damageAttr1": [ 1.0 ],
       "damageAttr1Type": 1,
       "damageAttr2": [],
       "damageAttr2Type": 0,
@@ -93,7 +93,7 @@
     {
       "id": 2003001,
       "name": "허졸 변조자 기본공격",
-      "damageAttr1": [1.0],
+      "damageAttr1": [ 1.0 ],
       "damageAttr1Type": 1,
       "damageAttr2": [],
       "damageAttr2Type": 0,
@@ -102,7 +102,7 @@
     {
       "id": 2004001,
       "name": "허졸 말살자 기본공격",
-      "damageAttr1": [1.0],
+      "damageAttr1": [ 1.0 ],
       "damageAttr1Type": 1,
       "damageAttr2": [],
       "damageAttr2Type": 0,

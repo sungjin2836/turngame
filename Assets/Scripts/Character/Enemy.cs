@@ -91,7 +91,7 @@ public class Enemy : Character
     }
     public void SetHealth()
     {
-        Debug.Log($"sethealth 매개변수 : {hp}, 실제 체력 {_hp}");
+        //Debug.Log($"sethealth 매개변수 : {hp}, 실제 체력 {_hp}");
         enemyHpBar.value = hp;
         if (hp == 0)
         {
