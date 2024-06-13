@@ -4,10 +4,8 @@ using UnityEngine;
 
 public class BattleCamera : MonoBehaviour
 {
-    private const float Duration = 0.2f;
+    private const float Duration = 0.3f;
 
-    public Transform startPosition;
-    public CinemachineVirtualCamera startCamera;
     public float startAngle = -50;
     public float eachAngle = 4;
 
@@ -75,17 +73,9 @@ public class BattleCamera : MonoBehaviour
     private float _lastTime;
     private float _lastXAxisValue;
 
-    private void Awake()
-    {
-        m_Camera = startCamera;
-    }
-
     private void Start()
     {
         UpdateEnemyList();
-
-        m_Player = startPosition;
-        m_Enemy = enemies[0].transform;
     }
 
     private void Update()
@@ -116,5 +106,12 @@ public class BattleCamera : MonoBehaviour
         {
             _targets.Add(enemies[i].transform, startAngle + i * eachAngle);
         }
+    }
+
+    public void SetCameraTo(CinemachineVirtualCamera camera, Transform follow, Transform lookAt)
+    {
+        m_Camera = camera;
+        m_Player = follow;
+        LookAt(lookAt);
     }
 }
