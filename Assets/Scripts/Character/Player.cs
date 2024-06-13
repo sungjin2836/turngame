@@ -66,6 +66,8 @@ public class Player : Character
 
     public override int NormalAttack(Character target, float value = 0.5f)
     {
+        BattleCamera.MoveTo("Attack Camera", transform, target.transform);
+        
         Debug.Log("NormalAttack의 공격력" + finalAttackStat);
         var enemy = target as Enemy;
         if (enemy.ContainsElement(element)) enemy.DamageToShield(30);
@@ -78,6 +80,7 @@ public class Player : Character
 
     public virtual void BattleSkill(Character target)
     {
+        BattleCamera.MoveTo("Skill Camera", transform, target.transform);
         // 스킬
         var enemy = target as Enemy;
         if (enemy.ContainsElement(element)) enemy.DamageToShield(60);
@@ -90,6 +93,9 @@ public class Player : Character
 
     public virtual void BattleSkill(Character[] target)
     {
+        var rnd = Random.Range(0, target.Length);
+        BattleCamera.MoveTo("Skill Camera", transform, target[rnd].transform);
+
         // 스킬
         for (int i = 0; i < target.Length; i++)
         {
@@ -126,6 +132,8 @@ public class Player : Character
 
     public virtual void BattleSkill(Player target)
     {
+        BattleCamera.MoveTo("Heal Camera", target.transform, target.transform);
+
         int healamount = Mathf.FloorToInt(maxHP * battleSkill.damageAttr1[0]);
 
         target.hp += Mathf.FloorToInt(healamount);

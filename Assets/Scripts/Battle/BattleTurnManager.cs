@@ -132,6 +132,7 @@ public class BattleTurnManager : MonoBehaviour
                     prevTarget.SetShield();
                     prevTarget.ReturnPrevActionGauge();
                     basicTarget = rayHit.collider.gameObject;
+                    BattleCamera.m_Enemy = basicTarget.transform;
                     CheckElementChose(basicTarget, TurnPlayers[0]);
                     SetTurnOrder();
                 }
@@ -480,6 +481,7 @@ public class BattleTurnManager : MonoBehaviour
             {
                 _turnPlayer.InitGauge();
                 TurnPlayers.Add(character);
+                BattleCamera.MoveTo("Ready Camera", TurnPlayers[0].transform, basicTarget.transform);
                 SetButtonName();
             }
         }
