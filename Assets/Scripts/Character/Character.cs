@@ -4,7 +4,7 @@ using UnityEngine;
 public abstract class Character : MonoBehaviour, IComparable<Character>
 {
     public Action OnTurnEnd;
-    
+
     [Header("기본 캐릭터 정보")] public string charName;
     public int level;
     public int maxHP;

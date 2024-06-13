@@ -15,9 +15,9 @@ public class BattleTurnManager : MonoBehaviour
     bool ISAllPlayersDead;
     int MaxRandom;
     [SerializeField]
-    private List<GameObject> players; // ÇöÀç ÇÃ·¹ÀÌ¾î ¼ö
+    private List<GameObject> players; // í˜„ì¬ í”Œë ˆì´ì–´ ìˆ˜
     [SerializeField]
-    List<GameObject> enemies; // ÇöÀç ¸ó½ºÅÍ ¼ö
+    List<GameObject> enemies; // í˜„ì¬ ëª¬ìŠ¤í„° ìˆ˜
     Character turnPlayer;
     Character turnPlayer2;
     List<Character> tempPlayers;
@@ -91,10 +91,10 @@ public class BattleTurnManager : MonoBehaviour
         //    Deq();
         //    Debug.Log("-----------------");
         //    List<Character> toList = queue.ToList();
-        //    Debug.Log("----------½ÃÀÛ-------------");
+        //    Debug.Log("----------ì‹œì‘-------------");
         //    for (int j = 0; j < toList.Count; j++)
         //    {
-        //        Debug.Log($"{toList[j].charName}Àº {j}¹ø Â°ÀÌ°í ÇöÀç Çàµ¿°ÔÀÌÁö´Â {toList[j].actionGauge - toList[j].currentActionGauge} / {toList[j].actionGauge}ÀÌ´Ù.");
+        //        Debug.Log($"{toList[j].charName}ì€ {j}ë²ˆ ì§¸ì´ê³  í˜„ì¬ í–‰ë™ê²Œì´ì§€ëŠ” {toList[j].actionGauge - toList[j].currentActionGauge} / {toList[j].actionGauge}ì´ë‹¤.");
         //    }
         //}
 
@@ -122,7 +122,7 @@ public class BattleTurnManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             RaycastHit rayHit;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); //¸¶¿ì½º À§Ä¡
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); //ë§ˆìš°ìŠ¤ ìœ„ì¹˜
             if (Physics.Raycast(ray, out rayHit) && rayHit.collider != null)
             {
                 if (rayHit.collider.gameObject.CompareTag("Enemy") && basicTarget != null)
@@ -131,8 +131,13 @@ public class BattleTurnManager : MonoBehaviour
                     prevTarget.SetHealth();
                     prevTarget.SetShield();
                     prevTarget.ReturnPrevActionGauge();
-                    basicTarget = rayHit.collider.gameObject;
-                    CheckElementChose(basicTarget, TurnPlayers[0]);
+                    Debug.Log($" í„´í”Œë ˆì´ì–´ ë¦¬ìŠ¤íŠ¸ì— ë“±ë¡ëœ í”Œë ˆì´ì–´ ìˆ«ì{TurnPlayers.Count}");
+                    if(TurnPlayers.Count > 0)
+                    {
+                        basicTarget = rayHit.collider.gameObject;
+                        Debug.Log($" íƒ€ê²Ÿ ì´ë¦„ : {basicTarget.name}");
+                        CheckElementChose(basicTarget, TurnPlayers[0]);
+                    }
                     SetTurnOrder();
                 }
                 else if (rayHit.collider.gameObject.CompareTag("Player"))
@@ -162,12 +167,12 @@ public class BattleTurnManager : MonoBehaviour
     void SetTurnOrder()
     {
         List<Character> toList = queue.ToList();
-        Debug.Log("----------½ÃÀÛ-------------");
+        Debug.Log("----------ì‹œì‘-------------");
         for (int i = 0; i < toList.Count; i++)
         {
-            Debug.Log($"{toList[i].charName}Àº {i}¹ø Â°ÀÌ°í ³²Àº Çàµ¿ °ÔÀÌÁö´Â {toList[i].actionGauge - toList[i].currentActionGauge}ÀÌ´Ù.");
+            Debug.Log($"{toList[i].charName}ì€ {i}ë²ˆ ì§¸ì´ê³  ë‚¨ì€ í–‰ë™ ê²Œì´ì§€ëŠ” {toList[i].actionGauge - toList[i].currentActionGauge}ì´ë‹¤.");
         }
-        Debug.Log("-----------³¡------------");
+        Debug.Log("-----------ë------------");
         for (int i = 0; i < toList.Count; i++)
         {
             if (toList[i].hp == 0)
@@ -209,7 +214,7 @@ public class BattleTurnManager : MonoBehaviour
     {
         if(TurnPlayers.Count <= 0)
         {
-            Debug.Log("ÇÃ·¹ÀÌ¾î Â÷·Ê°¡ ¾Æ´Õ´Ï´Ù.");
+            Debug.Log("í”Œë ˆì´ì–´ ì°¨ë¡€ê°€ ì•„ë‹™ë‹ˆë‹¤.");
             return;
         }
         Player p = TurnPlayers[0].GetComponent<Player>();
@@ -220,7 +225,7 @@ public class BattleTurnManager : MonoBehaviour
         float finalAttack = TurnPlayers[0].attackStat * p.normalAttack.damageAttr1[0];
 
         p.NormalAttack(charTarget, finalAttack);
-        if (TurnPlayers[1] != null)
+        if (TurnPlayers.Count == 2)
         {
             int ran = Random.Range(0, 100);
             if (ran > 90)
@@ -240,20 +245,25 @@ public class BattleTurnManager : MonoBehaviour
         }
         //TurnPlayers[0].speed -= 100;
         //p.ReturnPrevActionGauge();
-        Debug.Log($"{TurnPlayers[0].charName}ÀÇ Çàµ¿°ÔÀÌÁö {TurnPlayers[0].currentActionGauge} / {TurnPlayers[0].actionGauge}");
+        Debug.Log($"{TurnPlayers[0].charName}ì˜ í–‰ë™ê²Œì´ì§€ {TurnPlayers[0].currentActionGauge} / {TurnPlayers[0].actionGauge}");
         queue.Enqueue(TurnPlayers[0]);
         TurnPlayers.Remove(TurnPlayers[0]);
         SetButtonName();
         SetTurnOrder();
         SetTurnPlayerGroup();
 
-        Debug.Log($"Ã¼·Â¹Ù Å×½ºÆ® {enemy.name} Ã¼·Â : {enemy.hp} ½Çµå : {enemy.shield}");
+        Debug.Log($"ì²´ë ¥ë°” í…ŒìŠ¤íŠ¸ {enemy.name} ì²´ë ¥ : {enemy.hp} ì‹¤ë“œ : {enemy.shield}");
         
         //Turn();
     }
 
     public void OnClickSkillAttack()
     {
+        if (TurnPlayers.Count <= 0 )
+        {
+            Debug.Log("í”Œë ˆì´ì–´ ì°¨ë¡€ê°€ ì•„ë‹™ë‹ˆë‹¤.");
+            return;
+        }
         Player p = TurnPlayers[0].GetComponent<Player>();
 
         Character charTarget = basicTarget.GetComponent<Character>();
@@ -295,7 +305,7 @@ public class BattleTurnManager : MonoBehaviour
                     SetTurnPlayerGroup();
                 }
             }
-            Debug.Log($"±¤¿ª°ø°İ {TurnPlayers[0].charName}");
+            Debug.Log($"ê´‘ì—­ê³µê²© {TurnPlayers[0].charName}");
         }
         queue.Enqueue(TurnPlayers[0]);
         TurnPlayers.Remove(TurnPlayers[0]);
@@ -306,7 +316,14 @@ public class BattleTurnManager : MonoBehaviour
 
     public void OnCooperativeSkill()
     {
-        Debug.Log($"{TurnPlayers[0].charName}°ú {TurnPlayers[1].charName}ÀÇ Çùµ¿½ºÅ³ ¹ßµ¿");
+        Debug.Log($"{TurnPlayers[0].charName}ê³¼ {TurnPlayers[1].charName}ì˜ í˜‘ë™ìŠ¤í‚¬ ë°œë™");
+
+        Player p = TurnPlayers[0].GetComponent<Player>();
+
+        Character charTarget = basicTarget.GetComponent<Character>();
+        Enemy EnemyTarget = basicTarget.GetComponent<Enemy>();
+
+        p.CooperativeSkillAttack(TurnPlayers, charTarget, enemies);
 
         for (int i = 0; i < TurnPlayers.Count; i++)
         {
@@ -325,14 +342,14 @@ public class BattleTurnManager : MonoBehaviour
         int randomCount = Random.Range(0, playerCount);
 
         Player targetPlayerType = players[randomCount].GetComponent<Player>();
-        Debug.Log($"{e.charName}°¡ {targetPlayerType.charName}À»(¸¦) °ø°İÇÔ");
+        Debug.Log($"{e.charName}ê°€ {targetPlayerType.charName}ì„(ë¥¼) ê³µê²©í•¨");
         Debug.Log($"{e.charName}, {targetPlayerType.hp}");
         e.NormalAttack(targetPlayerType);
 
         targetPlayerType.SetHealth();
         if (targetPlayerType.hp == 0)
         {
-            Debug.Log($"{targetPlayerType.charName}ÀÌ Á×¾î ¸®½ºÆ®¿¡¼­ Á¦°ÅÇÕ´Ï´Ù.");
+            Debug.Log($"{targetPlayerType.charName}ì´ ì£½ì–´ ë¦¬ìŠ¤íŠ¸ì—ì„œ ì œê±°í•©ë‹ˆë‹¤.");
 
             if (TurnPlayers.Contains(targetPlayerType))
             {
@@ -345,7 +362,7 @@ public class BattleTurnManager : MonoBehaviour
             if(players.Count <= 0)
             {
                 ISAllPlayersDead = true;
-                Debug.Log($"player°¡ ¸ğµÎ Á×¾î ÀüÅõ¿¡¼­ ÆĞ¹èÇß½À´Ï´Ù.");
+                Debug.Log($"playerê°€ ëª¨ë‘ ì£½ì–´ ì „íˆ¬ì—ì„œ íŒ¨ë°°í–ˆìŠµë‹ˆë‹¤.");
                 StopCoroutine(AutoTurn());
             }
         }
@@ -358,7 +375,7 @@ public class BattleTurnManager : MonoBehaviour
             if(!enemies[i].activeSelf)
             {
                 isCheckDie[i] = true;
-                Debug.Log($"¸ó½ºÅÍ Á×Àº°Å Ã¼Å© {enemies[i].activeSelf}");
+                Debug.Log($"ëª¬ìŠ¤í„° ì£½ì€ê±° ì²´í¬ {enemies[i].activeSelf}");
             }
         }
 
@@ -375,7 +392,7 @@ public class BattleTurnManager : MonoBehaviour
     {
         if (ISAllPlayersDead)
         {
-            Debug.Log($"{ISAllPlayersDead} ÀüÅõ ÆĞ¹è");
+            Debug.Log($"{ISAllPlayersDead} ì „íˆ¬ íŒ¨ë°°");
             uIManager.GameOver();
             StopAllCoroutines();
         }
@@ -391,7 +408,7 @@ public class BattleTurnManager : MonoBehaviour
         SetTurnPlayerGroup();
         CheckPlayer(turnPlayer, isPlayer);
         CheckPlayer(turnPlayer2, isPlayer2);
-        // turnPlayers ¸®½ºÆ®ÀÇ °¹¼ö¸¦ È®ÀÎÇÏ¿© 2°³¸é Çùµ¿±â ¹öÆ° È°¼ºÈ­
+        // turnPlayers ë¦¬ìŠ¤íŠ¸ì˜ ê°¯ìˆ˜ë¥¼ í™•ì¸í•˜ì—¬ 2ê°œë©´ í˜‘ë™ê¸° ë²„íŠ¼ í™œì„±í™”
         if (isPlayer || isPlayer2)
         {
             SetButtonName();
@@ -399,12 +416,12 @@ public class BattleTurnManager : MonoBehaviour
 
         if (turnPlayer is Enemy)
         {
-            Debug.Log($"ÅÏ¸ó½ºÅÍ Àâ±â Àü null È®ÀÎ {turnPlayer.charName}");
+            Debug.Log($"í„´ëª¬ìŠ¤í„° ì¡ê¸° ì „ null í™•ì¸ {turnPlayer.charName}");
             MonsterTurn(turnPlayer);
         }
         if(turnPlayer2 is Enemy)
         {
-            Debug.Log($"ÅÏ¸ó½ºÅÍ2 Àâ±â Àü null È®ÀÎ {turnPlayer2.charName}");
+            Debug.Log($"í„´ëª¬ìŠ¤í„°2 ì¡ê¸° ì „ null í™•ì¸ {turnPlayer2.charName}");
             MonsterTurn(turnPlayer2);
         }
         
@@ -414,10 +431,10 @@ public class BattleTurnManager : MonoBehaviour
     private void MonsterTurn(Character _turnPlayer)
     {
         if (ISAllPlayersDead) return;
-        Debug.Log($"¸ó½ºÅÍ ÅÏ {_turnPlayer.charName}");
+        Debug.Log($"ëª¬ìŠ¤í„° í„´ {_turnPlayer.charName}");
         if (_turnPlayer.hp > 0)
         {
-            Debug.Log($"¸ó½ºÅÍÀÇ Ã¼·ÂÀÌ 0 ÀÌ»óÀÓ {_turnPlayer.hp}");
+            Debug.Log($"ëª¬ìŠ¤í„°ì˜ ì²´ë ¥ì´ 0 ì´ìƒì„ {_turnPlayer.hp}");
             MonsterAttack(_turnPlayer);
         }
     }
@@ -427,12 +444,12 @@ public class BattleTurnManager : MonoBehaviour
         if (_turnPlayer is Player)
         {
             _isPlayer = true;
-            Debug.Log($"{_turnPlayer.charName}ÀÇ Â÷·Ê {_isPlayer}");
+            Debug.Log($"{_turnPlayer.charName}ì˜ ì°¨ë¡€ {_isPlayer}");
         }
         else
         {
             _isPlayer = false;
-            Debug.Log($"{_turnPlayer.charName}ÀÇ Â÷·Ê {_isPlayer}");
+            Debug.Log($"{_turnPlayer.charName}ì˜ ì°¨ë¡€ {_isPlayer}");
         }
     }
 
@@ -440,8 +457,8 @@ public class BattleTurnManager : MonoBehaviour
     {
         if(TurnPlayers.Count <= 0)
         {
-            PlayerButton.GetComponentsInChildren<Text>()[0].text = "ÀÏ¹İ °ø°İ";
-            PlayerButton.GetComponentsInChildren<Text>()[1].text = "½ºÅ³ °ø°İ";
+            PlayerButton.GetComponentsInChildren<Text>()[0].text = "ì¼ë°˜ ê³µê²©";
+            PlayerButton.GetComponentsInChildren<Text>()[1].text = "ìŠ¤í‚¬ ê³µê²©";
             return;
         }
         Player playerButton = TurnPlayers[0].GetComponent<Player>();
@@ -465,7 +482,7 @@ public class BattleTurnManager : MonoBehaviour
             }
         }
 
-        Debug.Log($"{_turnPlayer.charName} Ä³¸¯ÅÍ ÄÄÆ÷³ÍÆ®¾øÀÌ hp È®ÀÎ µÇ´ÂÁö Å×½ºÆ® {_turnPlayer.hp}");
+        Debug.Log($"{_turnPlayer.charName} ìºë¦­í„° ì»´í¬ë„ŒíŠ¸ì—†ì´ hp í™•ì¸ ë˜ëŠ”ì§€ í…ŒìŠ¤íŠ¸ {_turnPlayer.hp}");
 
         int needGauge = 0;
 
@@ -520,13 +537,13 @@ public class BattleTurnManager : MonoBehaviour
     {
         while (!IsFinishGame)
         {
-            Debug.Log($"»õ·Î¿î ÅÏ");
+            Debug.Log($"ìƒˆë¡œìš´ í„´");
             Turn();
             yield return new WaitForSeconds(3.0f);
         }
     }
 
-    //--------------------------ÇöÀç »ç¿ë ½Ç»ç¿ë ¾ÈÇÏ´Â ¸Ş¼­µå-------------------------
+    //--------------------------í˜„ì¬ ì‚¬ìš© ì‹¤ì‚¬ìš© ì•ˆí•˜ëŠ” ë©”ì„œë“œ-------------------------
 
     void CompareSpeed()
     {

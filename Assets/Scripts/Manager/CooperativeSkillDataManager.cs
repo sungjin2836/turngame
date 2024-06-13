@@ -9,7 +9,7 @@ public class CooperativeSkillDataManager : MonoBehaviour
     public Dictionary<string, CooperativeSkill> CoSkills { get; private set; }
 
     private const string DATA_PATH = "Data";
-    private const string COSKILL_JSON = "CooperativeSkill";
+    private const string COSKILL_JSON = "cooperativeSkill";
 
     public enum Range
     {
@@ -34,7 +34,8 @@ public class CooperativeSkillDataManager : MonoBehaviour
     public class CooperativeSkill
     {
         public string id;
-        public string cooperativeSkillName;
+        public string name;
+        public int cooperativeId;
         public float[] damageAttr1;
         public DamageType damageAttr1Type;
         public float[] damageAttr2;
@@ -47,7 +48,7 @@ public class CooperativeSkillDataManager : MonoBehaviour
 
     public class CooperativeSkillData
     {
-        public CooperativeSkill[] coSkill;
+        public CooperativeSkill[] cooperativeSkill;
     }
 
     void Awake()
@@ -72,7 +73,7 @@ public class CooperativeSkillDataManager : MonoBehaviour
         TextAsset cooperativeSkillJson = Resources.Load<TextAsset>(Path.Combine(DATA_PATH, COSKILL_JSON));
         CooperativeSkillData cooperativeSkillList = JsonUtility.FromJson<CooperativeSkillData>(cooperativeSkillJson.text);
         
-        foreach (var data in cooperativeSkillList.coSkill)
+        foreach (var data in cooperativeSkillList.cooperativeSkill)
         {
             CoSkills.Add(data.id, data);
         }

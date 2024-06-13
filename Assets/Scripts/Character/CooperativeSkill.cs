@@ -4,6 +4,7 @@ using static CooperativeSkillDataManager;
 public class CooperativeSkill : MonoBehaviour
 {
     public string cooperativeSkillName;
+    public int cooperativeId;
     public float[] damageAttr1;
     public DamageType damageAttr1Type;
     public float[] damageAttr2;
