@@ -16,7 +16,7 @@ public class PlayerInput : MonoBehaviour
     private static Dictionary<KeyAction, KeyCode> _keys = new();
 
     private KeyCode[] _defaultKeys =
-        { KeyCode.Q, KeyCode.E, KeyCode.LeftShift, KeyCode.F, KeyCode.Escape };
+        { KeyCode.Q, KeyCode.E, KeyCode.LeftShift, KeyCode.F };
 
     public Action OnNormalAttack;
     public Action OnBattleSkill;
@@ -55,11 +55,6 @@ public class PlayerInput : MonoBehaviour
         {
             OnBattleSkill?.Invoke();
         }
-
-        //if (Input.GetKeyDown())
-        //{
-
-        //}
     }
 
     public void ChangeIndex<T>(T[] array, ref int index)
