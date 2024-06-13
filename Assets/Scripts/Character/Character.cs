@@ -12,6 +12,7 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
     public int attackStat;
     public int _hp;
     public int actionGauge;
+    public int _currentActionGauge;
 
     
     public bool isDead { get; private set; }
@@ -26,7 +27,7 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
     }
 
     public int finalSpeed { get; protected set; }
-    public int currentActionGauge {  get; protected set; }
+    public int currentActionGauge { get => _currentActionGauge; protected set => _currentActionGauge = Mathf.Clamp(value, 0, 1000); }
     public int finalAttackStat { get; protected set; }
 
     protected virtual void Awake()

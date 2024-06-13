@@ -18,7 +18,7 @@ public class Enemy : Character
     Slider enemyHpBar;
 
     int _shield;
-    int speedDebuff = 10;
+    int ActionGaugeDebuff = 10;
     Camera mainCamera;
 
     public int hp
@@ -109,8 +109,8 @@ public class Enemy : Character
         enemyShieldBar.value = shield;
         if (shield == 0)
         {
-            speed -= speedDebuff;
-            Debug.Log($"속성 실드가 파괴되어 속도가 {speedDebuff}만큼 느려져서 {speed}가 됨");
+            currentActionGauge -= ActionGaugeDebuff;
+            Debug.Log($"속성 실드가 파괴되어 행동게이지가 {ActionGaugeDebuff}만큼 느려져서 {currentActionGauge}가 됨");
         }
     }
 
@@ -143,13 +143,16 @@ public class Enemy : Character
         enemyShieldBar.value -= prevShieldAttack;
     }
 
-    public void SetPrevFinalSpeed()
+    public void SetPrevActionGauge()
     {
-        if (enemyShieldBar.value == 0) finalSpeed -= speedDebuff;
+        if (enemyShieldBar.value == 0) currentActionGauge -= ActionGaugeDebuff;
     }
-    public void ReturnPrevFinalSpeed()
+    public void ReturnPrevActionGauge()
     {
-        finalSpeed = speed;
+        if (shield == 0)
+        {
+            currentActionGauge += ActionGaugeDebuff;
+        }
     }
 
 }

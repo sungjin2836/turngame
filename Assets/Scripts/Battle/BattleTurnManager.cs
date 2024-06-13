@@ -98,12 +98,8 @@ public class BattleTurnManager : MonoBehaviour
         //    }
         //}
 
-        while(true)
-        {
-            Turn();
-        }
-
-        //StartCoroutine(AutoTurn());
+        
+        StartCoroutine(AutoTurn());
     }
     void Update()
     {
@@ -134,7 +130,7 @@ public class BattleTurnManager : MonoBehaviour
                     Enemy prevTarget = basicTarget.GetComponent<Enemy>();
                     prevTarget.SetHealth();
                     prevTarget.SetShield();
-                    prevTarget.ReturnPrevFinalSpeed();
+                    prevTarget.ReturnPrevActionGauge();
                     basicTarget = rayHit.collider.gameObject;
                     CheckElementChose(basicTarget, TurnPlayers[0]);
                     SetTurnOrder();
@@ -155,7 +151,7 @@ public class BattleTurnManager : MonoBehaviour
         if ((enemy.ContainsElement(player.element)))
         {
             enemy.SetPrevHpAndShield(30, player.PrevNormalSkill(true));
-            enemy.SetPrevFinalSpeed();
+            enemy.SetPrevActionGauge();
         }
         else
         {
@@ -239,9 +235,11 @@ public class BattleTurnManager : MonoBehaviour
         if (enemy.hp == 0)
         {
             basicTarget.SetActive(false);
+            SetTurnOrder();
+            SetTurnPlayerGroup();
         }
         //TurnPlayers[0].speed -= 100;
-        //p.ReturnPrevFinalSpeed();
+        //p.ReturnPrevActionGauge();
         Debug.Log($"{TurnPlayers[0].charName}의 행동게이지 {TurnPlayers[0].currentActionGauge} / {TurnPlayers[0].actionGauge}");
         queue.Enqueue(TurnPlayers[0]);
         TurnPlayers.Remove(TurnPlayers[0]);
@@ -277,6 +275,8 @@ public class BattleTurnManager : MonoBehaviour
             if (EnemyTarget.hp == 0)
             {
                 basicTarget.SetActive(false);
+                SetTurnOrder();
+                SetTurnPlayerGroup();
             }
         }
         else if (p.battleSkill.range == SkillDataManager.Range.all)
@@ -291,10 +291,13 @@ public class BattleTurnManager : MonoBehaviour
                 if(EnemyTarget.hp == 0)
                 {
                     enemies[i].SetActive(false);
+                    SetTurnOrder();
+                    SetTurnPlayerGroup();
                 }
             }
             Debug.Log($"광역공격 {TurnPlayers[0].charName}");
         }
+        queue.Enqueue(TurnPlayers[0]);
         TurnPlayers.Remove(TurnPlayers[0]);
         SetButtonName();
         SetTurnOrder();
@@ -305,7 +308,10 @@ public class BattleTurnManager : MonoBehaviour
     {
         Debug.Log($"{TurnPlayers[0].charName}과 {TurnPlayers[1].charName}의 협동스킬 발동");
 
-
+        for (int i = 0; i < TurnPlayers.Count; i++)
+        {
+            queue.Enqueue(TurnPlayers[i]);
+        }
 
         TurnPlayers.Clear();
         SetTurnPlayerGroup();
@@ -343,11 +349,6 @@ public class BattleTurnManager : MonoBehaviour
                 StopCoroutine(AutoTurn());
             }
         }
-        //turnMonster.speed -= 100;
-        //e.ReturnPrevFinalSpeed();
-        //queue.Enqueue(turnMonster);
-        SetTurnOrder();
-        //StartCoroutine(waitOneSec());
     }
 
     private bool CheckDeadChar()
@@ -386,7 +387,6 @@ public class BattleTurnManager : MonoBehaviour
         }
         turnPlayer = Deq();
         turnPlayer2 = Deq();
-        SetTurnOrder();
 
         SetTurnPlayerGroup();
         CheckPlayer(turnPlayer, isPlayer);
@@ -407,6 +407,8 @@ public class BattleTurnManager : MonoBehaviour
             Debug.Log($"턴몬스터2 잡기 전 null 확인 {turnPlayer2.charName}");
             MonsterTurn(turnPlayer2);
         }
+        
+        SetTurnOrder();
     }
 
     private void MonsterTurn(Character _turnPlayer)
@@ -449,65 +451,42 @@ public class BattleTurnManager : MonoBehaviour
 
     private Character Deq()
     {
-        //turnPlayer1
         Character _turnPlayer = queue.Dequeue();
-        if(TurnPlayers.Count >= 2)
+        if (_turnPlayer.hp <= 0)
         {
-            while(_turnPlayer is Player)
+            _turnPlayer = queue.Dequeue();
+        }
+        if (TurnPlayers.Count >= 2)
+        {
+            while (_turnPlayer is Player)
             {
                 tempPlayers.Add(_turnPlayer);
                 _turnPlayer = queue.Dequeue();
             }
         }
-        if(_turnPlayer.hp <= 0)
-        {
-            _turnPlayer = queue.Dequeue();
-        }
 
-        Debug.Log($"캐릭터 컴포넌트없이 hp 확인 되는지 테스트 {_turnPlayer.hp}");
+        Debug.Log($"{_turnPlayer.charName} 캐릭터 컴포넌트없이 hp 확인 되는지 테스트 {_turnPlayer.hp}");
 
         int needGauge = 0;
 
         Character character = _turnPlayer.GetComponent<Character>();
 
         needGauge = character.actionGauge - character.currentActionGauge;
-
+        ChargeGaue(needGauge);
+        SetTurnOrder();
         if (TurnPlayers.Count < 2)
         {
-            for (int i = 0; i < testPlayersData.Length; i++)
+            if (_turnPlayer is Player && !TurnPlayers.Contains(_turnPlayer))
             {
-                testPlayersData[i].AddGauge(needGauge);
-            }
-        }
-        for (int i = 0; i < testEnemysData.Length; i++)
-        {
-            testEnemysData[i].AddGauge(needGauge);
-        }
-        if(TurnPlayers.Count < 2)
-        {
-            _turnPlayer.InitGauge();
-        }
-        else if(_turnPlayer is Enemy)
-        {
-            _turnPlayer.InitGauge();
-            queue.Enqueue(_turnPlayer);
-        }
-
-        if (_turnPlayer is Player)
-        {
-            if (TurnPlayers.Count < 2 && !TurnPlayers.Contains(_turnPlayer))
-            {
+                _turnPlayer.InitGauge();
                 TurnPlayers.Add(character);
                 SetButtonName();
             }
-            else
-            {
-                Debug.Log($"{_turnPlayer.charName}은 턴을 못잡음");
-                queue.Enqueue(_turnPlayer);
-            }
         }
-        else
+
+        if (_turnPlayer is Enemy)
         {
+            _turnPlayer.InitGauge();
             queue.Enqueue(_turnPlayer);
         }
 
@@ -515,12 +494,27 @@ public class BattleTurnManager : MonoBehaviour
         {
             queue.Enqueue(tempPlayers[i]);
         }
+        tempPlayers.Clear();
 
         Debug.Log($"deq1 {_turnPlayer.charName} {_turnPlayer.currentActionGauge}");
-        //Debug.Log($"deq2 {turnPlayer2.charName} {turnPlayer2.currentActionGauge}");
         return _turnPlayer;
     }
 
+    private void ChargeGaue(int needGauge)
+    {
+        if (TurnPlayers.Count < 2)
+        {
+            for (int i = 0; i < testPlayersData.Length; i++)
+            {
+                testPlayersData[i].AddGauge(needGauge);
+            }
+        }
+
+        for (int i = 0; i < testEnemysData.Length; i++)
+        {
+            testEnemysData[i].AddGauge(needGauge);
+        }
+    }
 
     IEnumerator AutoTurn()
     {
