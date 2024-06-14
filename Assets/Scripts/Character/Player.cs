@@ -103,6 +103,8 @@ public class Player : Character
 
     public override int NormalAttack(Character target, float value = 0.5f)
     {
+        MoveToTarget(target);
+        SetHealth();
         Debug.Log("NormalAttack의 공격력" + finalAttackStat);
         var enemy = target as Enemy;
         if (enemy.ContainsElement(element)) enemy.DamageToShield(30);
@@ -115,6 +117,8 @@ public class Player : Character
 
     public virtual void BattleSkill(Character target)
     {
+        MoveToTarget(target);
+
         // 스킬
         var enemy = target as Enemy;
         if (enemy.ContainsElement(element)) enemy.DamageToShield(60);
@@ -378,4 +382,15 @@ public class Player : Character
         finalSpeed = speed;
     }
 
+    protected override void MoveToTarget(Character target)
+    {
+        base.MoveToTarget(target);
+        BattleCamera.MoveTo("Attack Camera", transform, target.transform);
+    }
+
+    protected override void TurnEnd()
+    {
+        base.TurnEnd();
+        BattleCamera.MoveTo("Ready Camera");
+    }
 }

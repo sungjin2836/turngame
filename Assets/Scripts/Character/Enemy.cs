@@ -130,6 +130,7 @@ public class Enemy : Character
 
     public int NormalAttack(Player target, float value = 0.5f)
     {
+        MoveToTarget(target);
         Debug.Log($" {charName}의 NormalAttack의 공격력 {attackStat}");
         var player = target as Player;
         int dam = player.GetDamage(Mathf.FloorToInt(attackStat));
@@ -139,7 +140,7 @@ public class Enemy : Character
 
     public void SetPrevHpAndShield(int prevShieldAttack, int prevAttack)
     {
-        enemyHpBar.value -= prevAttack;
+        //enemyHpBar.value -= prevAttack;
         enemyShieldBar.value -= prevShieldAttack;
     }
 

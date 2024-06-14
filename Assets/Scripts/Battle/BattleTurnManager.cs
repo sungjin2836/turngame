@@ -128,13 +128,14 @@ public class BattleTurnManager : MonoBehaviour
                 if (rayHit.collider.gameObject.CompareTag("Enemy") && basicTarget != null)
                 {
                     Enemy prevTarget = basicTarget.GetComponent<Enemy>();
-                    prevTarget.SetHealth();
+                    //prevTarget.SetHealth();
                     prevTarget.SetShield();
                     prevTarget.ReturnPrevActionGauge();
                     Debug.Log($" 턴플레이어 리스트에 등록된 플레이어 숫자{TurnPlayers.Count}");
                     if(TurnPlayers.Count > 0)
                     {
                         basicTarget = rayHit.collider.gameObject;
+                        BattleCamera.m_Enemy = basicTarget.transform;
                         Debug.Log($" 타겟 이름 : {basicTarget.name}");
                         CheckElementChose(basicTarget, TurnPlayers[0]);
                     }
@@ -235,11 +236,14 @@ public class BattleTurnManager : MonoBehaviour
                 p2.NormalAttack(charTarget, finalAttack);
             }
         }
-        enemy.SetHealth();
-        enemy.SetShield();
+        //enemy.SetHealth();
+        //enemy.SetShield();
         if (enemy.hp == 0)
         {
+            enemies.Remove(basicTarget);
             basicTarget.SetActive(false);
+
+            basicTarget = enemies.First();
             SetTurnOrder();
             SetTurnPlayerGroup();
         }

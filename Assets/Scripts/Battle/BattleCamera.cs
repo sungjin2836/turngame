@@ -58,10 +58,10 @@ public class BattleCamera : MonoBehaviour
         if (m_Camera == null) m_Camera = cameras[0];
     }
 
-    public static void MoveTo(string camera, Transform follow, Transform lookAt)
+    public static void MoveTo(string camera, Transform follow = null, Transform lookAt = null)
     {
         m_Camera = VirtualCameras[camera];
-        m_Player = follow;
-        m_Enemy = lookAt;
+        if (follow) m_Player = follow;
+        if (lookAt) m_Enemy = lookAt;
     }
 }
