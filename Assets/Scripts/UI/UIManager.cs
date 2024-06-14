@@ -7,7 +7,13 @@ public class UIManager : MonoBehaviour
     private GameObject turnOrderPanel;
 
     [SerializeField]
+    private GameObject PlayerTurnOrderPanel;
+
+    [SerializeField]
     private GameObject resultWindow;
+
+    [SerializeField]
+    private GameObject gameOverWindow;
 
     [SerializeField]
     private Image[] itemIndex;
@@ -26,8 +32,11 @@ public class UIManager : MonoBehaviour
     private Slider enemyHpBar;
     [SerializeField]
     private Text turnOrderText;
+    [SerializeField]
+    private Text turnPlayersOrderText;
 
     Text[] turnTexts;
+    Text[] PlayersturnTexts;
     private int _hp;
     private int _shield;
     public int Hp
@@ -48,6 +57,7 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         resultWindow.SetActive(false);
+        gameOverWindow.SetActive(false);
     }
 
     public void InitTurnText(int num)
@@ -60,6 +70,16 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void InitTurnPlayerText(int num)
+    {
+        PlayersturnTexts = new Text[num];
+        for (int i = 0; i < num; i++)
+        {
+            PlayersturnTexts[i] = Instantiate(turnPlayersOrderText, PlayerTurnOrderPanel.transform.position, Quaternion.identity);
+            PlayersturnTexts[i].transform.SetParent(PlayerTurnOrderPanel.transform);
+        }
+    }
+
     public void TurnTextClear()
     {
         for (int i = 0;i < turnTexts.Length; i++)
@@ -67,9 +87,22 @@ public class UIManager : MonoBehaviour
             turnTexts[i].text = "";
         }
     }
-    public void TurnTextPrint(int num, string Name)
+    public void TurnPlayerTextClear()
+    {
+        for (int i = 0; i < PlayersturnTexts.Length; i++)
+        {
+            PlayersturnTexts[i].text = "";
+        }
+    }
+    public void TurnTextPrint(int num, string Name, int ActionPoint)
     {
         turnTexts[num].text = Name;
+        turnTexts[num].text += " "+ ActionPoint;
+    }
+
+    public void TurnPlayerTextPrint(int num, string Name)
+    {
+        PlayersturnTexts[num].text = Name;
     }
 
     public void SetMaxHealth(int health)
@@ -112,6 +145,12 @@ public class UIManager : MonoBehaviour
         Debug.Log("finish");
         resultWindow.SetActive(true);
         InitItem();
+    }
+
+    public void GameOver()
+    {
+        Debug.Log("GameOver");
+        gameOverWindow.SetActive(true);
     }
     
 

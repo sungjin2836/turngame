@@ -5,10 +5,10 @@ using UnityEngine;
 public class TargetRayCast : MonoBehaviour
 {
     [SerializeField]
-    private float _maxDistance = 10.0f;
+    float _maxDistance = 10.0f;
 
     Enemy rayEnemy;
-    private Color _color = Color.red;
+    Color _color = Color.red;
     FieldUIController _controller;
     GameObject _gameObject;
 

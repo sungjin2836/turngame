@@ -7,13 +7,15 @@ using UnityEngine;
 [DefaultExecutionOrder(200)]
 public class FieldCharDataManager : MonoBehaviour
 {
-    public static FieldCharDataManager instance;
-    private CharacterData[] playerDataIDs;
-    private int enemyDataID;
+    public static FieldCharDataManager instance = null;
+    CharacterData[] playerDataIDs;
+    int enemyDataID;
     [SerializeField]
-    private GameObject players;
+    GameObject players;
     public bool isWeakElement;
 
+
+    
     void Awake()
     {
         if (instance != null)
@@ -39,11 +41,6 @@ public class FieldCharDataManager : MonoBehaviour
             Debug.Log($"아이디는 {playerDataIDs[i].CharacterID}");
         }
         Debug.Log($"공격당한 몬스터의 아이디는 {enemyDataID}");
-    }
-
-    void Update()
-    {
-        
     }
 
     public int GetCharacterID(int num)

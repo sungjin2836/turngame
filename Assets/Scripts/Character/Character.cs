@@ -4,7 +4,7 @@ using UnityEngine;
 public abstract class Character : MonoBehaviour, IComparable<Character>
 {
     public Action OnTurnEnd;
-    
+
     [Header("기본 캐릭터 정보")] public string charName;
     public int level;
     public int maxHP;
@@ -12,6 +12,7 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
     public int attackStat;
     public int _hp;
     public int actionGauge;
+    public int _currentActionGauge;
 
     
     public bool isDead { get; private set; }
@@ -26,7 +27,7 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
     }
 
     public int finalSpeed { get; protected set; }
-    public int currentActionGauge {  get; protected set; }
+    public int currentActionGauge { get => _currentActionGauge; protected set => _currentActionGauge = Mathf.Clamp(value, 0, 1000); }
     public int finalAttackStat { get; protected set; }
 
     protected virtual void Awake()
@@ -38,7 +39,7 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
 
     public int CompareTo(Character other)
     {
-        return other.speed - speed;
+        return (actionGauge - currentActionGauge) - (other.actionGauge - other.currentActionGauge);
     }
 
     public virtual void GetActionGauge()
@@ -90,7 +91,16 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
     private void CorrectionSpeed()
     {
         int CorrectionValue = UnityEngine.Random.Range( 0, 5);
-
-
     }
+
+    public void AddGauge(int num)
+    {
+        currentActionGauge += num;
+    }
+
+    public void InitGauge()
+    {
+        currentActionGauge = currentActionGauge - actionGauge;
+    }
+
 }
