@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
 
-// ESCÅ°´Â º¯µ¿µÉ ÀÏÀÌ ¾øÀ¸¹Ç·Î Pause Å¬·¡½º¿¡¼­¸¸ °ü¸® -> ¿øÀÛ°ÔÀÓ¿¡¼­µµ Å°¼¼ÆÃ¿¡¼­´Â Ãâ·ÂµÇÁö¸¸ º¯°æ ºÒ°¡´ÉÇÏ°Ô ¸·ÇôÀÖÀ½
+// ESCí‚¤ëŠ” ë³€ë™ë  ì¼ì´ ì—†ìœ¼ë¯€ë¡œ Pause í´ë˜ìŠ¤ì—ì„œë§Œ ê´€ë¦¬ -> ì›ì‘ê²Œì„ì—ì„œë„ í‚¤ì„¸íŒ…ì—ì„œëŠ” ì¶œë ¥ë˜ì§€ë§Œ ë³€ê²½ ë¶ˆê°€ëŠ¥í•˜ê²Œ ë§‰í˜€ìˆìŒ
 
 public class Pause : MonoBehaviour
 {
@@ -10,16 +10,12 @@ public class Pause : MonoBehaviour
     [SerializeField]
     private RectTransform pausePanel;
     [SerializeField]
-    private RectTransform pauseOutsideBorder;
-    [SerializeField]
     private RectTransform closeButton;
 
     public virtual void Start()
     {
-        TogglePauseCanvas();
+        TogglePauseCanvas(pausePanel);
 
-
-        AddToggleEvent(pauseOutsideBorder);
         AddToggleEvent(closeButton);
     }
 
@@ -31,35 +27,31 @@ public class Pause : MonoBehaviour
         }
     }
 
-    public virtual void TogglePauseState()
+    protected virtual void TogglePauseState()
     {
         isPause = !isPause;
-        TogglePauseCanvas();
+        TogglePauseCanvas(pausePanel);
     }
 
-    private void TogglePauseCanvas()
+    protected void TogglePauseCanvas(RectTransform targetCanvas)
     {
-        if (pausePanel != null)
-        {
-            pausePanel.gameObject.SetActive(isPause);
-            pauseOutsideBorder.gameObject.SetActive(isPause);
-        }
+        targetCanvas.gameObject.SetActive(isPause);
     }
 
-        private void AddToggleEvent(RectTransform target)
+    protected void AddToggleEvent(RectTransform target)
+    {
+        EventTrigger targetTrigger = target.GetComponent<EventTrigger>();
+
+        if (targetTrigger == null)
         {
-            EventTrigger targetTrigger = target.GetComponent<EventTrigger>();
-
-            if (targetTrigger == null)
-            {
-                Debug.LogError("ÇØ´ç ÄÄÆ÷³ÍÆ®¿¡´Â ÀÌº¥Æ® Æ®¸®°Å°¡ µî·ÏµÇÁö ¾Ê¾Ò¾î¿ä.");
-                return;
-            }
-
-            EventTrigger.Entry entry = new EventTrigger.Entry();
-            entry.eventID = EventTriggerType.PointerClick;
-
-            entry.callback.AddListener((eventData) => TogglePauseState());
-            targetTrigger.triggers.Add(entry);
+            Debug.LogError("í•´ë‹¹ ì»´í¬ë„ŒíŠ¸ì—ëŠ” ì´ë²¤íŠ¸ íŠ¸ë¦¬ê±°ê°€ ë“±ë¡ë˜ì§€ ì•Šì•˜ì–´ìš”.");
+            return;
         }
+
+        EventTrigger.Entry entry = new EventTrigger.Entry();
+        entry.eventID = EventTriggerType.PointerClick;
+
+        entry.callback.AddListener((eventData) => TogglePauseState());
+        targetTrigger.triggers.Add(entry);
+    }
 }

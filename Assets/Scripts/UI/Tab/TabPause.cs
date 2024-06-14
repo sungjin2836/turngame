@@ -2,20 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// 전투에서 일시정지 할 때 나오는 탭 메뉴
-
-public class BattlePause : Pause
+public class TabPause : Pause
 {
+    [SerializeField]
+    private RectTransform tabContentContainer;
+
     public override void Start()
     {
         base.Start();
+
+        TogglePauseCanvas(tabContentContainer);
     }
 
-    public override void TogglePauseState()
+    protected override void TogglePauseState()
     {
         base.TogglePauseState();
+        TogglePauseCanvas(tabContentContainer);
         ToggleTimeStop();
     }
+
     private void ToggleTimeStop()
     {
         Time.timeScale = isPause ? 0 : 1;

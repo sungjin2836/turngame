@@ -4,9 +4,7 @@ using UnityEngine;
 public class TabGroup : MonoBehaviour
 {
     List<TabButtonItem> tabButtons = new();
-    [Header("¹öÆ° µÞ¹è°æ")]
-    [SerializeField]
-    private Sprite tabIdle;
+    [Header("ë²„íŠ¼ ë’·ë°°ê²½")]
     [SerializeField]
     private Sprite tabHover;
     [SerializeField]
@@ -26,20 +24,23 @@ public class TabGroup : MonoBehaviour
     public void OnTabExit(TabButtonItem button)
     {
         ResetSelection();
-        button.background.sprite = tabIdle;
+        button.background.sprite = null;
+        button.icon.color = Color.white;
     }
 
     public void OnTabSelected(TabButtonItem button)
     {
         ResetSelection();
         button.background.sprite = tabActive;
+        button.icon.color = Color.black;
     }
 
     private void ResetSelection()
     {
-        foreach (TabButtonItem tabButton in tabButtons)
+        foreach (TabButtonItem button in tabButtons)
         {
-            tabButton.background.sprite = tabIdle;
+            button.background.sprite = null;
+            button.icon.color = Color.white;
         }
     }
 }

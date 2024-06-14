@@ -9,6 +9,7 @@ public class TabButtonItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 {
     TabGroup tabGroup;
     public Image background;
+    public Image icon;
 
     void Start()
     {
@@ -18,6 +19,7 @@ public class TabButtonItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         }
 
         background = GetComponent<Image>();
+        icon = transform.Find("Icon").GetComponent<Image>();
         tabGroup.Subscribe(gameObject.GetComponent<TabButtonItem>());
     }
 
