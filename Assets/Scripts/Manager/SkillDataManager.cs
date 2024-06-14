@@ -23,6 +23,12 @@ public class SkillDataManager : MonoBehaviour
         attack,
         heal
     }
+
+    public enum Distance
+    {
+        close,
+        far
+    }
     
     [System.Serializable]
     public class Skill 
@@ -34,6 +40,7 @@ public class SkillDataManager : MonoBehaviour
         public float[] damageAttr2;
         public DamageType damageAttr2Type;
         public Range range;
+        public Distance distance;
     }
 
     public class SkillData

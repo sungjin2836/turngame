@@ -7,28 +7,28 @@ public class FieldToTurnDataManager : MonoBehaviour
     private FieldCharDataManager fieldCharDataManager;
 
     [SerializeField]
-    private GameObject players;
+    GameObject players;
     [SerializeField]
-    private GameObject enemy;
-    private CharacterData[] playerDataIDs;
-    private CharacterData enemyDataID;
+    GameObject enemy;
+    CharacterData[] playerDataIDs;
+    CharacterData enemyDataID;
 
     private void Awake()
     {
         fieldCharDataManager = FindObjectOfType<FieldCharDataManager>();
-
-        Debug.Log($" 약점 공격을 했는지?{fieldCharDataManager.isWeakElement}");
-        fieldCharDataManager.DebugIdTest();
-
-        playerDataIDs = players.GetComponentsInChildren<CharacterData>();
-        enemyDataID = enemy.GetComponent<CharacterData>();
-
-        for ( int i = 0; i < playerDataIDs.Length; i++)
+        if(fieldCharDataManager != null)
         {
-            playerDataIDs[i].CharacterID = fieldCharDataManager.GetCharacterID(i);
+            Debug.Log($" 약점 공격을 했는지?{fieldCharDataManager.isWeakElement}");
+            fieldCharDataManager.DebugIdTest();
+            playerDataIDs = players.GetComponentsInChildren<CharacterData>();
+            enemyDataID = enemy.GetComponent<CharacterData>();
+
+            for (int i = 0; i < playerDataIDs.Length; i++)
+            {
+                playerDataIDs[i].CharacterID = fieldCharDataManager.GetCharacterID(i);
+            }
+            enemyDataID.CharacterID = fieldCharDataManager.SetEnemyID();
         }
-        enemyDataID.CharacterID = fieldCharDataManager.SetEnemyID();
-        
     }
 
     void Start()

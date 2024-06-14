@@ -5,23 +5,21 @@ using static UnityEditor.Rendering.FilterWindow;
 
 public class Enemy : Character
 {
-    [Header("적 캐릭터 정보")] 
+    [Header("적 캐릭터 정보")]
     public int maxShield;
     public Skill normalAttack;
     public ElementType[] weakElements;
 
     [SerializeField]
-    private GameObject BarPosition;
+    GameObject BarPosition;
     [SerializeField]
-    private Slider enemyShieldBar;
+    Slider enemyShieldBar;
     [SerializeField]
-    private Slider enemyHpBar;
+    Slider enemyHpBar;
 
-    private int _shield;
-
-    private int speedDebuff = 10;
-
-    private Camera mainCamera;
+    int _shield;
+    int ActionGaugeDebuff = 10;
+    Camera mainCamera;
 
     public int hp
     {
@@ -56,7 +54,7 @@ public class Enemy : Character
 
         mainCamera = Camera.main;
 
-        if(enemyHpBar != null && enemyShieldBar != null)
+        if (enemyHpBar != null && enemyShieldBar != null)
         {
             SetMaxHealth();
             SetMaxShield();
@@ -85,7 +83,7 @@ public class Enemy : Character
     {
         shield = maxShield;
     }
-    
+
     public void SetMaxHealth()
     {
         enemyHpBar.maxValue = maxHP;
@@ -93,9 +91,9 @@ public class Enemy : Character
     }
     public void SetHealth()
     {
-        Debug.Log($"sethealth 매개변수 : {hp}, 실제 체력 {_hp}");
+        //Debug.Log($"sethealth 매개변수 : {hp}, 실제 체력 {_hp}");
         enemyHpBar.value = hp;
-        if(hp == 0)
+        if (hp == 0)
         {
             enemyHpBar.gameObject.SetActive(false);
             enemyShieldBar.gameObject.SetActive(false);
@@ -109,10 +107,10 @@ public class Enemy : Character
     public void SetShield()
     {
         enemyShieldBar.value = shield;
-        if(shield == 0)
+        if (shield == 0)
         {
-            speed -= speedDebuff;
-            Debug.Log($"속성 실드가 파괴되어 속도가 {speedDebuff}만큼 느려져서 {speed}가 됨");
+            currentActionGauge -= ActionGaugeDebuff;
+            Debug.Log($"속성 실드가 파괴되어 행동게이지가 {ActionGaugeDebuff}만큼 느려져서 {currentActionGauge}가 됨");
         }
     }
 
@@ -129,7 +127,7 @@ public class Enemy : Character
         //Debug.Log($" {charName} bar 포지션2 : {transform.position}");
         BarPosition.transform.position = screenPosition;
     }
-    
+
     public int NormalAttack(Player target, float value = 0.5f)
     {
         Debug.Log($" {charName}의 NormalAttack의 공격력 {attackStat}");
@@ -139,19 +137,22 @@ public class Enemy : Character
         return dam;
     }
 
-    public void SetPrevHpAndShield(int prevShieldAttack , int prevAttack)
+    public void SetPrevHpAndShield(int prevShieldAttack, int prevAttack)
     {
         enemyHpBar.value -= prevAttack;
         enemyShieldBar.value -= prevShieldAttack;
     }
 
-    public void SetPrevFinalSpeed()
+    public void SetPrevActionGauge()
     {
-        if(enemyShieldBar.value == 0)finalSpeed -= speedDebuff;
+        if (enemyShieldBar.value == 0) currentActionGauge -= ActionGaugeDebuff;
     }
-    public void ReturnPrevFinalSpeed()
+    public void ReturnPrevActionGauge()
     {
-        finalSpeed = speed;
+        if (shield == 0)
+        {
+            currentActionGauge += ActionGaugeDebuff;
+        }
     }
 
 }
