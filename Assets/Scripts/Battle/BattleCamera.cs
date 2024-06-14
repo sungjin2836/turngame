@@ -4,18 +4,12 @@ using UnityEngine;
 
 public class BattleCamera : MonoBehaviour
 {
-    private const float Duration = 0.3f;
+    [SerializeField] private CinemachineVirtualCamera[] cameras;
+    private static readonly Dictionary<string, CinemachineVirtualCamera> VirtualCameras = new();
+    
+    private static CinemachineVirtualCamera _camera;
 
-    public float startAngle = -50;
-    public float eachAngle = 4;
-
-    public Enemy[] enemies;
-
-    private readonly Dictionary<Transform, float> _targets = new();
-
-    private CinemachineVirtualCamera _camera;
-
-    public CinemachineVirtualCamera m_Camera
+    public static CinemachineVirtualCamera m_Camera
     {
         get => _camera;
         set
@@ -28,28 +22,13 @@ public class BattleCamera : MonoBehaviour
             _camera = value;
             _camera.LookAt = m_Enemy;
             _camera.m_Priority = 100;
-            _orbital = m_Camera.GetCinemachineComponent<CinemachineOrbitalTransposer>();
-
-            if (enemies == null) return;
-
-            UpdateEnemyList();
-
-            if (_orbital)
-            {
-                _orbital.m_XAxis.m_MinValue = _targets[enemies[0].transform];
-                _orbital.m_XAxis.m_MaxValue = _targets[enemies[^1].transform];
-            }
         }
     }
 
-    private CinemachineOrbitalTransposer _orbital;
+    private static Transform _player;
 
-    private Transform _player;
-
-
-    public Transform m_Player
+    public static Transform m_Player
     {
-        get => _player;
         set
         {
             _player = value;
@@ -57,10 +36,9 @@ public class BattleCamera : MonoBehaviour
         }
     }
 
-    private Transform _enemy;
+    private static Transform _enemy;
 
-
-    private Transform m_Enemy
+    public static Transform m_Enemy
     {
         get => _enemy;
         set
@@ -70,48 +48,20 @@ public class BattleCamera : MonoBehaviour
         }
     }
 
-    private float _lastTime;
-    private float _lastXAxisValue;
-
-    private void Start()
+    private void Awake()
     {
-        UpdateEnemyList();
-    }
-
-    private void Update()
-    {
-        if (!_orbital)
+        foreach (var cam in cameras)
         {
-            m_Enemy = _enemy;
-            return;
+            VirtualCameras.Add(cam.name, cam);
         }
 
-        _orbital.m_XAxis.Value = Mathf.Lerp(_lastXAxisValue, _targets[m_Enemy], (Time.time - _lastTime) / Duration);
+        if (m_Camera == null) m_Camera = cameras[0];
     }
 
-    public void LookAt(Transform target)
+    public static void MoveTo(string camera, Transform follow, Transform lookAt)
     {
-        if (!_orbital) return;
-        if (!target.CompareTag("Enemy")) return;
-        m_Enemy = target;
-        _lastXAxisValue = _orbital.m_XAxis.Value;
-        _lastTime = Time.time;
-    }
-
-    private void UpdateEnemyList()
-    {
-        _targets.Clear();
-
-        for (int i = 0; i < enemies.Length; i++)
-        {
-            _targets.Add(enemies[i].transform, startAngle + i * eachAngle);
-        }
-    }
-
-    public void SetCameraTo(CinemachineVirtualCamera camera, Transform follow, Transform lookAt)
-    {
-        m_Camera = camera;
+        m_Camera = VirtualCameras[camera];
         m_Player = follow;
-        LookAt(lookAt);
+        m_Enemy = lookAt;
     }
 }
