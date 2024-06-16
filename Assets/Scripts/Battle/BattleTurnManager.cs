@@ -42,7 +42,7 @@ public class BattleTurnManager : MonoBehaviour
 
     List<Character> TurnPlayers;
 
-    private Character[] targets;
+    Character[] targets;
 
     PriorityQueue<Character> queue = new();
 
@@ -168,12 +168,12 @@ public class BattleTurnManager : MonoBehaviour
     void SetTurnOrder()
     {
         List<Character> toList = queue.ToList();
-        Debug.Log("----------시작-------------");
-        for (int i = 0; i < toList.Count; i++)
-        {
-            Debug.Log($"{toList[i].charName}은 {i}번 째이고 남은 행동 게이지는 {toList[i].actionGauge - toList[i].currentActionGauge}이다.");
-        }
-        Debug.Log("-----------끝------------");
+        //Debug.Log("----------시작-------------");
+        //for (int i = 0; i < toList.Count; i++)
+        //{
+        //    Debug.Log($"{toList[i].charName}은 {i}번 째이고 남은 행동 게이지는 {toList[i].actionGauge - toList[i].currentActionGauge}이다.");
+        //}
+        //Debug.Log("-----------끝------------");
         for (int i = 0; i < toList.Count; i++)
         {
             if (toList[i].hp == 0)
@@ -326,8 +326,20 @@ public class BattleTurnManager : MonoBehaviour
 
         Character charTarget = basicTarget.GetComponent<Character>();
         Enemy EnemyTarget = basicTarget.GetComponent<Enemy>();
+        targets = new Character[enemies.Count];
 
-        p.CooperativeSkillAttack(TurnPlayers, charTarget, enemies);
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            targets[i] = enemies[i].GetComponent<Character>();
+        }
+        Player healCharTarget = healTarget.GetComponent<Player>();
+        p.CooperativeSkillAttack(TurnPlayers, charTarget, targets, testPlayersData, healCharTarget);
+
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            enemies[i].GetComponent<Enemy>().SetHealth();
+            enemies[i].GetComponent<Enemy>().SetShield();
+        }
 
         for (int i = 0; i < TurnPlayers.Count; i++)
         {
@@ -346,8 +358,7 @@ public class BattleTurnManager : MonoBehaviour
         int randomCount = Random.Range(0, playerCount);
 
         Player targetPlayerType = players[randomCount].GetComponent<Player>();
-        Debug.Log($"{e.charName}가 {targetPlayerType.charName}을(를) 공격함");
-        Debug.Log($"{e.charName}, {targetPlayerType.hp}");
+        Debug.Log($"{e.charName}가 {targetPlayerType.charName}을(를) 공격해서 {targetPlayerType.hp}의 체력이 남음");
         e.NormalAttack(targetPlayerType);
 
         targetPlayerType.SetHealth();
@@ -448,12 +459,12 @@ public class BattleTurnManager : MonoBehaviour
         if (_turnPlayer is Player)
         {
             _isPlayer = true;
-            Debug.Log($"{_turnPlayer.charName}의 차례 {_isPlayer}");
+           // Debug.Log($"{_turnPlayer.charName}의 차례 {_isPlayer}");
         }
         else
         {
             _isPlayer = false;
-            Debug.Log($"{_turnPlayer.charName}의 차례 {_isPlayer}");
+            //Debug.Log($"{_turnPlayer.charName}의 차례 {_isPlayer}");
         }
     }
 
@@ -486,7 +497,7 @@ public class BattleTurnManager : MonoBehaviour
             }
         }
 
-        Debug.Log($"{_turnPlayer.charName} 캐릭터 컴포넌트없이 hp 확인 되는지 테스트 {_turnPlayer.hp}");
+        //Debug.Log($"{_turnPlayer.charName} 캐릭터 컴포넌트없이 hp 확인 되는지 테스트 {_turnPlayer.hp}");
 
         int needGauge = 0;
 

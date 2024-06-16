@@ -50,4 +50,11 @@ public class FieldUIController : MonoBehaviour
             enemyElements.text = elementsData;
         }
     }
+
+    public void NoDetectEnemy()
+    {
+        enemyName.text = "";
+        enemyElements.text = "";
+
+    }
 }

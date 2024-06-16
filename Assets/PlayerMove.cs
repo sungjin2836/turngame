@@ -1,19 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
 
 public class PlayerMove : MonoBehaviour
 {
-    float Speed = 5f;
+    float speed = 5f;
+    float fastSpeed = 10f;
+    bool isRun;
     Rigidbody rbody;
     Rotate rotate;
     [SerializeField]
     private GameObject targetRange;
 
+    public UnityEngine.UI.Button runButton;
+
     public float mouseSensitivity = 100f;
     private float xRotation = 0f;
     private float yRotation = 0f;
+    Vector3 moveVelocity;
 
     void Start()
     {
@@ -22,7 +29,7 @@ public class PlayerMove : MonoBehaviour
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
 
         targetRange.SetActive(false);
-
+        isRun = false;
     }
 
 
@@ -32,37 +39,69 @@ public class PlayerMove : MonoBehaviour
         float zMove = Input.GetAxis("Vertical");
 
         Vector3 moveDirection = new Vector3(xMove, 0, zMove).normalized;
-        Vector3 moveVelocity = transform.TransformDirection(moveDirection) * Speed;
-
-        //Vector3 vector3 = new Vector3(xMove, 0, zMove).normalized * Speed;
-
+        if(isRun)
+        {
+            moveVelocity = transform.TransformDirection(moveDirection) * fastSpeed;
+        }
+        else
+        {
+            moveVelocity = transform.TransformDirection(moveDirection) * speed;
+        }
         rbody.velocity = new Vector3(moveVelocity.x, rbody.velocity.y, moveVelocity.z);
 
-        //∏∂øÏΩ∫ »∏¿¸
+        //ÎßàÏö∞Ïä§ ÌöåÏ†Ñ
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
         xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f); // »∏¿¸∞¢ ¡¶«—
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f); // ÌöåÏ†ÑÍ∞Å Ï†úÌïú
 
         yRotation += mouseX;
 
         transform.localRotation = Quaternion.Euler(0f, yRotation, 0f);
-        Camera.main.transform.localRotation = Quaternion.Euler(xRotation, yRotation, 0f); // ƒ´∏ﬁ∂Û »∏¿¸∏∏ ¿ßæ∆∑° º≥¡§
+        Camera.main.transform.localRotation = Quaternion.Euler(xRotation, yRotation, 0f); // Ïπ¥Î©îÎùº ÌöåÏ†ÑÎßå ÏúÑÏïÑÎûò ÏÑ§Ï†ï
 
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            targetRange.SetActive(true);
-            Invoke("TargetActive", 1f);
+            OnFieldNormalAttack();
         }
+
+        if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKey(KeyCode.Mouse1))
+        {
+            OnRunButtonClick();
+        }
+
+
     }
 
+    public void OnFieldNormalAttack()
+    {
+        targetRange.SetActive(true);
+        Invoke("TargetActive", 1f);
+    }
 
     private void TargetActive()
     {
         targetRange.SetActive(false);
     }
 
+    public void OnRunButtonClick()
+    {
+        isRun = !isRun;
+        ColorBlock colorBlock = runButton.colors;
+        if (isRun)
+        {
+            colorBlock.normalColor = Color.gray;
+            colorBlock.selectedColor = Color.gray;
+        }
+        else
+        {
+            colorBlock.normalColor = Color.white;
+            colorBlock.selectedColor = Color.white;
+        }
+        runButton.colors = colorBlock;
+    }
+    
 
 
     

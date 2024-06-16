@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public abstract class Character : MonoBehaviour, IComparable<Character>
 {
@@ -49,7 +50,10 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
 
     private void Update()
     {
+        if(SceneManager.GetActiveScene().name != "FieldScene")
+        {
         UpdatePosition();
+        }
     }
 
     private void UpdatePosition()
