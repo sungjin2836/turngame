@@ -14,7 +14,9 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
     public int actionGauge;
     public int _currentActionGauge;
 
-    
+    [HideInInspector] public Vector3 startPos;
+    protected Vector3 TargetPos;
+
     public bool isDead { get; private set; }
 
     private Animator _animator;
@@ -27,12 +29,24 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
     }
 
     public int finalSpeed { get; protected set; }
-    public int currentActionGauge { get => _currentActionGauge; protected set => _currentActionGauge = Mathf.Clamp(value, 0, 1000); }
+
+    public int currentActionGauge
+    {
+        get => _currentActionGauge;
+        protected set => _currentActionGauge = Mathf.Clamp(value, 0, 1000);
+    }
+
     public int finalAttackStat { get; protected set; }
 
     protected virtual void Awake()
     {
         _animator = GetComponent<Animator>();
+        startPos = transform.position;
+    }
+
+    private void FixedUpdate()
+    {
+        MoveTowards();
     }
 
     public abstract void Initialize(int id);
@@ -43,13 +57,13 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
     }
 
     public virtual void GetActionGauge()
-    { 
-        actionGauge = Mathf.FloorToInt(10000/speed);
+    {
+        actionGauge = Mathf.FloorToInt(10000 / speed);
     }
 
     public virtual int NormalAttack(Character target, float value = 1f)
     {
-        
+        TargetPos = target.transform.position + target.transform.forward;
         int dam = target.GetDamage(Mathf.FloorToInt(finalAttackStat * value));
         Debug.Log($"{target.charName}의 체력은 {target.hp}/{target.maxHP}");
         return dam;
@@ -67,6 +81,7 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
         {
             hp -= damage;
         }
+
         if (hp == 0) Die();
         return damage;
     }
@@ -80,7 +95,6 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
     {
         isDead = true;
         Debug.Log($"{charName}은 죽었다!");
-        
     }
 
     public virtual void TurnEnd()
@@ -90,7 +104,7 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
 
     private void CorrectionSpeed()
     {
-        int CorrectionValue = UnityEngine.Random.Range( 0, 5);
+        int CorrectionValue = UnityEngine.Random.Range(0, 5);
     }
 
     public void AddGauge(int num)
@@ -103,4 +117,15 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
         currentActionGauge = currentActionGauge - actionGauge;
     }
 
+    protected virtual void MoveTowards()
+    {
+        if (TargetPos == Vector3.zero) return;
+        transform.position = Vector3.MoveTowards(transform.position, TargetPos, .2f);
+        if (Vector3.Distance(transform.position, TargetPos) < 1e-2f) TargetPos = startPos;
+        if (Vector3.Distance(transform.position, startPos) < 1e-2f)
+        {
+            TargetPos = Vector3.zero;
+            TurnEnd();
+        }
+    }
 }

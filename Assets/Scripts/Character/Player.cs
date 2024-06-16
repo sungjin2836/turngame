@@ -37,9 +37,12 @@ public class Player : Character
         SkillDataManager.Skill normalAttackData = SkillDataManager.Instance.GetSkillData($"{id}001");
         SkillDataManager.Skill battleSkillData = SkillDataManager.Instance.GetSkillData($"{id}002");
 
-        CooperativeSkillDataManager.CooperativeSkill cooperativeSkillData1 = CooperativeSkillDataManager.Instance.GetCoSkillData($"{id}1001");
-        CooperativeSkillDataManager.CooperativeSkill cooperativeSkillData2 = CooperativeSkillDataManager.Instance.GetCoSkillData($"{id}1002");
-        CooperativeSkillDataManager.CooperativeSkill cooperativeSkillData3 = CooperativeSkillDataManager.Instance.GetCoSkillData($"{id}1003");
+        CooperativeSkillDataManager.CooperativeSkill cooperativeSkillData1 =
+            CooperativeSkillDataManager.Instance.GetCoSkillData($"{id}1001");
+        CooperativeSkillDataManager.CooperativeSkill cooperativeSkillData2 =
+            CooperativeSkillDataManager.Instance.GetCoSkillData($"{id}1002");
+        CooperativeSkillDataManager.CooperativeSkill cooperativeSkillData3 =
+            CooperativeSkillDataManager.Instance.GetCoSkillData($"{id}1003");
 
         normalAttack = gameObject.AddComponent<Skill>();
         normalAttack.skillName = normalAttackData.name;
@@ -74,10 +77,10 @@ public class Player : Character
         SetMaxHealth();
         SetHpBarPosition();
         Debug.Log($"{currentActionGauge} / {actionGauge}");
-
     }
 
-    private CooperativeSkill InitCooperativeSkillData(CooperativeSkillDataManager.CooperativeSkill cooperativeSkillData1)
+    private CooperativeSkill InitCooperativeSkillData(
+        CooperativeSkillDataManager.CooperativeSkill cooperativeSkillData1)
     {
         CooperativeSkill _cooperativeSkill = gameObject.AddComponent<CooperativeSkill>();
         _cooperativeSkill.cooperativeSkillName = cooperativeSkillData1.name;
@@ -103,10 +106,13 @@ public class Player : Character
 
     public override int NormalAttack(Character target, float value = 0.5f)
     {
+        BattleCamera.MoveTo("Attack Camera", transform, target.transform);
+        TargetPos = target.startPos + target.transform.forward;
         Debug.Log("NormalAttack의 공격력" + finalAttackStat);
         var enemy = target as Enemy;
         if (enemy.ContainsElement(element)) enemy.DamageToShield(30);
-        int dam = enemy.GetDamage(Mathf.FloorToInt(finalAttackStat * normalAttack.damageAttr1[0] * 0.9f), enemy.HasShield());
+        int dam = enemy.GetDamage(Mathf.FloorToInt(finalAttackStat * normalAttack.damageAttr1[0] * 0.9f),
+            enemy.HasShield());
         //Debug.Log($"{enemy.charName}의 체력은 {enemy.hp}/{enemy.maxHP}, 실드는 {enemy.shield}/{enemy.maxShield}");
 
         return dam;
@@ -115,14 +121,14 @@ public class Player : Character
 
     public virtual void BattleSkill(Character target)
     {
+        BattleCamera.MoveTo("Attack Camera", transform, target.transform);
+        TargetPos = target.startPos + target.transform.forward;
         // 스킬
         var enemy = target as Enemy;
         if (enemy.ContainsElement(element)) enemy.DamageToShield(60);
         int dam = enemy.GetDamage(Mathf.FloorToInt(attackStat * battleSkill.damageAttr1[0]), enemy.HasShield());
         enemy.speed -= 10;
         Debug.Log($"스킬 사용 {enemy.charName}의 체력은 {enemy.hp}/{enemy.maxHP}, 실드는 {enemy.shield}/{enemy.maxShield}");
-
-
     }
 
     public virtual void BattleSkill(Character[] target)
@@ -145,7 +151,6 @@ public class Player : Character
         if (isSameElement)
         {
             dam = Mathf.FloorToInt(attackStat * normalAttack.damageAttr1[0]);
-            
         }
         else
         {
@@ -163,6 +168,8 @@ public class Player : Character
 
     public virtual void BattleSkill(Player target)
     {
+        BattleCamera.MoveTo("Heal Camera", target.transform, target.transform);
+        TargetPos = transform.position + transform.up;
         int healamount = Mathf.FloorToInt(maxHP * battleSkill.damageAttr1[0]);
 
         target.hp += Mathf.FloorToInt(healamount);
@@ -173,12 +180,12 @@ public class Player : Character
     public void CooperativeSkillAttack(List<Character> _players, Character _charTarget, List<GameObject> enemies)
     {
         int partyMemberId = _players[1].gameObject.GetComponent<CharacterData>().CharacterID;
-        
+
         CooperativeSkill currentCooperativeSkill = new CooperativeSkill();
 
         currentCooperativeSkill = CheckCooperativeID(partyMemberId);
 
-        if(currentCooperativeSkill == null)
+        if (currentCooperativeSkill == null)
         {
             Debug.Log($"현재 협동스킬이 널값임 {currentCooperativeSkill}");
             return;
@@ -196,6 +203,7 @@ public class Player : Character
                         CoSkillAttackAndHeal(currentCooperativeSkill);
                         break;
                 }
+
                 break;
             case (CooperativeSkillDataManager.DamageType.heal):
                 switch (currentCooperativeSkill.damageAttr2Type)
@@ -207,8 +215,8 @@ public class Player : Character
                         CoSkillDoubleHeal(currentCooperativeSkill);
                         break;
                 }
+
                 break;
-            
         }
         // 광역 딜, 광역 딜
         // 광역 딜, 광역 힐
@@ -268,6 +276,7 @@ public class Player : Character
                     case (CooperativeSkillDataManager.Range.all):
                         break;
                 }
+
                 break;
             case (CooperativeSkillDataManager.Range.all):
                 switch (currentCooperativeSkill.range2)
@@ -277,6 +286,7 @@ public class Player : Character
                     case (CooperativeSkillDataManager.Range.all):
                         break;
                 }
+
                 break;
         }
     }
@@ -293,6 +303,7 @@ public class Player : Character
                     case (CooperativeSkillDataManager.Range.all):
                         break;
                 }
+
                 break;
             case (CooperativeSkillDataManager.Range.all):
                 switch (currentCooperativeSkill.range2)
@@ -302,6 +313,7 @@ public class Player : Character
                     case (CooperativeSkillDataManager.Range.all):
                         break;
                 }
+
                 break;
         }
     }
@@ -319,6 +331,7 @@ public class Player : Character
                     case (CooperativeSkillDataManager.Range.all):
                         break;
                 }
+
                 break;
             case (CooperativeSkillDataManager.Range.all):
                 switch (currentCooperativeSkill.range2)
@@ -328,6 +341,7 @@ public class Player : Character
                     case (CooperativeSkillDataManager.Range.all):
                         break;
                 }
+
                 break;
         }
     }
@@ -346,9 +360,9 @@ public class Player : Character
         {
             return cooperativeSkill3;
         }
+
         return null;
     }
-
 
 
     public void SetMaxHealth()
@@ -356,6 +370,7 @@ public class Player : Character
         playerHpBar.maxValue = maxHP;
         playerHpBar.value = hp;
     }
+
     public void SetHealth()
     {
         Debug.Log($"sethealth 매개변수 : {hp}, 실제 체력 {_hp}");
@@ -377,5 +392,4 @@ public class Player : Character
     {
         finalSpeed = speed;
     }
-
 }

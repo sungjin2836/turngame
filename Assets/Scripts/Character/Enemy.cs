@@ -130,6 +130,7 @@ public class Enemy : Character
 
     public int NormalAttack(Player target, float value = 0.5f)
     {
+        TargetPos = target.startPos + target.transform.forward;
         Debug.Log($" {charName}의 NormalAttack의 공격력 {attackStat}");
         var player = target as Player;
         int dam = player.GetDamage(Mathf.FloorToInt(attackStat));

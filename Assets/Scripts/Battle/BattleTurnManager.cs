@@ -135,6 +135,7 @@ public class BattleTurnManager : MonoBehaviour
                     if(TurnPlayers.Count > 0)
                     {
                         basicTarget = rayHit.collider.gameObject;
+                        BattleCamera.m_Enemy = basicTarget.transform;
                         Debug.Log($" 타겟 이름 : {basicTarget.name}");
                         CheckElementChose(basicTarget, TurnPlayers[0]);
                     }
@@ -198,6 +199,7 @@ public class BattleTurnManager : MonoBehaviour
         for (int i = 0; i < TurnPlayers.Count; i++)
         {
             uIManager.TurnPlayerTextPrint(i, TurnPlayers[i].charName);
+            BattleCamera.MoveTo("Ready Camera", TurnPlayers[0].transform, basicTarget.transform);
         }
     }
 
