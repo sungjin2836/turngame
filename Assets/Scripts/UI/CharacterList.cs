@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class CharacterList : MonoBehaviour
@@ -63,21 +62,32 @@ public class CharacterList : MonoBehaviour
 
     private void Awake()
     {
-        Initialize();
-
-        foreach (var button in uiObjects.view.pageButtons)
-        {
-            button.interactable = !_panelPair[button].gameObject.activeSelf;
-        }
+        InitializeUI();
+        LoadCharacterList();
     }
 
-    private void Initialize()
+    private void InitializeUI()
     {
         if (!TryAdd(uiObjects.view)) return;
 
         foreach (var button in uiObjects.view.pageButtons)
         {
             button.onClick.AddListener(() => { EnablePanel(button); });
+        }
+        
+        foreach (var button in uiObjects.view.pageButtons)
+        {
+            button.interactable = !_panelPair[button].gameObject.activeSelf;
+        }
+    }
+
+    private void LoadCharacterList()
+    {
+        var userData = UserDataManager.Instance.UserData;
+        var characters = userData.ownedCharacter;
+        foreach (UserDataManager.OwnedCharacter character in characters)
+        {
+            AddCharacterIcon(character.characterID);
         }
     }
 
@@ -120,7 +130,7 @@ public class CharacterList : MonoBehaviour
         uiObjects.details.levelUpButton.onClick.RemoveAllListeners();
     }
 
-    public void AddCharacter(int id)
+    public void AddCharacterIcon(int id)
     {
         CharacterIcon icon = new GameObject($"Icon_{id}").AddComponent<CharacterIcon>();
         icon.transform.SetParent(uiObjects.view.content);
@@ -154,6 +164,7 @@ public class CharacterList : MonoBehaviour
 
     private static void LevelUp()
     {
+        if (_currentCharacter.level >= 20) return;
         _currentCharacter.level++;
         _currentCharacter.hp += 6;
         _currentCharacter.attackStat += 4;
@@ -178,8 +189,8 @@ public class CharacterList : MonoBehaviour
         equipments.speedText.text = $"{_currentCharacter.speed}";
     }
 
-    public string WriteData()
+    public DataManager.Player WriteData()
     {
-        return JsonUtility.ToJson(_currentCharacter);
+        return _currentCharacter;
     }
 }
