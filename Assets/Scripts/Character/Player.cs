@@ -35,9 +35,9 @@ public class Player : Character
         var userOwnedCharacter = LoadUserOwnedCharacter(id);
         charName = defaultPlayerData.charName;
         level = userOwnedCharacter.currentLevel;
-        maxHP = defaultPlayerData.hp + level * 6;
+        maxHP = defaultPlayerData.hp + level * STAT_HP;
         speed = defaultPlayerData.speed;
-        attackStat = defaultPlayerData.attackStat + level * 4;
+        attackStat = defaultPlayerData.attackStat + level * STAT_ATTACK;
         element = defaultPlayerData.elem;
         actionGauge = Mathf.FloorToInt(10000 / defaultPlayerData.speed);
 

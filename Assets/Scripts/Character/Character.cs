@@ -3,6 +3,9 @@ using UnityEngine;
 
 public abstract class Character : MonoBehaviour, IComparable<Character>
 {
+    public const int STAT_HP = 6;
+    public const int STAT_ATTACK = 4;
+
     public Action OnTurnEnd;
 
     [Header("기본 캐릭터 정보")] public string charName;
@@ -102,5 +105,4 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
     {
         currentActionGauge = currentActionGauge - actionGauge;
     }
-
 }

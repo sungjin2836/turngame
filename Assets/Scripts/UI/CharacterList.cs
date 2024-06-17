@@ -8,8 +8,6 @@ using UnityEngine.UI;
 public class CharacterList : MonoBehaviour
 {
     private const int PANEL_COUNT = 2;
-    private const int STAT_HP = 6;
-    private const int STAT_ATTACK = 4;
 
     private int _characterID;
     private static DataManager.Player _currentCharacter;
@@ -147,8 +145,8 @@ public class CharacterList : MonoBehaviour
         icon.GetCharacterData(id);
         
         icon.Data.level = level;
-        icon.Data.hp += level * STAT_HP;
-        icon.Data.attackStat += level * STAT_ATTACK;
+        icon.Data.hp += level * Character.STAT_HP;
+        icon.Data.attackStat += level * Character.STAT_ATTACK;
         
         _expPair.Add(icon.Data, exp);
 
@@ -181,8 +179,8 @@ public class CharacterList : MonoBehaviour
     private static void LevelUp()
     {
         _currentCharacter.level++;
-        _currentCharacter.hp += STAT_HP;
-        _currentCharacter.attackStat += STAT_ATTACK;
+        _currentCharacter.hp += Character.STAT_HP;
+        _currentCharacter.attackStat += Character.STAT_ATTACK;
     }
 
     private void UpdateUI()
