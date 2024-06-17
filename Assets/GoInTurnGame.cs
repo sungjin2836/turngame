@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static UnityEditor.Rendering.FilterWindow;
 
 public class GoInTurnGame : MonoBehaviour
 {
@@ -38,10 +35,10 @@ public class GoInTurnGame : MonoBehaviour
             ObjectManager objectManager = other.gameObject.GetComponentInParent<ObjectManager>();
             other.gameObject.SetActive(false);
             objectManager.checkObject();
-            Debug.Log("¾ÆÀÌÅÛ È¹µæ");
+            Debug.Log("ì•„ì´í…œ íšë“");
         }
 
-        //ÆäÀÌµåÀÎÆäÀÌµå¾Æ¿ô
+        //í˜ì´ë“œì¸í˜ì´ë“œì•„ì›ƒ
         
     }
 

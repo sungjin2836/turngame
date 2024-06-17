@@ -7,10 +7,13 @@ public class StartUIManager : MonoBehaviour
 {
     [SerializeField]
     private RectTransform startClickArea;
+    [SerializeField]
+    private RectTransform exitButton;
 
     void Start()
     {
         AddEvent(startClickArea, MoveToFieldScene);
+        AddEvent(exitButton, ExitGame);
     }
 
     private void MoveToFieldScene()
@@ -33,5 +36,10 @@ public class StartUIManager : MonoBehaviour
 
         entry.callback.AddListener((eventData) => callback());
         targetTrigger.triggers.Add(entry);
+    }
+
+    private void ExitGame()
+    {
+        Application.Quit();
     }
 }
