@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using static SkillDataManager;
 
 public class Skill : MonoBehaviour

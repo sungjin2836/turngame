@@ -700,6 +700,7 @@ MonoBehaviour:
   cooperativeSkill2: {fileID: 0}
   cooperativeSkill3: {fileID: 0}
   playerHpBar: {fileID: 1201049530}
+  playerImage: {fileID: 7210355368033204067, guid: 1fae44a158ff0694ab40cfd352eefba8, type: 3}
 --- !u!114 &245203594
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2588,6 +2589,7 @@ MonoBehaviour:
   cooperativeSkill2: {fileID: 0}
   cooperativeSkill3: {fileID: 0}
   playerHpBar: {fileID: 534395008}
+  playerImage: {fileID: -1476703378631970907, guid: a079b4ad120a1e6439628c14b578648e, type: 3}
 --- !u!114 &1260060014
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3444,6 +3446,7 @@ MonoBehaviour:
   cooperativeSkill2: {fileID: 0}
   cooperativeSkill3: {fileID: 0}
   playerHpBar: {fileID: 1587659341}
+  playerImage: {fileID: 8141823094621491818, guid: 2a507a4a332ff624796dd5971e4bf700, type: 3}
 --- !u!114 &1699831501
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4205,6 +4208,7 @@ MonoBehaviour:
   cooperativeSkill2: {fileID: 0}
   cooperativeSkill3: {fileID: 0}
   playerHpBar: {fileID: 607188904}
+  playerImage: {fileID: 6421376503784187215, guid: b5fb1255b93594e4d835cf1b7b381fc1, type: 3}
 --- !u!114 &2088956609
 MonoBehaviour:
   m_ObjectHideFlags: 0

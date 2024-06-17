@@ -1,7 +1,10 @@
+using System.Collections;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.Rendering.FilterWindow;
+using static System.Net.Mime.MediaTypeNames;
+// static UnityEditor.Rendering.FilterWindow;
 
 public class Enemy : Character
 {
@@ -11,15 +14,24 @@ public class Enemy : Character
     public ElementType[] weakElements;
 
     [SerializeField]
+    private GameObject DamageTextPref;
+    [SerializeField]
     GameObject BarPosition;
+    private TextMeshProUGUI damageText;
     [SerializeField]
     Slider enemyShieldBar;
     [SerializeField]
     Slider enemyHpBar;
 
+    Canvas canvas;
+
     int _shield;
     int ActionGaugeDebuff = 10;
+
+    float duration =  2f;
     Camera mainCamera;
+
+    bool istarget;
 
     public int hp
     {
@@ -33,6 +45,7 @@ public class Enemy : Character
         get => _shield;
         private set => _shield = Mathf.Clamp(value, 0, maxShield);
     }
+
 
     public override void Initialize(int id)
     {
@@ -54,14 +67,26 @@ public class Enemy : Character
 
         mainCamera = Camera.main;
 
+        canvas = FindAnyObjectByType<Canvas>();
+
+        istarget = false;
+
         if (enemyHpBar != null && enemyShieldBar != null)
         {
             SetMaxHealth();
             SetMaxShield();
             SetBarPosition();
         }
+        
+    }
 
-        Debug.Log($"{currentActionGauge} / {actionGauge}");
+    private void Update()
+    {
+        if (enemyHpBar != null && enemyShieldBar != null)
+        {
+            SetBarPosition();
+        }
+
     }
 
     public bool ContainsElement(ElementType element)
@@ -128,6 +153,40 @@ public class Enemy : Character
         BarPosition.transform.position = screenPosition;
     }
 
+    public void SetDamageText(string _damageText)
+    {
+        GameObject damageTextInstance = Instantiate(DamageTextPref, canvas.transform);
+
+        //damageText.text = _damageText;
+        //damageText = GetComponent<TextMeshProUGUI>();
+        damageText = damageTextInstance.GetComponent<TextMeshProUGUI>();
+        damageText.text = _damageText;
+
+        Vector3 screenPosition = mainCamera.WorldToScreenPoint(gameObject.transform.position + Vector3.down);
+        damageTextInstance.transform.position = screenPosition;
+
+        Debug.Log($"{charName}이 받은 데미지 {_damageText} 호출됨");
+        StartCoroutine(FadeDamageText(damageTextInstance));
+    }
+
+    IEnumerator FadeDamageText(GameObject _damageTextInstance)
+    {
+        float elapsedTime = 0f;
+        float initialSize = damageText.fontSize;
+        Debug.Log($"{charName}");
+        while (elapsedTime < duration && _damageTextInstance != null)
+        {
+            elapsedTime += Time.deltaTime;
+            damageText.fontSize = Mathf.Lerp(initialSize, 20f, elapsedTime / duration);
+
+            Vector3 screenPosition = mainCamera.WorldToScreenPoint(transform.position + (Vector3.down / 2f) + (Vector3.left * 1.4f));
+            _damageTextInstance.transform.position = screenPosition;
+
+            yield return null;
+        }
+    }
+
+
     public int NormalAttack(Player target, float value = 0.5f)
     {
         MoveToTarget(target);
@@ -154,6 +213,16 @@ public class Enemy : Character
         {
             currentActionGauge += ActionGaugeDebuff;
         }
+    }
+
+    public void SetOutLineActive()
+    {
+        gameObject.GetComponent<Outline>().enabled = true;
+    }
+
+    public void SetOutLineActiveFalse()
+    {
+        gameObject.GetComponent<Outline>().enabled = false;
     }
 
 }

@@ -107,12 +107,16 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
         if (hasShield)
         {
             hp -= finaldam;
+            if (hp == 0) Die();
             return finaldam;
         }
         else
         {
             hp -= damage;
+            
         }
+
+        Debug.Log($"{hasShield}, {damage}, {finaldam}, {hp}, {_hp}, {name}");
 
         if (hp == 0) Die();
         return damage;
