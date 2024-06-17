@@ -20,5 +20,6 @@ public class FieldPause : Pause
         base.TogglePauseState();
         TogglePauseCanvas(pauseOutsideBorder);
         Time.timeScale = isPause ? 0 : 1;
+        Cursor.lockState = isPause ? CursorLockMode.None : CursorLockMode.Locked;
     }
 }
