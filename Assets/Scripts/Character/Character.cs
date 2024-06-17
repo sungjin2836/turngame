@@ -105,4 +105,19 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
     {
         currentActionGauge = currentActionGauge - actionGauge;
     }
+
+    public static Color ElementColor(ElementType type)
+    {
+        return type switch
+        {
+            ElementType.Physical => Color.white,
+            ElementType.Fire => Color.red,
+            ElementType.Ice => Color.cyan,
+            ElementType.Lightning => new Color(0.5f, 0, 1f),
+            ElementType.Wind => Color.green,
+            ElementType.Quantum => new Color(0.3f, 0.3f, 0.9f),
+            ElementType.Imaginary => Color.yellow,
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+        };
+    }
 }

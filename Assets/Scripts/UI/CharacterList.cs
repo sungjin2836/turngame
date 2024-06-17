@@ -187,7 +187,7 @@ public class CharacterList : MonoBehaviour
     {
         UIObject.ListDetail details = uiObjects.details;
         /*details.elementImage.sprite = Resources.Load<Sprite>($"Images/DoNotShare/{(int)_currentCharacter.elem}");*/
-        details.elementImage.color = ElementColor(_currentCharacter.elem);
+        details.elementImage.color = Character.ElementColor(_currentCharacter.elem);
         details.nameText.text = _currentCharacter.charName;
         details.levelText.text = $"Lv.{_currentCharacter.level}/20";
         details.expSlider.maxValue = MaxExp;
@@ -214,20 +214,5 @@ public class CharacterList : MonoBehaviour
         FileInfo file = new(path);
         file.Directory.Create();
         File.WriteAllText(file.FullName, jsonData);
-    }
-
-    private static Color ElementColor(ElementType type)
-    {
-        return type switch
-        {
-            ElementType.Physical => Color.white,
-            ElementType.Fire => Color.red,
-            ElementType.Ice => Color.cyan,
-            ElementType.Lightning => new Color(0.5f, 0, 1f),
-            ElementType.Wind => Color.green,
-            ElementType.Quantum => new Color(0.3f, 0.3f, 0.9f),
-            ElementType.Imaginary => Color.yellow,
-            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
-        };
     }
 }
