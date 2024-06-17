@@ -28,6 +28,21 @@ public class PlayerMove : MonoBehaviour
 
     void Update()
     {
+        Movement();
+    }
+
+
+    private void Movement()
+    {
+        // 일시정지일 때 움직임 기능 비활성화
+        if (Pause.isPause)
+        {
+            UnityEngine.Cursor.lockState = CursorLockMode.None;
+            return;
+        }
+
+        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+
         float xMove = Input.GetAxis("Horizontal");
         float zMove = Input.GetAxis("Vertical");
 
@@ -57,13 +72,8 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-
     private void TargetActive()
     {
         targetRange.SetActive(false);
     }
-
-
-
-    
 }

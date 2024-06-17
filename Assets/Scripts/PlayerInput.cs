@@ -7,7 +7,8 @@ public enum KeyAction
     NormalAttack,
     BattleSkill,
     Sprint,
-    Interact
+    Interact,
+    Pause
 }
 
 public class PlayerInput : MonoBehaviour
