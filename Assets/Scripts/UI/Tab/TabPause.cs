@@ -7,7 +7,7 @@ public class TabPause : Pause
     [SerializeField]
     private RectTransform tabContentContainer;
 
-    public override void Start()
+    protected override void Start()
     {
         base.Start();
 

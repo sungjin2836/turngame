@@ -13,7 +13,7 @@ public class Pause : MonoBehaviour
     [SerializeField]
     private RectTransform closeButton;
 
-    public virtual void Start()
+    protected virtual void Start()
     {
         TogglePauseCanvas(pausePanel);
 

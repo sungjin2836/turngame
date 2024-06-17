@@ -13,7 +13,7 @@ public class BattlePause : Pause
     [SerializeField]
     private RectTransform exitButton;
 
-    public override void Start()
+    protected override void Start()
     {
         base.Start();
 

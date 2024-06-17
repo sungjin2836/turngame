@@ -7,7 +7,7 @@ public class FieldPause : Pause
     [SerializeField]
     private RectTransform pauseOutsideBorder;
 
-    public override void Start()
+    protected override void Start()
     {
         base.Start();
 
