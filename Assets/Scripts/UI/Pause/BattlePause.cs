@@ -21,6 +21,7 @@ public class BattlePause : Pause
         AddToggleEvent(continueButton);
         AddEvent(exitButton, ExitToFieldScene);
         TogglePauseCanvas(pauseOutsideBorder);
+        Cursor.lockState = CursorLockMode.None;
     }
 
     protected override void TogglePauseState()
