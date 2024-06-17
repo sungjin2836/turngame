@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public abstract class Character : MonoBehaviour, IComparable<Character>
 {
@@ -46,7 +47,10 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
 
     private void FixedUpdate()
     {
-        MoveTowards();
+        if(SceneManager.GetActiveScene().name != "FieldScene")
+        {
+            MoveTowards();
+        }
     }
 
     public abstract void Initialize(int id);
@@ -75,12 +79,16 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
         if (hasShield)
         {
             hp -= finaldam;
+            if (hp == 0) Die();
             return finaldam;
         }
         else
         {
             hp -= damage;
+            
         }
+
+        Debug.Log($"{hasShield}, {damage}, {finaldam}, {hp}, {_hp}, {name}");
 
         if (hp == 0) Die();
         return damage;
@@ -97,7 +105,7 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
         Debug.Log($"{charName}은 죽었다!");
     }
 
-    public virtual void TurnEnd()
+    protected virtual void TurnEnd()
     {
         OnTurnEnd?.Invoke();
     }
