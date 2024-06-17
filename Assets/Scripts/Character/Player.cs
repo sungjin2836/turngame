@@ -7,7 +7,8 @@ using static SkillDataManager;
 
 public class Player : Character
 {
-    [Header("플레이어 캐릭터 정보")] public ElementType element;
+    [Header("플레이어 캐릭터 정보")]
+    public ElementType element;
 
     public Skill normalAttack;
     public Skill battleSkill;
@@ -18,6 +19,7 @@ public class Player : Character
 
 
     public Slider playerHpBar;
+    public Image playerImage;
 
     private Camera mainCamera;
 
@@ -32,7 +34,8 @@ public class Player : Character
         element = playerData.elem;
         actionGauge = Mathf.FloorToInt(10000 / playerData.speed);
 
-        Debug.Log("여기까지 되나1");
+        Debug.Log("해치웠나? 1");
+        //Debug.Log("여기까지 되나1");
 
         SkillDataManager.Skill normalAttackData = SkillDataManager.Instance.GetSkillData($"{id}001");
         SkillDataManager.Skill battleSkillData = SkillDataManager.Instance.GetSkillData($"{id}002");
@@ -57,7 +60,8 @@ public class Player : Character
         battleSkill.damageAttr1Type = battleSkillData.damageAttr1Type;
         battleSkill.damageAttr2Type = battleSkillData.damageAttr2Type;
 
-        Debug.Log("여기까지 되나2");
+        Debug.Log("해치웠나? 2");
+        //Debug.Log("여기까지 되나2");
 
         cooperativeSkill1 = InitCooperativeSkillData(cooperativeSkillData1);
         cooperativeSkill2 = InitCooperativeSkillData(cooperativeSkillData2);
@@ -67,13 +71,16 @@ public class Player : Character
         finalSpeed = speed;
         finalAttackStat = attackStat;
         currentActionGauge = 1;
-        //Debug.Log("파이널 어택"+finalAttackStat);
 
         mainCamera = Camera.main;
 
         SetMaxHealth();
-        SetHpBarPosition();
+        //SetHpBarPosition();
         Debug.Log($"{currentActionGauge} / {actionGauge}");
+
+        playerImage.color = Color.white;
+
+        SetColor(playerImage);
 
     }
 
@@ -103,10 +110,14 @@ public class Player : Character
 
     public override int NormalAttack(Character target, float value = 0.5f)
     {
+        MoveToTarget(target);
+        
         Debug.Log("NormalAttack의 공격력" + finalAttackStat);
         var enemy = target as Enemy;
         if (enemy.ContainsElement(element)) enemy.DamageToShield(30);
         int dam = enemy.GetDamage(Mathf.FloorToInt(finalAttackStat * normalAttack.damageAttr1[0] * 0.9f), enemy.HasShield());
+        enemy.SetDamageText(dam.ToString());
+        enemy.SetHealth();
         //Debug.Log($"{enemy.charName}의 체력은 {enemy.hp}/{enemy.maxHP}, 실드는 {enemy.shield}/{enemy.maxShield}");
 
         return dam;
@@ -115,14 +126,14 @@ public class Player : Character
 
     public virtual void BattleSkill(Character target)
     {
+        MoveToTarget(target);
+
         // 스킬
         var enemy = target as Enemy;
         if (enemy.ContainsElement(element)) enemy.DamageToShield(60);
         int dam = enemy.GetDamage(Mathf.FloorToInt(attackStat * battleSkill.damageAttr1[0]), enemy.HasShield());
-        enemy.speed -= 10;
-        Debug.Log($"스킬 사용 {enemy.charName}의 체력은 {enemy.hp}/{enemy.maxHP}, 실드는 {enemy.shield}/{enemy.maxShield}");
-
-
+        enemy.SetDamageText(dam.ToString());
+        Debug.Log($"스킬 사용 {enemy.charName}의 체력은 {enemy.hp}/{enemy.maxHP}, 실드는 {enemy.shield}/{enemy.maxShield} 죽음 여부{enemy.isDead}");
     }
 
     public virtual void BattleSkill(Character[] target)
@@ -133,26 +144,26 @@ public class Player : Character
             var enemy = target[i] as Enemy;
             if (enemy.ContainsElement(element)) enemy.DamageToShield(60);
             int dam = enemy.GetDamage(Mathf.FloorToInt(attackStat * battleSkill.damageAttr1[0]), enemy.HasShield());
+            enemy.SetDamageText(dam.ToString());
             enemy.SetHealth();
             enemy.SetShield();
-            Debug.Log($"광역스킬 사용 {enemy.charName}의 체력은 {enemy.hp}/{enemy.maxHP}, 실드는 {enemy.shield}/{enemy.maxShield}");
+            Debug.Log($"광역스킬 사용 {enemy.charName}의 체력은 {enemy.hp}/{enemy.maxHP}, 실드는 {enemy.shield}/{enemy.maxShield} 죽음 여부 {enemy.isDead}");
         }
     }
 
     public int PrevNormalSkill(bool isSameElement)
     {
-        int dam;
+        int damage;
         if (isSameElement)
         {
-            dam = Mathf.FloorToInt(attackStat * normalAttack.damageAttr1[0]);
-            
+            damage = Mathf.FloorToInt(attackStat * normalAttack.damageAttr1[0]);
         }
         else
         {
-            dam = Mathf.FloorToInt(attackStat * normalAttack.damageAttr1[0] * 0.9f);
+            damage = Mathf.FloorToInt(attackStat * normalAttack.damageAttr1[0] * 0.9f);
         }
 
-        return dam;
+        return damage;
     }
 
     public int PrevBattleSkill()
@@ -167,49 +178,70 @@ public class Player : Character
 
         target.hp += Mathf.FloorToInt(healamount);
         target.SetHealth();
-        Debug.Log($"{charName}이 {target.charName}을 {healamount}만큼 회복 시켜 {target.hp}가 됐다.");
+        //Debug.Log($"{charName}이 {target.charName}을 {healamount}만큼 회복 시켜 {target.hp}가 됐다.");
     }
 
-    public void CooperativeSkillAttack(List<Character> _players, Character _charTarget, List<GameObject> enemies)
+    public void CooperativeSkillAttack(List<Character> _turnplayers, Character _charTarget, Character[] targets, Player[] _players, Player _healCharTarget)
     {
-        int partyMemberId = _players[1].gameObject.GetComponent<CharacterData>().CharacterID;
-        
-        CooperativeSkill currentCooperativeSkill = new CooperativeSkill();
+        int partyMemberId = _turnplayers[1].gameObject.GetComponent<CharacterData>().CharacterID;
+
+        CooperativeSkill currentCooperativeSkill = gameObject.GetComponent<CooperativeSkill>();
 
         currentCooperativeSkill = CheckCooperativeID(partyMemberId);
 
-        if(currentCooperativeSkill == null)
+        if (currentCooperativeSkill == null)
         {
             Debug.Log($"현재 협동스킬이 널값임 {currentCooperativeSkill}");
             return;
         }
 
-        switch (currentCooperativeSkill.damageAttr1Type)
+        if (currentCooperativeSkill.damageAttr1Type == CooperativeSkillDataManager.DamageType.attack)
         {
-            case (CooperativeSkillDataManager.DamageType.attack):
-                switch (currentCooperativeSkill.damageAttr2Type)
-                {
-                    case (CooperativeSkillDataManager.DamageType.attack):
-                        CoSkillDoubleAttack(currentCooperativeSkill);
-                        break;
-                    case (CooperativeSkillDataManager.DamageType.heal):
-                        CoSkillAttackAndHeal(currentCooperativeSkill);
-                        break;
-                }
-                break;
-            case (CooperativeSkillDataManager.DamageType.heal):
-                switch (currentCooperativeSkill.damageAttr2Type)
-                {
-                    case (CooperativeSkillDataManager.DamageType.attack):
-                        CoSkillHealAndAttack(currentCooperativeSkill);
-                        break;
-                    case (CooperativeSkillDataManager.DamageType.heal):
-                        CoSkillDoubleHeal(currentCooperativeSkill);
-                        break;
-                }
-                break;
-            
+            CooperativeSkillAttack(_charTarget, targets, currentCooperativeSkill);
         }
+        else if (currentCooperativeSkill.damageAttr1Type == CooperativeSkillDataManager.DamageType.heal)
+        {
+            if (currentCooperativeSkill.range1 == CooperativeSkillDataManager.Range.all)
+            {
+                CooperativeSkillHeal(_players, currentCooperativeSkill);
+            }
+            else if(currentCooperativeSkill.range1 == CooperativeSkillDataManager.Range.single)
+            {
+                Player[] healCharTarget = { _healCharTarget};
+                CooperativeSkillHeal(healCharTarget, currentCooperativeSkill);
+            }
+        }
+
+
+
+
+
+        //switch (currentCooperativeSkill.damageAttr1Type)
+        //{
+        //    case (CooperativeSkillDataManager.DamageType.attack):
+        //        switch (currentCooperativeSkill.damageAttr2Type)
+        //        {
+        //            case (CooperativeSkillDataManager.DamageType.attack):
+        //                CoSkillDoubleAttack(currentCooperativeSkill);
+        //                break;
+        //            case (CooperativeSkillDataManager.DamageType.heal):
+        //                CoSkillAttackAndHeal(currentCooperativeSkill);
+        //                break;
+        //        }
+        //        break;
+        //    case (CooperativeSkillDataManager.DamageType.heal):
+        //        switch (currentCooperativeSkill.damageAttr2Type)
+        //        {
+        //            case (CooperativeSkillDataManager.DamageType.attack):
+        //                CoSkillHealAndAttack(currentCooperativeSkill);
+        //                break;
+        //            case (CooperativeSkillDataManager.DamageType.heal):
+        //                CoSkillDoubleHeal(currentCooperativeSkill);
+        //                break;
+        //        }
+        //        break;
+
+        //}
         // 광역 딜, 광역 딜
         // 광역 딜, 광역 힐
         // 광역 딜, 단일 딜
@@ -218,6 +250,46 @@ public class Player : Character
         // 단일 딜, 단일 딜
         // 단일 힐, 광역 딜
         // 단일 힐, 단일 딜
+    }
+
+    private void CooperativeSkillHeal(Player[] _players, CooperativeSkill currentCooperativeSkill)
+    {
+        int healamount = Mathf.FloorToInt(maxHP * currentCooperativeSkill.damageAttr1[0]);
+
+        for (int i = 0; i < _players.Length; i++)
+        {
+            _players[i].hp += Mathf.FloorToInt(healamount);
+            _players[i].SetHealth();
+            Debug.Log($"{charName}이 {_players[i].charName}을 {healamount}만큼 회복 시켜 {_players[i].hp}가 됐다.");
+        }
+    }
+
+    private void CooperativeSkillAttack(Character _charTarget, Character[] targets, CooperativeSkill currentCooperativeSkill)
+    {
+        if (currentCooperativeSkill.range1 == CooperativeSkillDataManager.Range.all)
+        {
+            for (int i = 0; i < targets.Length; i++)
+            {
+                var enemy = targets[i] as Enemy;
+                if (enemy.ContainsElement(element)) enemy.DamageToShield(60);
+                int dam = enemy.GetDamage(Mathf.FloorToInt(attackStat * currentCooperativeSkill.damageAttr1[0]), enemy.HasShield());
+                enemy.SetDamageText(dam.ToString());
+                enemy.SetHealth();
+                enemy.SetShield();
+                Debug.Log($"협동스킬 사용 {enemy.charName}의 체력은 {enemy.hp}/{enemy.maxHP}, 실드는 {enemy.shield}/{enemy.maxShield}이고 데미지는 {dam}이다.");
+            }
+        }
+        else if (currentCooperativeSkill.range1 == CooperativeSkillDataManager.Range.single)
+        {
+            MoveToTarget(_charTarget);
+
+            // 스킬
+            var enemy = _charTarget as Enemy;
+            if (enemy.ContainsElement(element)) enemy.DamageToShield(60);
+            int dam = enemy.GetDamage(Mathf.FloorToInt(attackStat * currentCooperativeSkill.damageAttr1[0]), enemy.HasShield());
+            enemy.SetDamageText(dam.ToString());
+            Debug.Log($"스킬 사용 {enemy.charName}의 체력은 {enemy.hp}/{enemy.maxHP}, 실드는 {enemy.shield}/{enemy.maxShield}");
+        }
     }
 
     private void CoSkillDoubleHeal(CooperativeSkill currentCooperativeSkill)
@@ -358,7 +430,7 @@ public class Player : Character
     }
     public void SetHealth()
     {
-        Debug.Log($"sethealth 매개변수 : {hp}, 실제 체력 {_hp}");
+        //Debug.Log($"sethealth 매개변수 : {hp}, 실제 체력 {_hp}");
         playerHpBar.value = hp;
         if (hp == 0)
         {
@@ -377,5 +449,47 @@ public class Player : Character
     {
         finalSpeed = speed;
     }
+
+    protected override void MoveToTarget(Character target)
+    {
+        base.MoveToTarget(target);
+        BattleCamera.MoveTo("Attack Camera", transform, target.transform);
+    }
+
+    protected override void TurnEnd()
+    {
+        base.TurnEnd();
+        BattleCamera.MoveTo("Ready Camera");
+    }
+
+    private void SetColor(Image _image)
+    {
+        switch (charName)
+        {
+            case "개척자":
+                _image.color = Color.gray;
+                break;
+            case "삼칠이":
+                Color _color = new Vector4(0, 213, 255, 255);
+                _image.color = _color;
+                break;
+            case "단항":
+                _image.color = Color.green;
+                break;
+            case "히메코":
+                _image.color = Color.red;
+                break;
+            default: break;
+        }
+    }
+
+    public void SelectHealTarget()
+    {
+        BattleTurnManager battleTurnManager = GameObject.FindObjectOfType<BattleTurnManager>();
+        // 배틀매니저의 기존 인스턴스를 가져옴
+
+        battleTurnManager.SelectHealTarget(this.gameObject);
+    }
+
 
 }

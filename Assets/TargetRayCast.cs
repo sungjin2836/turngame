@@ -32,15 +32,21 @@ public class TargetRayCast : MonoBehaviour
                 if (_controller == null)
                 {
                     _controller = GetComponent<FieldUIController>();
-                    Debug.Log($"if (_controller == null)�̸� ���� {_controller}");
+                    Debug.Log($"if (_controller == null)이면 실행 {_controller}");
                 }
 
                 if (_controller != null)
                 {
                     _gameObject = hit.collider.gameObject;
                     rayEnemy = _gameObject.GetComponent<Enemy>();
+                    Debug.Log($"적 정보 나오는지 {rayEnemy.charName}");
                     _controller.DetectEnemy(rayEnemy);
                 }
+            }
+            else
+            {
+                _controller = GetComponent<FieldUIController>();
+                _controller.NoDetectEnemy();
             }
             
         }
