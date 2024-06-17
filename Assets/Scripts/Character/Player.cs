@@ -32,9 +32,9 @@ public class Player : Character
     public override void Initialize(int id)
     {
         var defaultPlayerData = DataManager.Instance.GetPlayerData(id);
-        var user = LoadUserOwnedCharacter(id);
+        var userOwnedCharacter = LoadUserOwnedCharacter(id);
         charName = defaultPlayerData.charName;
-        level = user.currentLevel;
+        level = userOwnedCharacter.currentLevel;
         maxHP = defaultPlayerData.hp + level * 6;
         speed = defaultPlayerData.speed;
         attackStat = defaultPlayerData.attackStat + level * 4;
