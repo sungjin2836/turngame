@@ -10,6 +10,8 @@ public class GoInTurnGame : MonoBehaviour
     private Enemy enemy;
     private CharacterData enemyIDData;
     private FieldCharDataManager fieldCharDataManager;
+
+    public static bool isSceneMove;
     
     void Start()
     {
@@ -17,33 +19,35 @@ public class GoInTurnGame : MonoBehaviour
         fieldCharDataManager = FindObjectOfType<FieldCharDataManager>();
     }
 
-    void Update()
-    {
-        
-    }
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Enemy"))
         {
-
+            isSceneMove = true;
             enemy = other.GetComponent<Enemy>();
             enemyIDData = other.GetComponent<CharacterData>();
             fieldCharDataManager.GetEnemyID(enemyIDData.CharacterID);
-            if (enemy.ContainsElement(player.element)) fieldCharDataManager.isWeakElement = true;
-                SceneManager.LoadScene("TurnTestScene");
+            if (enemy.ContainsElement(player.element)) 
+            {
+                fieldCharDataManager.isWeakElement = true;
+                FieldUIManager.Instance.DisplayWeakness(player.element);
+            }
+
+            StartCoroutine(LoadSceneWaitForSeconds(1.0f, 2));
         }
         if (other.CompareTag("Object"))
         {
             ObjectManager objectManager = other.gameObject.GetComponentInParent<ObjectManager>();
-            other.gameObject.SetActive(false);
+            other.GetComponent<BoxCollider>().enabled = false;
+            other.GetComponent<MeshRenderer>().enabled = false;
             objectManager.checkObject();
             Debug.Log("아이템 획득");
         }
-
-        //페이드인페이드아웃
-        
     }
 
-
+    private IEnumerator LoadSceneWaitForSeconds(float duration, int sceneIndex)
+    {
+        yield return new WaitForSeconds(duration);
+        SceneManager.LoadScene(sceneIndex);
+    }
 }
