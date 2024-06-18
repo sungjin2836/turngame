@@ -1171,6 +1171,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiObjects:
     view:
+      exitButton: {fileID: 689352198556514637}
       content: {fileID: 8298608134642478573}
       pageButtons:
       - {fileID: 4307190054176733437}
@@ -1178,7 +1179,6 @@ MonoBehaviour:
       panels:
       - {fileID: 4476518756833085444}
       - {fileID: 3740721732294067892}
-      exitButton: {fileID: 689352198556514637}
     details:
       elementImage: {fileID: 3222362445570225812}
       nameText: {fileID: 2256506097396608194}
@@ -3381,7 +3381,7 @@ MonoBehaviour:
     m_Right: 35
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 4
+  m_ChildAlignment: 3
   m_Spacing: 70
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
@@ -3881,7 +3881,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 0}
   m_FillRect: {fileID: 8876434201424486935}
   m_HandleRect: {fileID: 0}

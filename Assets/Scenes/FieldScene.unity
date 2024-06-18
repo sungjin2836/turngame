@@ -1335,8 +1335,8 @@ Camera:
   m_GameObject: {fileID: 516147031}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.6666667, g: 0.6666667, b: 0.6666667, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -2114,6 +2114,7 @@ MonoBehaviour:
   BarPosition: {fileID: 696555695}
   enemyShieldBar: {fileID: 1207545689}
   enemyHpBar: {fileID: 418844352}
+  enemyNameText: {fileID: 0}
 --- !u!114 &1062568855
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2449,6 +2450,7 @@ MonoBehaviour:
   BarPosition: {fileID: 696555695}
   enemyShieldBar: {fileID: 1207545689}
   enemyHpBar: {fileID: 418844352}
+  enemyNameText: {fileID: 0}
 --- !u!1001 &1193154258
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2857,6 +2859,7 @@ MonoBehaviour:
   BarPosition: {fileID: 696555695}
   enemyShieldBar: {fileID: 1207545689}
   enemyHpBar: {fileID: 418844352}
+  enemyNameText: {fileID: 0}
 --- !u!114 &1250742582
 MonoBehaviour:
   m_ObjectHideFlags: 0
