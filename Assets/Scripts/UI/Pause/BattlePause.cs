@@ -32,6 +32,6 @@ public class BattlePause : Pause
     private void ExitToFieldScene()
     {
         Cursor.lockState = CursorLockMode.Locked;
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene("FieldScene");
     }
 }
