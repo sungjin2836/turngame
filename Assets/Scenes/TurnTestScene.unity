@@ -10159,8 +10159,8 @@ Camera:
   m_GameObject: {fileID: 1899186606}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.6666667, g: 0.6666667, b: 0.6666667, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -10183,7 +10183,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 30
+  field of view: 60.000004
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -10209,8 +10209,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1899186606}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.17067231, y: 0.000000016953926, z: -0.0000000029366534, w: 0.98532784}
-  m_LocalPosition: {x: 2, y: 3, z: -3.53}
+  m_LocalRotation: {x: -0.0020474344, y: 0.9977861, z: -0.055233773, w: -0.036986455}
+  m_LocalPosition: {x: 0, y: 2.5, z: 8.47}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
