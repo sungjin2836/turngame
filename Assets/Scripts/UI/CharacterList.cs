@@ -145,8 +145,8 @@ public class CharacterList : MonoBehaviour
         icon.GetCharacterData(id);
         
         icon.Data.level = level;
-        icon.Data.hp += level * Character.STAT_HP;
-        icon.Data.attackStat += level * Character.STAT_ATTACK;
+        icon.Data.hp += (level - 1 * Character.STAT_HP);
+        icon.Data.attackStat += (level - 1 * Character.STAT_ATTACK);
         
         _expPair.Add(icon.Data, exp);
 
