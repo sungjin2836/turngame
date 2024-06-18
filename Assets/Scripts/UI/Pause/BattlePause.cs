@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -21,6 +18,8 @@ public class BattlePause : Pause
         AddToggleEvent(continueButton);
         AddEvent(exitButton, ExitToFieldScene);
         TogglePauseCanvas(pauseOutsideBorder);
+
+        Cursor.lockState = CursorLockMode.None;
     }
 
     protected override void TogglePauseState()
@@ -32,6 +31,7 @@ public class BattlePause : Pause
 
     private void ExitToFieldScene()
     {
-        SceneManager.LoadScene(0);
+        Cursor.lockState = CursorLockMode.Locked;
+        SceneManager.LoadScene(1);
     }
 }

@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UIElements;
 
 // ESC키는 변동될 일이 없으므로 Pause 클래스에서만 관리 -> 원작게임에서도 키세팅에서는 출력되지만 변경 불가능하게 막혀있음
 

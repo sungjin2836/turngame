@@ -42,7 +42,7 @@ public class BattleTurnManager : MonoBehaviour
 
     List<Character> TurnPlayers;
 
-    private Character[] targets;
+    Character[] targets;
 
     PriorityQueue<Character> queue = new();
 
@@ -128,15 +128,18 @@ public class BattleTurnManager : MonoBehaviour
                 if (rayHit.collider.gameObject.CompareTag("Enemy") && basicTarget != null)
                 {
                     Enemy prevTarget = basicTarget.GetComponent<Enemy>();
-                    prevTarget.SetHealth();
+                    //prevTarget.SetHealth();
                     prevTarget.SetShield();
                     prevTarget.ReturnPrevActionGauge();
-                    Debug.Log($" 턴플레이어 리스트에 등록된 플레이어 숫자{TurnPlayers.Count}");
+                    //Debug.Log($" 턴플레이어 리스트에 등록된 플레이어 숫자{TurnPlayers.Count}");
                     if(TurnPlayers.Count > 0)
                     {
+                        prevTarget.SetOutLineActiveFalse();
                         basicTarget = rayHit.collider.gameObject;
-                        Debug.Log($" 타겟 이름 : {basicTarget.name}");
+                        BattleCamera.m_Enemy = basicTarget.transform;
+                        //Debug.Log($" 타겟 이름 : {basicTarget.name}");
                         CheckElementChose(basicTarget, TurnPlayers[0]);
+                        basicTarget.GetComponent<Enemy>().SetOutLineActive();
                     }
                     SetTurnOrder();
                 }
@@ -167,12 +170,12 @@ public class BattleTurnManager : MonoBehaviour
     void SetTurnOrder()
     {
         List<Character> toList = queue.ToList();
-        Debug.Log("----------시작-------------");
-        for (int i = 0; i < toList.Count; i++)
-        {
-            Debug.Log($"{toList[i].charName}은 {i}번 째이고 남은 행동 게이지는 {toList[i].actionGauge - toList[i].currentActionGauge}이다.");
-        }
-        Debug.Log("-----------끝------------");
+        //Debug.Log("----------시작-------------");
+        //for (int i = 0; i < toList.Count; i++)
+        //{
+        //    Debug.Log($"{toList[i].charName}은 {i}번 째이고 남은 행동 게이지는 {toList[i].actionGauge - toList[i].currentActionGauge}이다.");
+        //}
+        //Debug.Log("-----------끝------------");
         for (int i = 0; i < toList.Count; i++)
         {
             if (toList[i].hp == 0)
@@ -198,12 +201,13 @@ public class BattleTurnManager : MonoBehaviour
         for (int i = 0; i < TurnPlayers.Count; i++)
         {
             uIManager.TurnPlayerTextPrint(i, TurnPlayers[i].charName);
+            BattleCamera.MoveTo("Ready Camera", TurnPlayers[0].transform, basicTarget.transform);
         }
     }
 
     void CheckDeadCharacter(Character turnPlayer)
     {
-        if (turnPlayer.hp == 0)
+        if (turnPlayer.isDead == true)
         {
             turnPlayer = queue.Dequeue();
             CheckDeadCharacter(turnPlayer);
@@ -235,11 +239,19 @@ public class BattleTurnManager : MonoBehaviour
                 p2.NormalAttack(charTarget, finalAttack);
             }
         }
-        enemy.SetHealth();
-        enemy.SetShield();
-        if (enemy.hp == 0)
+        //enemy.SetHealth();
+        //enemy.SetShield();
+        if (enemy.isDead == true)
         {
+            enemies.Remove(basicTarget);
             basicTarget.SetActive(false);
+
+            if(enemies.Count > 0)
+            {
+                basicTarget = enemies.First();
+                basicTarget.GetComponent<Enemy>().SetOutLineActive();
+            }
+            
             SetTurnOrder();
             SetTurnPlayerGroup();
         }
@@ -282,8 +294,9 @@ public class BattleTurnManager : MonoBehaviour
             p.BattleSkill(charTarget);
             EnemyTarget.SetHealth();
             EnemyTarget.SetShield();
-            if (EnemyTarget.hp == 0)
+            if (EnemyTarget.isDead == true)
             {
+                enemies.Remove(basicTarget);
                 basicTarget.SetActive(false);
                 SetTurnOrder();
                 SetTurnPlayerGroup();
@@ -291,20 +304,36 @@ public class BattleTurnManager : MonoBehaviour
         }
         else if (p.battleSkill.range == SkillDataManager.Range.all)
         {
+            List<GameObject> enemiesToRemove = new List<GameObject>();
+
             for (int i = 0; i < enemies.Count; i++)
             {
                 targets[i] = enemies[i].GetComponent<Character>();
                 p.BattleSkill(targets[i]);
                 EnemyTarget = enemies[i].GetComponent<Enemy>();
                 EnemyTarget.SetHealth();
-                EnemyTarget.SetShield();
-                if(EnemyTarget.hp == 0)
+                EnemyTarget.SetShield(); // 리스트에서 체력이 0인 애들 삭제
+
+                if(EnemyTarget.isDead == true)
                 {
-                    enemies[i].SetActive(false);
-                    SetTurnOrder();
-                    SetTurnPlayerGroup();
+                    enemiesToRemove.Add(enemies[i]);
                 }
+                Debug.Log($"체력바 테스트 {EnemyTarget.name} 체력 : {EnemyTarget.hp} 실드 : {EnemyTarget.shield} 죽음 여부 : {EnemyTarget.isDead}");
             }
+
+            foreach (var enemy in enemiesToRemove)
+            {
+                enemies.Remove(enemy);
+                enemy.SetActive(false);
+            }
+            if (enemies.Count > 0)
+            {
+                basicTarget = enemies.First();
+                basicTarget.GetComponent<Enemy>().SetOutLineActive();
+                SetTurnOrder();
+                SetTurnPlayerGroup();
+            }
+
             Debug.Log($"광역공격 {TurnPlayers[0].charName}");
         }
         queue.Enqueue(TurnPlayers[0]);
@@ -322,8 +351,27 @@ public class BattleTurnManager : MonoBehaviour
 
         Character charTarget = basicTarget.GetComponent<Character>();
         Enemy EnemyTarget = basicTarget.GetComponent<Enemy>();
+        targets = new Character[enemies.Count];
 
-        p.CooperativeSkillAttack(TurnPlayers, charTarget, enemies);
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            targets[i] = enemies[i].GetComponent<Character>();
+        }
+        Player healCharTarget = healTarget.GetComponent<Player>();
+        p.CooperativeSkillAttack(TurnPlayers, charTarget, targets, testPlayersData, healCharTarget);
+
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            Enemy _enemy = enemies[i].GetComponent<Enemy>();
+            _enemy.SetHealth();
+            _enemy.SetShield();
+            if (_enemy.hp == 0)
+            {
+                enemies[i].SetActive(false);
+                SetTurnOrder();
+                SetTurnPlayerGroup();
+            }
+        }
 
         for (int i = 0; i < TurnPlayers.Count; i++)
         {
@@ -342,12 +390,11 @@ public class BattleTurnManager : MonoBehaviour
         int randomCount = Random.Range(0, playerCount);
 
         Player targetPlayerType = players[randomCount].GetComponent<Player>();
-        Debug.Log($"{e.charName}가 {targetPlayerType.charName}을(를) 공격함");
-        Debug.Log($"{e.charName}, {targetPlayerType.hp}");
+        Debug.Log($"{e.charName}가 {targetPlayerType.charName}을(를) 공격해서 {targetPlayerType.hp}의 체력이 남음");
         e.NormalAttack(targetPlayerType);
 
         targetPlayerType.SetHealth();
-        if (targetPlayerType.hp == 0)
+        if (targetPlayerType.isDead == true)
         {
             Debug.Log($"{targetPlayerType.charName}이 죽어 리스트에서 제거합니다.");
 
@@ -370,12 +417,13 @@ public class BattleTurnManager : MonoBehaviour
 
     private bool CheckDeadChar()
     {
-        for (int i = 0; i < enemies.Count; i++)
+        for (int i = 0; i < testEnemysData.Length; i++)
         {
-            if(!enemies[i].activeSelf)
+            if (testEnemysData[i].isDead)
             {
                 isCheckDie[i] = true;
-                Debug.Log($"몬스터 죽은거 체크 {enemies[i].activeSelf}");
+                //Debug.Log($"몬스터 죽은거 체크 {enemies[i].activeSelf}");
+                Debug.Log($"몬스터 죽은거 체크 {isCheckDie[i]}");
             }
         }
 
@@ -398,12 +446,16 @@ public class BattleTurnManager : MonoBehaviour
         }
         if (CheckDeadChar())
         {
+            Debug.Log($"전투 승리 확인 {CheckDeadChar()}");
             IsFinishGame = true;
             uIManager.FinishGame();
             return;
         }
-        turnPlayer = Deq();
-        turnPlayer2 = Deq();
+        else
+        {
+            turnPlayer = Deq();
+            turnPlayer2 = Deq();
+        }
 
         SetTurnPlayerGroup();
         CheckPlayer(turnPlayer, isPlayer);
@@ -416,12 +468,10 @@ public class BattleTurnManager : MonoBehaviour
 
         if (turnPlayer is Enemy)
         {
-            Debug.Log($"턴몬스터 잡기 전 null 확인 {turnPlayer.charName}");
             MonsterTurn(turnPlayer);
         }
         if(turnPlayer2 is Enemy)
         {
-            Debug.Log($"턴몬스터2 잡기 전 null 확인 {turnPlayer2.charName}");
             MonsterTurn(turnPlayer2);
         }
         
@@ -444,12 +494,12 @@ public class BattleTurnManager : MonoBehaviour
         if (_turnPlayer is Player)
         {
             _isPlayer = true;
-            Debug.Log($"{_turnPlayer.charName}의 차례 {_isPlayer}");
+           // Debug.Log($"{_turnPlayer.charName}의 차례 {_isPlayer}");
         }
         else
         {
             _isPlayer = false;
-            Debug.Log($"{_turnPlayer.charName}의 차례 {_isPlayer}");
+            //Debug.Log($"{_turnPlayer.charName}의 차례 {_isPlayer}");
         }
     }
 
@@ -482,7 +532,7 @@ public class BattleTurnManager : MonoBehaviour
             }
         }
 
-        Debug.Log($"{_turnPlayer.charName} 캐릭터 컴포넌트없이 hp 확인 되는지 테스트 {_turnPlayer.hp}");
+        //Debug.Log($"{_turnPlayer.charName} 캐릭터 컴포넌트없이 hp 확인 되는지 테스트 {_turnPlayer.hp}");
 
         int needGauge = 0;
 
@@ -513,7 +563,7 @@ public class BattleTurnManager : MonoBehaviour
         }
         tempPlayers.Clear();
 
-        Debug.Log($"deq1 {_turnPlayer.charName} {_turnPlayer.currentActionGauge}");
+        Debug.Log($"deq1 {_turnPlayer.charName} {_turnPlayer.hp}");
         return _turnPlayer;
     }
 
@@ -571,6 +621,10 @@ public class BattleTurnManager : MonoBehaviour
         }
     }
 
+    public void SelectHealTarget(GameObject _healTarget)
+    {
+        healTarget = _healTarget;
+    }
 
 
 
