@@ -244,7 +244,10 @@ public class BattleTurnManager : MonoBehaviour
         if (enemy.isDead == true)
         {
             enemies.Remove(basicTarget);
-            basicTarget.SetActive(false);
+
+            StartCoroutine(TargetDieOnesec(basicTarget));
+
+            //basicTarget.SetActive(false);
 
             if(enemies.Count > 0)
             {
@@ -267,6 +270,12 @@ public class BattleTurnManager : MonoBehaviour
         Debug.Log($"체력바 테스트 {enemy.name} 체력 : {enemy.hp} 실드 : {enemy.shield}");
         
         //Turn();
+    }
+
+    IEnumerator TargetDieOnesec(GameObject _basicTarget)
+    {
+        yield return new WaitForSeconds(1.0f);
+        _basicTarget.SetActive(false);
     }
 
     public void OnClickSkillAttack()
@@ -297,7 +306,8 @@ public class BattleTurnManager : MonoBehaviour
             if (EnemyTarget.isDead == true)
             {
                 enemies.Remove(basicTarget);
-                basicTarget.SetActive(false);
+                StartCoroutine(TargetDieOnesec(basicTarget));
+                //basicTarget.SetActive(false);
                 SetTurnOrder();
                 SetTurnPlayerGroup();
             }
@@ -324,7 +334,8 @@ public class BattleTurnManager : MonoBehaviour
             foreach (var enemy in enemiesToRemove)
             {
                 enemies.Remove(enemy);
-                enemy.SetActive(false);
+                StartCoroutine(TargetDieOnesec(enemy));
+                //enemy.SetActive(false);
             }
             if (enemies.Count > 0)
             {
@@ -367,7 +378,8 @@ public class BattleTurnManager : MonoBehaviour
             _enemy.SetShield();
             if (_enemy.hp == 0)
             {
-                enemies[i].SetActive(false);
+                StartCoroutine(TargetDieOnesec(enemies[i]));
+                //enemies[i].SetActive(false);
                 SetTurnOrder();
                 SetTurnPlayerGroup();
             }
@@ -448,7 +460,8 @@ public class BattleTurnManager : MonoBehaviour
         {
             Debug.Log($"전투 승리 확인 {CheckDeadChar()}");
             IsFinishGame = true;
-            uIManager.FinishGame();
+            StartCoroutine(FinishGameOneSecLater());
+            //uIManager.FinishGame();
             return;
         }
         else
@@ -476,6 +489,12 @@ public class BattleTurnManager : MonoBehaviour
         }
         
         SetTurnOrder();
+    }
+
+    IEnumerator FinishGameOneSecLater()
+    {
+        yield return new WaitForSeconds(1f);
+        uIManager.FinishGame();
     }
 
     private void MonsterTurn(Character _turnPlayer)
