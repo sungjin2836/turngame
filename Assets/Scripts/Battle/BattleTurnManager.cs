@@ -222,7 +222,8 @@ public class BattleTurnManager : MonoBehaviour
             return;
         }
         Player p = TurnPlayers[0].GetComponent<Player>();
-        
+        uIManager.DisplaySkillName(p.normalAttack.skillName);
+
         Character charTarget = basicTarget.GetComponent<Character>();
         Enemy enemy = basicTarget.GetComponent<Enemy>();
 
@@ -286,6 +287,7 @@ public class BattleTurnManager : MonoBehaviour
             return;
         }
         Player p = TurnPlayers[0].GetComponent<Player>();
+        uIManager.DisplaySkillName(p.battleSkill.skillName);
 
         Character charTarget = basicTarget.GetComponent<Character>();
         Enemy EnemyTarget = basicTarget.GetComponent<Enemy>();
@@ -369,7 +371,8 @@ public class BattleTurnManager : MonoBehaviour
             targets[i] = enemies[i].GetComponent<Character>();
         }
         Player healCharTarget = healTarget.GetComponent<Player>();
-        p.CooperativeSkillAttack(TurnPlayers, charTarget, targets, testPlayersData, healCharTarget);
+        CooperativeSkill finalCooperativeSkill = p.CooperativeSkillAttack(TurnPlayers, charTarget, targets, testPlayersData, healCharTarget);
+        uIManager.DisplaySkillName(finalCooperativeSkill.cooperativeSkillName);
 
         for (int i = 0; i < enemies.Count; i++)
         {

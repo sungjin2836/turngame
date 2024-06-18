@@ -192,7 +192,7 @@ public class Player : Character
         //Debug.Log($"{charName}이 {target.charName}을 {healamount}만큼 회복 시켜 {target.hp}가 됐다.");
     }
 
-    public void CooperativeSkillAttack(List<Character> _turnplayers, Character _charTarget, Character[] targets, Player[] _players, Player _healCharTarget)
+    public CooperativeSkill CooperativeSkillAttack(List<Character> _turnplayers, Character _charTarget, Character[] targets, Player[] _players, Player _healCharTarget)
     {
         int partyMemberId = _turnplayers[1].gameObject.GetComponent<CharacterData>().CharacterID;
 
@@ -203,7 +203,7 @@ public class Player : Character
         if (currentCooperativeSkill == null)
         {
             Debug.Log($"현재 협동스킬이 널값임 {currentCooperativeSkill}");
-            return;
+            return null;
         }
 
         if (currentCooperativeSkill.damageAttr1Type == CooperativeSkillDataManager.DamageType.attack)
@@ -223,7 +223,7 @@ public class Player : Character
             }
         }
 
-
+        return currentCooperativeSkill;
 
 
 

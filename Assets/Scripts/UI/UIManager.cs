@@ -1,3 +1,5 @@
+using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,6 +24,11 @@ public class UIManager : MonoBehaviour
 
     [SerializeField]
     private GameObject ItemPanel;
+
+    [SerializeField]
+    private RectTransform skillNameDisplayPanel;
+
+    private IEnumerator skillNameDisplayPanelHideCoroutine;
 
     private int itemCount = 5;
 
@@ -135,8 +142,8 @@ public class UIManager : MonoBehaviour
             int itemNum = Random.Range(0, itemIndex.Length);
 
             items[i] = Instantiate(itemIndex[itemNum], ItemPanel.transform.position, Quaternion.identity);
-            items[i].transform.SetParent(ItemPanel.transform); // ItemPanel = ¿¸≈ı∞·∞˙√¢
-            Debug.Log($"æ∆¿Ã≈€{i} {items[i]}");
+            items[i].transform.SetParent(ItemPanel.transform); // ItemPanel = Ï†ÑÌà¨Í≤∞Í≥ºÏ∞Ω
+            Debug.Log($"ÏïÑÏù¥ÌÖú{i} {items[i]}");
         }
     }
 
@@ -153,7 +160,23 @@ public class UIManager : MonoBehaviour
         gameOverWindow.SetActive(true);
     }
     
+    public void DisplaySkillName(string skillName)
+    {
+        skillNameDisplayPanel.gameObject.SetActive(true);
+        if (skillNameDisplayPanelHideCoroutine != null)
+        {
+            StopCoroutine(skillNameDisplayPanelHideCoroutine);
+        }
+        skillNameDisplayPanelHideCoroutine = HideGameObjectAfterSeconds(skillNameDisplayPanel, 4);
 
+        TextMeshProUGUI skillText = skillNameDisplayPanel.GetComponentInChildren<TextMeshProUGUI>();
+        skillText.text = skillName;
+        StartCoroutine(skillNameDisplayPanelHideCoroutine);
+    }
 
-
+    private IEnumerator HideGameObjectAfterSeconds(RectTransform target, int time)
+    {
+        yield return new WaitForSeconds(time);
+        target.gameObject.SetActive(false);
+    }
 }
