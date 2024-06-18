@@ -691,6 +691,7 @@ MonoBehaviour:
   targetRange: {fileID: 1448562550}
   runButton: {fileID: 1378506789}
   mouseSensitivity: 100
+  swordEffect: {fileID: 7436505192011349636, guid: 9f79ffe44b6139949b14fbca279706fc, type: 3}
 --- !u!136 &245203588
 CapsuleCollider:
   m_ObjectHideFlags: 0

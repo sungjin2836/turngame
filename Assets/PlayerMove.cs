@@ -22,6 +22,9 @@ public class PlayerMove : MonoBehaviour
     private float yRotation = 0f;
     Vector3 moveVelocity;
 
+    [SerializeField]
+    private GameObject swordEffect;
+
     void Start()
     {
         rbody = GetComponent<Rigidbody>();
@@ -74,6 +77,7 @@ public class PlayerMove : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             OnFieldNormalAttack();
+            CreateSwordEffect();
         }
 
         if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKey(KeyCode.Mouse1))
@@ -113,8 +117,12 @@ public class PlayerMove : MonoBehaviour
         }
         runButton.colors = colorBlock;
     }
-    
 
+    private void CreateSwordEffect()
+    {
+        GameObject effect = Instantiate(swordEffect);
+        effect.transform.position = gameObject.transform.position + transform.forward;
+    }
 
     
 }
