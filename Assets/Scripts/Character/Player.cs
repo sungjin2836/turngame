@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using static CooperativeSkillDataManager;
@@ -23,16 +24,24 @@ public class Player : Character
 
     private Camera mainCamera;
 
+    private UserDataManager.OwnedCharacter LoadUserOwnedCharacter(int id)
+    {
+        var characters = UserDataManager.Instance.UserData.ownedCharacter;
+        var character = characters.FirstOrDefault(x => x.characterID == id);
+        return character;
+    }
+
     public override void Initialize(int id)
     {
-        var playerData = DataManager.Instance.GetPlayerData(id);
-        charName = playerData.charName;
-        level = playerData.level;
-        maxHP = playerData.hp;
-        speed = playerData.speed;
-        attackStat = playerData.attackStat;
-        element = playerData.elem;
-        actionGauge = Mathf.FloorToInt(10000 / playerData.speed);
+        var defaultPlayerData = DataManager.Instance.GetPlayerData(id);
+        var userOwnedCharacter = LoadUserOwnedCharacter(id);
+        charName = defaultPlayerData.charName;
+        level = userOwnedCharacter.currentLevel;
+        maxHP = defaultPlayerData.hp + level * STAT_HP;
+        speed = defaultPlayerData.speed;
+        attackStat = defaultPlayerData.attackStat + level * STAT_ATTACK;
+        element = defaultPlayerData.elem;
+        actionGauge = Mathf.FloorToInt(10000 / defaultPlayerData.speed);
 
         Debug.Log("해치웠나? 1");
         //Debug.Log("여기까지 되나1");

@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class CharacterList : MonoBehaviour
 {
     private const int PANEL_COUNT = 2;
-    
+
     private int _characterID;
     private static DataManager.Player _currentCharacter;
     private readonly Dictionary<DataManager.Player, int> _expPair = new();
     private readonly Dictionary<Button, Image> _panelPair = new();
-    
-    // TODO - Fix maxExp to return max experience from data
-    private static int maxExp => 200 * _currentCharacter.level;
+
+    private static int MaxExp => _currentCharacter.reachableLevels[_currentCharacter.level - 1];
 
     private static Action _onValueChanged;
 
@@ -61,23 +61,37 @@ public class CharacterList : MonoBehaviour
 
     [SerializeField] private UIObject uiObjects;
 
-    private void Awake()
+    private void Start()
     {
-        Initialize();
+        InitializeUI();
+        LoadCharacterList();
+    }
 
-        foreach (var button in uiObjects.view.pageButtons)
+    private void InitializeUI()
+    {
+        if (!TryAdd(uiObjects.view)) return;
+
+        foreach (Button button in uiObjects.view.pageButtons)
+        {
+            button.onClick.AddListener(() => { EnablePanel(button); });
+        }
+
+        foreach (Button button in uiObjects.view.pageButtons)
         {
             button.interactable = !_panelPair[button].gameObject.activeSelf;
         }
     }
 
-    private void Initialize()
-    {
-        if (!TryAdd(uiObjects.view)) return;
+    private UserDataManager.User userData;
+    private UserDataManager.OwnedCharacter[] characters;
 
-        foreach (var button in uiObjects.view.pageButtons)
+    private void LoadCharacterList()
+    {
+        userData = UserDataManager.Instance.UserData;
+        UserDataManager.OwnedCharacter[] characters = userData.ownedCharacter;
+        foreach (UserDataManager.OwnedCharacter character in characters)
         {
-            button.onClick.AddListener(() => { EnablePanel(button); });
+            AddCharacterIcon(character.characterID, character.currentLevel, character.currentExp);
         }
     }
 
@@ -88,7 +102,7 @@ public class CharacterList : MonoBehaviour
             b.interactable = true;
             _panelPair[b].gameObject.SetActive(false);
         }
-                
+
         button.interactable = false;
         _panelPair[button].gameObject.SetActive(true);
     }
@@ -105,28 +119,36 @@ public class CharacterList : MonoBehaviour
         {
             _panelPair.Add(view.pageButtons[i], view.panels[i]);
         }
+
         return true;
     }
 
     private void OnEnable()
     {
         _onValueChanged += UpdateUI;
+        _onValueChanged += WriteData;
         uiObjects.details.levelUpButton.onClick.AddListener(() => AddExp(1000));
     }
 
     private void OnDisable()
     {
         _onValueChanged -= UpdateUI;
+        _onValueChanged -= WriteData;
         uiObjects.details.levelUpButton.onClick.RemoveAllListeners();
     }
 
-    public void AddCharacter(int id)
+    private void AddCharacterIcon(int id, int level = 1, int exp = 0)
     {
         CharacterIcon icon = new GameObject($"Icon_{id}").AddComponent<CharacterIcon>();
         icon.transform.SetParent(uiObjects.view.content);
 
         icon.GetCharacterData(id);
-        _expPair.Add(icon.Data, 0);
+        
+        icon.Data.level = level;
+        icon.Data.hp += level * Character.STAT_HP;
+        icon.Data.attackStat += level * Character.STAT_ATTACK;
+        
+        _expPair.Add(icon.Data, exp);
 
         if (_expPair.Count == 1) SelectCharacter(icon);
     }
@@ -140,10 +162,12 @@ public class CharacterList : MonoBehaviour
     private void AddExp(int value)
     {
         int newExp = _expPair[_currentCharacter] + value;
+        bool isMaxLevel = _currentCharacter.level >= _currentCharacter.reachableLevels.Length;
+        if (isMaxLevel) return;
 
-        while (newExp >= maxExp)
+        while (newExp >= MaxExp)
         {
-            newExp -= maxExp;
+            newExp -= MaxExp;
             LevelUp();
         }
 
@@ -155,18 +179,18 @@ public class CharacterList : MonoBehaviour
     private static void LevelUp()
     {
         _currentCharacter.level++;
-        _currentCharacter.hp += 6;
-        _currentCharacter.attackStat += 4;
+        _currentCharacter.hp += Character.STAT_HP;
+        _currentCharacter.attackStat += Character.STAT_ATTACK;
     }
 
     private void UpdateUI()
     {
         UIObject.ListDetail details = uiObjects.details;
-        // TODO - Use Dictionary instead of Resource.Load() 
-        details.elementImage.sprite = Resources.Load<Sprite>($"Images/DoNotShare/{(int)_currentCharacter.elem}");
+        /*details.elementImage.sprite = Resources.Load<Sprite>($"Images/DoNotShare/{(int)_currentCharacter.elem}");*/
+        details.elementImage.color = Character.ElementColor(_currentCharacter.elem);
         details.nameText.text = _currentCharacter.charName;
         details.levelText.text = $"Lv.{_currentCharacter.level}/20";
-        details.expSlider.maxValue = maxExp;
+        details.expSlider.maxValue = MaxExp;
         details.expSlider.value = _expPair[_currentCharacter];
         details.hpText.text = $"{_currentCharacter.hp}";
         details.atkText.text = $"{_currentCharacter.attackStat}";
@@ -178,8 +202,17 @@ public class CharacterList : MonoBehaviour
         equipments.speedText.text = $"{_currentCharacter.speed}";
     }
 
-    public string WriteData()
+    private void WriteData()
     {
-        return JsonUtility.ToJson(_currentCharacter);
+        userData.ownedCharacter.FirstOrDefault(x => x.characterID == _currentCharacter.id)!.currentLevel =
+            _currentCharacter.level;
+        userData.ownedCharacter.FirstOrDefault(x => x.characterID == _currentCharacter.id)!.currentExp =
+            _expPair[_currentCharacter];
+
+        string jsonData = JsonUtility.ToJson(userData);
+        string path = Path.Combine(Application.dataPath, "Resources/Data", "userdata.json");
+        FileInfo file = new(path);
+        file.Directory.Create();
+        File.WriteAllText(file.FullName, jsonData);
     }
 }

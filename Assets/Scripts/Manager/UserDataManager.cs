@@ -18,6 +18,7 @@ public class UserDataManager : MonoBehaviour
         public int characterID;
         public int currentHP;
         public int currentLevel;
+        public int currentExp;
         public int[] skillLevel;
     }
 
