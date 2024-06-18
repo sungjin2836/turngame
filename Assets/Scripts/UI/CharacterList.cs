@@ -154,11 +154,7 @@ public class CharacterList : MonoBehaviour
         icon.transform.SetParent(uiObjects.view.content);
 
         icon.GetCharacterData(id);
-        
         icon.Data.level = level;
-        icon.Data.hp += (level - 1) * Character.STAT_HP;
-        icon.Data.attackStat += (level - 1) * Character.STAT_ATTACK;
-        
         _expPair.Add(icon.Data, exp);
 
         if (_expPair.Count == 1) SelectCharacter(icon);
@@ -197,19 +193,18 @@ public class CharacterList : MonoBehaviour
     private void UpdateUI()
     {
         UIObject.ListDetail details = uiObjects.details;
-        /*details.elementImage.sprite = Resources.Load<Sprite>($"Images/DoNotShare/{(int)_currentCharacter.elem}");*/
         details.elementImage.color = Character.ElementColor(_currentCharacter.elem);
         details.nameText.text = _currentCharacter.charName;
         details.levelText.text = $"Lv.{_currentCharacter.level}/20";
         details.expSlider.maxValue = MaxExp;
         details.expSlider.value = _expPair[_currentCharacter];
-        details.hpText.text = $"{_currentCharacter.hp}";
-        details.atkText.text = $"{_currentCharacter.attackStat}";
+        details.hpText.text = $"{_currentCharacter.hp + (_currentCharacter.level - 1) * Character.STAT_HP}";
+        details.atkText.text = $"{_currentCharacter.attackStat + (_currentCharacter.level - 1) * Character.STAT_ATTACK}";
         details.speedText.text = $"{_currentCharacter.speed}";
 
         UIObject.ListEquipment equipments = uiObjects.equipments;
-        equipments.hpText.text = $"{_currentCharacter.hp}";
-        equipments.atkText.text = $"{_currentCharacter.attackStat}";
+        equipments.hpText.text = $"{_currentCharacter.hp + (_currentCharacter.level - 1) * Character.STAT_HP}";
+        equipments.atkText.text = $"{_currentCharacter.attackStat + (_currentCharacter.level - 1) * Character.STAT_ATTACK}";
         equipments.speedText.text = $"{_currentCharacter.speed}";
     }
 
