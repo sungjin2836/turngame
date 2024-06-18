@@ -46,7 +46,6 @@ public class Enemy : Character
         private set => _shield = Mathf.Clamp(value, 0, maxShield);
     }
 
-
     public override void Initialize(int id)
     {
         var enemyData = DataManager.Instance.GetEnemyData(id);
@@ -189,7 +188,7 @@ public class Enemy : Character
 
     public int NormalAttack(Player target, float value = 0.5f)
     {
-        MoveToTarget(target);
+        TargetPos = target.startPos + target.transform.forward;
         Debug.Log($" {charName}의 NormalAttack의 공격력 {attackStat}");
         var player = target as Player;
         int dam = player.GetDamage(Mathf.FloorToInt(attackStat));

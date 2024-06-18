@@ -201,6 +201,7 @@ public class BattleTurnManager : MonoBehaviour
         for (int i = 0; i < TurnPlayers.Count; i++)
         {
             uIManager.TurnPlayerTextPrint(i, TurnPlayers[i].charName);
+            BattleCamera.MoveTo("Ready Camera", TurnPlayers[0].transform, basicTarget.transform);
         }
     }
 
@@ -425,16 +426,6 @@ public class BattleTurnManager : MonoBehaviour
                 Debug.Log($"몬스터 죽은거 체크 {isCheckDie[i]}");
             }
         }
-
-        //for (int i = 0; i < enemies.Count; i++)
-        //{
-        //    if(!enemies[i].activeSelf)
-        //    {
-        //        isCheckDie[i] = true;
-        //        //Debug.Log($"몬스터 죽은거 체크 {enemies[i].activeSelf}");
-        //        Debug.Log($"몬스터 죽은거 체크 {isCheckDie[i]}");
-        //    }
-        //}
 
         return isCheckDie.All(x => x);
     }

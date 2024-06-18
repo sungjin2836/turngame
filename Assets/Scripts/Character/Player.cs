@@ -110,8 +110,8 @@ public class Player : Character
 
     public override int NormalAttack(Character target, float value = 0.5f)
     {
-        MoveToTarget(target);
-        
+        BattleCamera.MoveTo("Attack Camera", transform, target.transform);
+        TargetPos = target.startPos + target.transform.forward;
         Debug.Log("NormalAttack의 공격력" + finalAttackStat);
         var enemy = target as Enemy;
         if (enemy.ContainsElement(element)) enemy.DamageToShield(30);
@@ -126,8 +126,8 @@ public class Player : Character
 
     public virtual void BattleSkill(Character target)
     {
-        MoveToTarget(target);
-
+        BattleCamera.MoveTo("Attack Camera", transform, target.transform);
+        TargetPos = target.startPos + target.transform.forward;
         // 스킬
         var enemy = target as Enemy;
         if (enemy.ContainsElement(element)) enemy.DamageToShield(60);
@@ -174,6 +174,8 @@ public class Player : Character
 
     public virtual void BattleSkill(Player target)
     {
+        BattleCamera.MoveTo("Heal Camera", target.transform, target.transform);
+        TargetPos = transform.position + transform.up;
         int healamount = Mathf.FloorToInt(maxHP * battleSkill.damageAttr1[0]);
 
         target.hp += Mathf.FloorToInt(healamount);
@@ -281,7 +283,7 @@ public class Player : Character
         }
         else if (currentCooperativeSkill.range1 == CooperativeSkillDataManager.Range.single)
         {
-            MoveToTarget(_charTarget);
+            TargetPos = _charTarget.startPos + _charTarget.transform.forward;
 
             // 스킬
             var enemy = _charTarget as Enemy;
@@ -448,12 +450,6 @@ public class Player : Character
     public void ReturnPrevFinalSpeed()
     {
         finalSpeed = speed;
-    }
-
-    protected override void MoveToTarget(Character target)
-    {
-        base.MoveToTarget(target);
-        BattleCamera.MoveTo("Attack Camera", transform, target.transform);
     }
 
     protected override void TurnEnd()

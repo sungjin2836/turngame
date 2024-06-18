@@ -1713,6 +1713,7 @@ MonoBehaviour:
   _hp: 0
   actionGauge: 0
   _currentActionGauge: 0
+  startPos: {x: 0, y: 0, z: 0}
   maxShield: 0
   normalAttack: {fileID: 0}
   weakElements: 
@@ -2537,13 +2538,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 461978065}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: -812.5025, y: -547, z: 3.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 197442900}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!114 &461978071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2564,6 +2565,7 @@ MonoBehaviour:
   _hp: 0
   actionGauge: 0
   _currentActionGauge: 0
+  startPos: {x: 0, y: 0, z: 0}
   element: 0
   normalAttack: {fileID: 0}
   battleSkill: {fileID: 0}
@@ -3660,6 +3662,7 @@ MonoBehaviour:
   _hp: 0
   actionGauge: 0
   _currentActionGauge: 0
+  startPos: {x: 0, y: 0, z: 0}
   maxShield: 0
   normalAttack: {fileID: 0}
   weakElements: 
@@ -4996,6 +4999,7 @@ MonoBehaviour:
   _hp: 0
   actionGauge: 0
   _currentActionGauge: 0
+  startPos: {x: 0, y: 0, z: 0}
   maxShield: 0
   normalAttack: {fileID: 0}
   weakElements: 
@@ -5906,13 +5910,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 990658873}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: -816.5025, y: -547, z: 3.47}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 197442900}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!114 &990658879
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5933,6 +5937,7 @@ MonoBehaviour:
   _hp: 0
   actionGauge: 0
   _currentActionGauge: 0
+  startPos: {x: 0, y: 0, z: 0}
   element: 0
   normalAttack: {fileID: 0}
   battleSkill: {fileID: 0}
@@ -6566,13 +6571,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1162076381}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: -818.5025, y: -547, z: 3.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 197442900}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!114 &1162076387
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6593,6 +6598,7 @@ MonoBehaviour:
   _hp: 0
   actionGauge: 0
   _currentActionGauge: 0
+  startPos: {x: 0, y: 0, z: 0}
   element: 0
   normalAttack: {fileID: 0}
   battleSkill: {fileID: 0}
@@ -7910,13 +7916,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1506497498}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: -814.5025, y: -547, z: 3.47}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 197442900}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!114 &1506497504
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7937,6 +7943,7 @@ MonoBehaviour:
   _hp: 0
   actionGauge: 0
   _currentActionGauge: 0
+  startPos: {x: 0, y: 0, z: 0}
   element: 0
   normalAttack: {fileID: 0}
   battleSkill: {fileID: 0}
@@ -8206,6 +8213,7 @@ MonoBehaviour:
   _hp: 0
   actionGauge: 0
   _currentActionGauge: 0
+  startPos: {x: 0, y: 0, z: 0}
   maxShield: 0
   normalAttack: {fileID: 0}
   weakElements: 
@@ -9754,7 +9762,7 @@ MonoBehaviour:
   m_UpdateMethod: 2
   m_BlendUpdateMethod: 1
   m_DefaultBlend:
-    m_Style: 1
+    m_Style: 7
     m_Time: 2
     m_CustomCurve:
       serializedVersion: 2
@@ -9762,7 +9770,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  m_CustomBlends: {fileID: 0}
+  m_CustomBlends: {fileID: 11400000, guid: 36b65caf0a26ac94dbe930bea1ea7956, type: 2}
   m_CameraCutEvent:
     m_PersistentCalls:
       m_Calls: []
