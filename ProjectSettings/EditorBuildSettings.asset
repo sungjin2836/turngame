@@ -12,9 +12,9 @@ EditorBuildSettings:
     path: Assets/Scenes/FieldScene.unity
     guid: 5df92fd3673d1704c9d48fec493a925e
   - enabled: 1
-    path: Assets/Scenes/CharacterListScene.unity
-    guid: e303970324c298e46abcff07694970d6
-  - enabled: 1
     path: Assets/Scenes/TurnTestScene.unity
     guid: a3c6ea4cb9e49524fb98ac119ec7077f
+  - enabled: 1
+    path: Assets/Scenes/CharacterListScene.unity
+    guid: e303970324c298e46abcff07694970d6
   m_configObjects: {}
