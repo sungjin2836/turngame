@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
@@ -152,6 +153,15 @@ public class UIManager : MonoBehaviour
         Debug.Log("finish");
         resultWindow.SetActive(true);
         InitItem();
+
+        StartCoroutine(nameof(ExitToFieldScene));
+    }
+
+    private IEnumerator ExitToFieldScene()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        yield return new WaitForSeconds(1f);
+        SceneManager.LoadScene("FieldScene");
     }
 
     public void GameOver()

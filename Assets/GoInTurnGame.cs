@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,7 +34,7 @@ public class GoInTurnGame : MonoBehaviour
                 FieldUIManager.Instance.DisplayWeakness(player.element);
             }
 
-            StartCoroutine(LoadSceneWaitForSeconds(1.0f, 2));
+            StartCoroutine(LoadSceneWaitForSeconds(1.0f, "TurnTestScene"));
         }
         if (other.CompareTag("Object"))
         {
@@ -49,5 +50,16 @@ public class GoInTurnGame : MonoBehaviour
     {
         yield return new WaitForSeconds(duration);
         SceneManager.LoadScene(sceneIndex);
+    }
+    
+    private IEnumerator LoadSceneWaitForSeconds(float duration, string sceneIndex)
+    {
+        yield return new WaitForSeconds(duration);
+        SceneManager.LoadScene(sceneIndex);
+    }
+
+    private void OnDestroy()
+    {
+        isSceneMove = false;
     }
 }
