@@ -28,18 +28,28 @@ public class PlayerMove : MonoBehaviour
 
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
 
-        targetRange.SetActive(false);
+        targetRange.GetComponent<BoxCollider>().enabled = false;
+        targetRange.GetComponent<MeshRenderer>().enabled = false;
         isRun = false;
     }
 
-
     void Update()
     {
+        Movement();
+    }
+
+    void Movement()
+    {
+        if (Pause.isPause || GoInTurnGame.isSceneMove)
+        {
+            return;
+        }
+
         float xMove = Input.GetAxis("Horizontal");
         float zMove = Input.GetAxis("Vertical");
 
         Vector3 moveDirection = new Vector3(xMove, 0, zMove).normalized;
-        if(isRun)
+        if (isRun)
         {
             moveVelocity = transform.TransformDirection(moveDirection) * fastSpeed;
         }
@@ -70,19 +80,21 @@ public class PlayerMove : MonoBehaviour
         {
             OnRunButtonClick();
         }
-
-
     }
 
     public void OnFieldNormalAttack()
     {
-        targetRange.SetActive(true);
+        //targetRange.SetActive(true);
+        targetRange.GetComponent<BoxCollider>().enabled = true;
+        targetRange.GetComponent<MeshRenderer>().enabled = true;
         Invoke("TargetActive", 1f);
     }
 
     private void TargetActive()
     {
-        targetRange.SetActive(false);
+        //targetRange.SetActive(false);
+        targetRange.GetComponent<BoxCollider>().enabled = false;
+        targetRange.GetComponent<MeshRenderer>().enabled = false;
     }
 
     public void OnRunButtonClick()
