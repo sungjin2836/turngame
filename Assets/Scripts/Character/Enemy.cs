@@ -22,6 +22,8 @@ public class Enemy : Character
     Slider enemyShieldBar;
     [SerializeField]
     Slider enemyHpBar;
+    [SerializeField]
+    UnityEngine.UI.Text enemyNameText;
 
     Canvas canvas;
 
@@ -69,6 +71,13 @@ public class Enemy : Character
         canvas = FindAnyObjectByType<Canvas>();
 
         istarget = false;
+
+        if (enemyNameText != null)
+        {
+            enemyNameText = enemyNameText.GetComponent<UnityEngine.UI.Text>();
+            SetEnemyNameText();
+        }
+        
 
         if (enemyHpBar != null && enemyShieldBar != null)
         {
@@ -119,6 +128,7 @@ public class Enemy : Character
         enemyHpBar.value = hp;
         if (hp == 0)
         {
+            enemyNameText.gameObject.SetActive(false);
             enemyHpBar.gameObject.SetActive(false);
             enemyShieldBar.gameObject.SetActive(false);
         }
@@ -154,6 +164,11 @@ public class Enemy : Character
 
     public void SetDamageText(string _damageText)
     {
+        if (isDead) 
+        {
+            return;
+        }
+        
         GameObject damageTextInstance = Instantiate(DamageTextPref, canvas.transform);
 
         //damageText.text = _damageText;
@@ -165,7 +180,10 @@ public class Enemy : Character
         damageTextInstance.transform.position = screenPosition;
 
         Debug.Log($"{charName}이 받은 데미지 {_damageText} 호출됨");
+        
         StartCoroutine(FadeDamageText(damageTextInstance));
+        
+        
     }
 
     IEnumerator FadeDamageText(GameObject _damageTextInstance)
@@ -222,6 +240,12 @@ public class Enemy : Character
     public void SetOutLineActiveFalse()
     {
         gameObject.GetComponent<Outline>().enabled = false;
+    }
+
+    private void SetEnemyNameText()
+    {
+
+        enemyNameText.text = charName;
     }
 
 }

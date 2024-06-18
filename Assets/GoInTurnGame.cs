@@ -13,12 +13,21 @@ public class GoInTurnGame : MonoBehaviour
     private FieldCharDataManager fieldCharDataManager;
 
     public static bool isSceneMove;
+
     
     void Start()
     {
         player = GetComponentInParent<Player>();
         fieldCharDataManager = FindObjectOfType<FieldCharDataManager>();
     }
+
+    private void Update()
+    {
+        
+    }
+
+    
+
 
     private void OnTriggerEnter(Collider other)
     {
