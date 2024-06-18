@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -18,6 +19,8 @@ public class Player : Character
     public CooperativeSkill cooperativeSkill2;
     public CooperativeSkill cooperativeSkill3;
 
+    [SerializeField]
+    private GameObject cooperativeEffect;
 
     public Slider playerHpBar;
     public Image playerImage;
@@ -42,9 +45,6 @@ public class Player : Character
         attackStat = defaultPlayerData.attackStat + level * STAT_ATTACK;
         element = defaultPlayerData.elem;
         actionGauge = Mathf.FloorToInt(10000 / defaultPlayerData.speed);
-
-        Debug.Log("해치웠나? 1");
-        //Debug.Log("여기까지 되나1");
 
         SkillDataManager.Skill normalAttackData = SkillDataManager.Instance.GetSkillData($"{id}001");
         SkillDataManager.Skill battleSkillData = SkillDataManager.Instance.GetSkillData($"{id}002");
@@ -84,7 +84,6 @@ public class Player : Character
         mainCamera = Camera.main;
 
         SetMaxHealth();
-        //SetHpBarPosition();
         Debug.Log($"{currentActionGauge} / {actionGauge}");
 
         playerImage.color = Color.white;
@@ -266,9 +265,9 @@ public class Player : Character
     private void CooperativeSkillHeal(Player[] _players, CooperativeSkill currentCooperativeSkill)
     {
         int healamount = Mathf.FloorToInt(maxHP * currentCooperativeSkill.damageAttr1[0]);
-
         for (int i = 0; i < _players.Length; i++)
         {
+            CreateCooperativeHealEffect(_players[i]);
             _players[i].hp += Mathf.FloorToInt(healamount);
             _players[i].SetHealth();
             Debug.Log($"{charName}이 {_players[i].charName}을 {healamount}만큼 회복 시켜 {_players[i].hp}가 됐다.");
@@ -279,6 +278,7 @@ public class Player : Character
     {
         if (currentCooperativeSkill.range1 == CooperativeSkillDataManager.Range.all)
         {
+            CreateCooperativeSkillEffect(currentCooperativeSkill);
             for (int i = 0; i < targets.Length; i++)
             {
                 var enemy = targets[i] as Enemy;
@@ -293,7 +293,7 @@ public class Player : Character
         else if (currentCooperativeSkill.range1 == CooperativeSkillDataManager.Range.single)
         {
             TargetPos = _charTarget.startPos + _charTarget.transform.forward;
-
+            CreateCooperativeSkillEffect(currentCooperativeSkill);
             // 스킬
             var enemy = _charTarget as Enemy;
             if (enemy.ContainsElement(element)) enemy.DamageToShield(60);
@@ -303,117 +303,6 @@ public class Player : Character
         }
     }
 
-    private void CoSkillDoubleHeal(CooperativeSkill currentCooperativeSkill)
-    {
-        switch (currentCooperativeSkill.range1)
-        {
-            case (CooperativeSkillDataManager.Range.single):
-                CoSkillDoubleSingleHeal(currentCooperativeSkill);
-                break;
-            case (CooperativeSkillDataManager.Range.all):
-                CoSkillDoubleAllHeal(currentCooperativeSkill);
-                break;
-        }
-    }
-
-    private static void CoSkillDoubleAllHeal(CooperativeSkill currentCooperativeSkill)
-    {
-        switch (currentCooperativeSkill.range2)
-        {
-            case (CooperativeSkillDataManager.Range.single):
-                break;
-            case (CooperativeSkillDataManager.Range.all):
-                break;
-        }
-    }
-
-    private static void CoSkillDoubleSingleHeal(CooperativeSkill currentCooperativeSkill)
-    {
-        switch (currentCooperativeSkill.range2)
-        {
-            case (CooperativeSkillDataManager.Range.single):
-
-                break;
-            case (CooperativeSkillDataManager.Range.all):
-                break;
-        }
-    }
-
-    private void CoSkillHealAndAttack(CooperativeSkill currentCooperativeSkill)
-    {
-        switch (currentCooperativeSkill.range1)
-        {
-            case (CooperativeSkillDataManager.Range.single):
-                switch (currentCooperativeSkill.range2)
-                {
-                    case (CooperativeSkillDataManager.Range.single):
-                        break;
-                    case (CooperativeSkillDataManager.Range.all):
-                        break;
-                }
-                break;
-            case (CooperativeSkillDataManager.Range.all):
-                switch (currentCooperativeSkill.range2)
-                {
-                    case (CooperativeSkillDataManager.Range.single):
-                        break;
-                    case (CooperativeSkillDataManager.Range.all):
-                        break;
-                }
-                break;
-        }
-    }
-
-    private void CoSkillAttackAndHeal(CooperativeSkill currentCooperativeSkill)
-    {
-        switch (currentCooperativeSkill.range1)
-        {
-            case (CooperativeSkillDataManager.Range.single):
-                switch (currentCooperativeSkill.range2)
-                {
-                    case (CooperativeSkillDataManager.Range.single):
-                        break;
-                    case (CooperativeSkillDataManager.Range.all):
-                        break;
-                }
-                break;
-            case (CooperativeSkillDataManager.Range.all):
-                switch (currentCooperativeSkill.range2)
-                {
-                    case (CooperativeSkillDataManager.Range.single):
-                        break;
-                    case (CooperativeSkillDataManager.Range.all):
-                        break;
-                }
-                break;
-        }
-    }
-
-    private static void CoSkillDoubleAttack(CooperativeSkill currentCooperativeSkill)
-    {
-        switch (currentCooperativeSkill.range1)
-        {
-            case (CooperativeSkillDataManager.Range.single):
-                switch (currentCooperativeSkill.range2)
-                {
-                    case (CooperativeSkillDataManager.Range.single):
-                        // 
-                        break;
-                    case (CooperativeSkillDataManager.Range.all):
-                        break;
-                }
-                break;
-            case (CooperativeSkillDataManager.Range.all):
-                switch (currentCooperativeSkill.range2)
-                {
-                    case (CooperativeSkillDataManager.Range.single):
-                        break;
-                    case (CooperativeSkillDataManager.Range.all):
-                        break;
-                }
-                break;
-        }
-    }
 
     private CooperativeSkill CheckCooperativeID(int partyMemberId)
     {
@@ -432,6 +321,38 @@ public class Player : Character
         return null;
     }
 
+    private void CreateCooperativeHealEffect(Player player)
+    {
+        GameObject skillEffect = Instantiate(cooperativeEffect);
+        skillEffect.transform.position = player.gameObject.transform.position + (Vector3.down);
+        if (skillEffect != null) DestroyObject(skillEffect, 2f);
+    }
+    private void CreateCooperativeSkillEffect(CooperativeSkill currentCooperativeSkill)
+    {
+        GameObject skillEffect = Instantiate(cooperativeEffect);
+        
+        if(currentCooperativeSkill.range1 == CooperativeSkillDataManager.Range.single)
+        {
+            skillEffect.transform.position = TargetPos;
+            if (skillEffect != null) DestroyObject(skillEffect, 2f);
+            return;
+        }
+
+        StartCoroutine(MoveEffect(skillEffect));
+
+        if (skillEffect != null) DestroyObject(skillEffect, 2f);
+    }
+
+    IEnumerator MoveEffect(GameObject _skillEffect)
+    {
+        int count = 0;
+        yield return new WaitForSeconds(0.1f);
+        while (count < 6)
+        {
+            _skillEffect.transform.position += Vector3.right;
+            count++;
+        }
+    }
 
 
     public void SetMaxHealth()

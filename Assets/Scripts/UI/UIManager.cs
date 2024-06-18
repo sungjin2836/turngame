@@ -135,8 +135,8 @@ public class UIManager : MonoBehaviour
             int itemNum = Random.Range(0, itemIndex.Length);
 
             items[i] = Instantiate(itemIndex[itemNum], ItemPanel.transform.position, Quaternion.identity);
-            items[i].transform.SetParent(ItemPanel.transform); // ItemPanel = ÀüÅõ°á°úÃ¢
-            Debug.Log($"¾ÆÀÌÅÛ{i} {items[i]}");
+            items[i].transform.SetParent(ItemPanel.transform); // ItemPanel = ì „íˆ¬ê²°ê³¼ì°½
+            Debug.Log($"ì•„ì´í…œ{i} {items[i]}");
         }
     }
 
