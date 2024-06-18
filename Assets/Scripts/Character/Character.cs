@@ -140,6 +140,7 @@ public abstract class Character : MonoBehaviour, IComparable<Character>
             ElementType.Imaginary => Color.yellow,
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
+    }
     protected virtual void MoveTowards()
     {
         if (TargetPos == Vector3.zero) return;
