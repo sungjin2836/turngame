@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(PlayerInput))]
 public class CharacterList : MonoBehaviour
 {
     private const int PANEL_COUNT = 2;
@@ -18,12 +20,15 @@ public class CharacterList : MonoBehaviour
 
     private static Action _onValueChanged;
 
+    private PlayerInput _input;
+
     [Serializable]
     private struct UIObject
     {
         [Serializable]
         public struct ListView
         {
+            public Button exitButton;
             public Transform content;
             public Button[] pageButtons;
             public Image[] panels;
@@ -63,6 +68,8 @@ public class CharacterList : MonoBehaviour
 
     private void Start()
     {
+        _input = GetComponent<PlayerInput>();
+
         InitializeUI();
         LoadCharacterList();
     }
@@ -127,6 +134,8 @@ public class CharacterList : MonoBehaviour
     {
         _onValueChanged += UpdateUI;
         _onValueChanged += WriteData;
+
+        uiObjects.view.exitButton.onClick.AddListener(ExitToFieldScene);
         uiObjects.details.levelUpButton.onClick.AddListener(() => AddExp(1000));
     }
 
@@ -134,6 +143,8 @@ public class CharacterList : MonoBehaviour
     {
         _onValueChanged -= UpdateUI;
         _onValueChanged -= WriteData;
+        
+        uiObjects.view.exitButton.onClick.RemoveAllListeners();
         uiObjects.details.levelUpButton.onClick.RemoveAllListeners();
     }
 
@@ -143,11 +154,7 @@ public class CharacterList : MonoBehaviour
         icon.transform.SetParent(uiObjects.view.content);
 
         icon.GetCharacterData(id);
-        
         icon.Data.level = level;
-        icon.Data.hp += (level - 1 * Character.STAT_HP);
-        icon.Data.attackStat += (level - 1 * Character.STAT_ATTACK);
-        
         _expPair.Add(icon.Data, exp);
 
         if (_expPair.Count == 1) SelectCharacter(icon);
@@ -186,19 +193,18 @@ public class CharacterList : MonoBehaviour
     private void UpdateUI()
     {
         UIObject.ListDetail details = uiObjects.details;
-        /*details.elementImage.sprite = Resources.Load<Sprite>($"Images/DoNotShare/{(int)_currentCharacter.elem}");*/
         details.elementImage.color = Character.ElementColor(_currentCharacter.elem);
         details.nameText.text = _currentCharacter.charName;
         details.levelText.text = $"Lv.{_currentCharacter.level}/20";
         details.expSlider.maxValue = MaxExp;
         details.expSlider.value = _expPair[_currentCharacter];
-        details.hpText.text = $"{_currentCharacter.hp}";
-        details.atkText.text = $"{_currentCharacter.attackStat}";
+        details.hpText.text = $"{_currentCharacter.hp + (_currentCharacter.level - 1) * Character.STAT_HP}";
+        details.atkText.text = $"{_currentCharacter.attackStat + (_currentCharacter.level - 1) * Character.STAT_ATTACK}";
         details.speedText.text = $"{_currentCharacter.speed}";
 
         UIObject.ListEquipment equipments = uiObjects.equipments;
-        equipments.hpText.text = $"{_currentCharacter.hp}";
-        equipments.atkText.text = $"{_currentCharacter.attackStat}";
+        equipments.hpText.text = $"{_currentCharacter.hp + (_currentCharacter.level - 1) * Character.STAT_HP}";
+        equipments.atkText.text = $"{_currentCharacter.attackStat + (_currentCharacter.level - 1) * Character.STAT_ATTACK}";
         equipments.speedText.text = $"{_currentCharacter.speed}";
     }
 
@@ -214,5 +220,18 @@ public class CharacterList : MonoBehaviour
         FileInfo file = new(path);
         file.Directory.Create();
         File.WriteAllText(file.FullName, jsonData);
+    }
+
+    private void Update()
+    {
+        if (_input.Cancel)
+        {
+            ExitToFieldScene();
+        }
+    }
+
+    private void ExitToFieldScene()
+    {
+        SceneManager.LoadScene("FieldScene");
     }
 }
