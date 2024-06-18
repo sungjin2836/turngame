@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -6,7 +7,8 @@ using UnityEngine.UI;
 public class CharacterIcon : MonoBehaviour, IPointerClickHandler
 {
     private Image _image;
-    public DataManager.Player Data { get; private set; }
+    public DataManager.Player DefaultData { get; private set; }
+    public UserDataManager.OwnedCharacter UserData { get; private set; }
 
     private void Awake()
     {
@@ -21,6 +23,7 @@ public class CharacterIcon : MonoBehaviour, IPointerClickHandler
     public void GetCharacterData(int id)
     {
         if (_image) _image.sprite = Resources.Load<Sprite>($"Images/DoNotShare/{id}");
-        Data = DataManager.Instance.GetPlayerData(id);
+        DefaultData = DataManager.Instance.GetPlayerData(id);
+        UserData = UserDataManager.Instance.UserData.ownedCharacter.FirstOrDefault(x => x.characterID == id);
     }
 }

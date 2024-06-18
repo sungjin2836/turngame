@@ -13,10 +13,12 @@ public class CharacterList : MonoBehaviour
 
     private int _characterID;
     private static DataManager.Player _currentCharacter;
-    private readonly Dictionary<DataManager.Player, int> _expPair = new();
+
+    private UserDataManager.User userData;
+    private readonly Dictionary<DataManager.Player, UserDataManager.OwnedCharacter> _ownedCharacters = new();
     private readonly Dictionary<Button, Image> _panelPair = new();
 
-    private static int MaxExp => _currentCharacter.reachableLevels[_currentCharacter.level - 1];
+    private int MaxExp => _currentCharacter.reachableLevels[_ownedCharacters[_currentCharacter].currentLevel];
 
     private static Action _onValueChanged;
 
@@ -89,16 +91,13 @@ public class CharacterList : MonoBehaviour
         }
     }
 
-    private UserDataManager.User userData;
-    private UserDataManager.OwnedCharacter[] characters;
-
     private void LoadCharacterList()
     {
         userData = UserDataManager.Instance.UserData;
         UserDataManager.OwnedCharacter[] characters = userData.ownedCharacter;
         foreach (UserDataManager.OwnedCharacter character in characters)
         {
-            AddCharacterIcon(character.characterID, character.currentLevel, character.currentExp);
+            AddCharacterIcon(character.characterID);
         }
     }
 
@@ -148,46 +147,38 @@ public class CharacterList : MonoBehaviour
         uiObjects.details.levelUpButton.onClick.RemoveAllListeners();
     }
 
-    private void AddCharacterIcon(int id, int level = 1, int exp = 0)
+    private void AddCharacterIcon(int id)
     {
         CharacterIcon icon = new GameObject($"Icon_{id}").AddComponent<CharacterIcon>();
         icon.transform.SetParent(uiObjects.view.content);
 
         icon.GetCharacterData(id);
-        icon.Data.level = level;
-        _expPair.Add(icon.Data, exp);
+        _ownedCharacters.Add(icon.DefaultData, icon.UserData);
 
-        if (_expPair.Count == 1) SelectCharacter(icon);
+        if (_ownedCharacters.Count == 1) SelectCharacter(icon);
     }
 
     public static void SelectCharacter(CharacterIcon icon)
     {
-        _currentCharacter = icon.Data;
+        _currentCharacter = icon.DefaultData;
         _onValueChanged?.Invoke();
     }
 
     private void AddExp(int value)
     {
-        int newExp = _expPair[_currentCharacter] + value;
+        int newExp = _ownedCharacters[_currentCharacter].currentExp + value;
         bool isMaxLevel = _currentCharacter.level >= _currentCharacter.reachableLevels.Length;
         if (isMaxLevel) return;
 
         while (newExp >= MaxExp)
         {
             newExp -= MaxExp;
-            LevelUp();
+            _ownedCharacters[_currentCharacter].currentLevel++;
         }
 
-        _expPair[_currentCharacter] = newExp;
+        _ownedCharacters[_currentCharacter].currentExp = newExp;
 
         _onValueChanged?.Invoke();
-    }
-
-    private static void LevelUp()
-    {
-        _currentCharacter.level++;
-        _currentCharacter.hp += Character.STAT_HP;
-        _currentCharacter.attackStat += Character.STAT_ATTACK;
     }
 
     private void UpdateUI()
@@ -195,26 +186,21 @@ public class CharacterList : MonoBehaviour
         UIObject.ListDetail details = uiObjects.details;
         details.elementImage.color = Character.ElementColor(_currentCharacter.elem);
         details.nameText.text = _currentCharacter.charName;
-        details.levelText.text = $"Lv.{_currentCharacter.level}/20";
+        details.levelText.text = $"Lv.{_ownedCharacters[_currentCharacter].currentLevel}/20";
         details.expSlider.maxValue = MaxExp;
-        details.expSlider.value = _expPair[_currentCharacter];
-        details.hpText.text = $"{_currentCharacter.hp + (_currentCharacter.level - 1) * Character.STAT_HP}";
-        details.atkText.text = $"{_currentCharacter.attackStat + (_currentCharacter.level - 1) * Character.STAT_ATTACK}";
+        details.expSlider.value = _ownedCharacters[_currentCharacter].currentExp;
+        details.hpText.text = $"{_currentCharacter.hp + (_ownedCharacters[_currentCharacter].currentLevel - 1) * Character.STAT_HP}";
+        details.atkText.text = $"{_currentCharacter.attackStat + (_ownedCharacters[_currentCharacter].currentLevel - 1) * Character.STAT_ATTACK}";
         details.speedText.text = $"{_currentCharacter.speed}";
 
         UIObject.ListEquipment equipments = uiObjects.equipments;
-        equipments.hpText.text = $"{_currentCharacter.hp + (_currentCharacter.level - 1) * Character.STAT_HP}";
-        equipments.atkText.text = $"{_currentCharacter.attackStat + (_currentCharacter.level - 1) * Character.STAT_ATTACK}";
+        equipments.hpText.text = $"{_currentCharacter.hp + (_ownedCharacters[_currentCharacter].currentLevel - 1) * Character.STAT_HP}";
+        equipments.atkText.text = $"{_currentCharacter.attackStat + (_ownedCharacters[_currentCharacter].currentLevel - 1) * Character.STAT_ATTACK}";
         equipments.speedText.text = $"{_currentCharacter.speed}";
     }
 
     private void WriteData()
     {
-        userData.ownedCharacter.FirstOrDefault(x => x.characterID == _currentCharacter.id)!.currentLevel =
-            _currentCharacter.level;
-        userData.ownedCharacter.FirstOrDefault(x => x.characterID == _currentCharacter.id)!.currentExp =
-            _expPair[_currentCharacter];
-
         string jsonData = JsonUtility.ToJson(userData);
         string path = Path.Combine(Application.dataPath, "Resources/Data", "userdata.json");
         FileInfo file = new(path);
