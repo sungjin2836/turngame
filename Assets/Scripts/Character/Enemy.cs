@@ -1,28 +1,39 @@
+using System.Collections;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.Rendering.FilterWindow;
+using static System.Net.Mime.MediaTypeNames;
+// static UnityEditor.Rendering.FilterWindow;
 
 public class Enemy : Character
 {
-    [Header("적 캐릭터 정보")] public int maxShield;
-
+    [Header("적 캐릭터 정보")]
+    public int maxShield;
     public Skill normalAttack;
-
     public ElementType[] weakElements;
 
     [SerializeField]
-    private GameObject BarPosition;
+    private GameObject DamageTextPref;
     [SerializeField]
-    private Slider enemyShieldBar;
+    GameObject BarPosition;
+    private TextMeshProUGUI damageText;
     [SerializeField]
-    private Slider enemyHpBar;
+    Slider enemyShieldBar;
+    [SerializeField]
+    Slider enemyHpBar;
+    [SerializeField]
+    UnityEngine.UI.Text enemyNameText;
 
-    private int _shield;
+    Canvas canvas;
 
-    private int speedDebuff = 10;
+    int _shield;
+    int ActionGaugeDebuff = 10;
 
-    private Camera mainCamera;
+    float duration =  2f;
+    Camera mainCamera;
+
+    bool istarget;
 
     public int hp
     {
@@ -37,8 +48,6 @@ public class Enemy : Character
         private set => _shield = Mathf.Clamp(value, 0, maxShield);
     }
 
-
-
     public override void Initialize(int id)
     {
         var enemyData = DataManager.Instance.GetEnemyData(id);
@@ -49,21 +58,43 @@ public class Enemy : Character
         attackStat = enemyData.attackStat;
         weakElements = enemyData.elem;
         maxShield = enemyData.shield;
+        actionGauge = Mathf.FloorToInt(10000 / enemyData.speed);
 
         hp = maxHP;
         finalSpeed = speed;
         finalAttackStat = attackStat;
         shield = maxShield;
+        currentActionGauge = 1;
 
         mainCamera = Camera.main;
 
-        //CreateBar();
+        canvas = FindAnyObjectByType<Canvas>();
 
-        SetMaxHealth();
-        SetMaxShield();
+        istarget = false;
 
-        SetBarPosition();
-        //Debug.Log(JsonUtility.ToJson(this));
+        if (enemyNameText != null)
+        {
+            enemyNameText = enemyNameText.GetComponent<UnityEngine.UI.Text>();
+            SetEnemyNameText();
+        }
+        
+
+        if (enemyHpBar != null && enemyShieldBar != null)
+        {
+            SetMaxHealth();
+            SetMaxShield();
+            SetBarPosition();
+        }
+        
+    }
+
+    private void Update()
+    {
+        if (enemyHpBar != null && enemyShieldBar != null)
+        {
+            SetBarPosition();
+        }
+
     }
 
     public bool ContainsElement(ElementType element)
@@ -85,7 +116,7 @@ public class Enemy : Character
     {
         shield = maxShield;
     }
-    
+
     public void SetMaxHealth()
     {
         enemyHpBar.maxValue = maxHP;
@@ -93,10 +124,11 @@ public class Enemy : Character
     }
     public void SetHealth()
     {
-        Debug.Log($"sethealth 매개변수 : {hp}, 실제 체력 {_hp}");
+        //Debug.Log($"sethealth 매개변수 : {hp}, 실제 체력 {_hp}");
         enemyHpBar.value = hp;
-        if(hp == 0)
+        if (hp == 0)
         {
+            enemyNameText.gameObject.SetActive(false);
             enemyHpBar.gameObject.SetActive(false);
             enemyShieldBar.gameObject.SetActive(false);
         }
@@ -109,10 +141,10 @@ public class Enemy : Character
     public void SetShield()
     {
         enemyShieldBar.value = shield;
-        if(shield == 0)
+        if (shield == 0)
         {
-            speed -= speedDebuff;
-            Debug.Log($"속성 실드가 파괴되어 속도가 {speedDebuff}만큼 느려져서 {speed}가 됨");
+            currentActionGauge -= ActionGaugeDebuff;
+            Debug.Log($"속성 실드가 파괴되어 행동게이지가 {ActionGaugeDebuff}만큼 느려져서 {currentActionGauge}가 됨");
         }
     }
 
@@ -129,9 +161,52 @@ public class Enemy : Character
         //Debug.Log($" {charName} bar 포지션2 : {transform.position}");
         BarPosition.transform.position = screenPosition;
     }
-    
+
+    public void SetDamageText(string _damageText)
+    {
+        if (isDead) 
+        {
+            return;
+        }
+        
+        GameObject damageTextInstance = Instantiate(DamageTextPref, canvas.transform);
+
+        //damageText.text = _damageText;
+        //damageText = GetComponent<TextMeshProUGUI>();
+        damageText = damageTextInstance.GetComponent<TextMeshProUGUI>();
+        damageText.text = _damageText;
+
+        Vector3 screenPosition = mainCamera.WorldToScreenPoint(gameObject.transform.position + Vector3.down);
+        damageTextInstance.transform.position = screenPosition;
+
+        Debug.Log($"{charName}이 받은 데미지 {_damageText} 호출됨");
+        
+        StartCoroutine(FadeDamageText(damageTextInstance));
+        
+        
+    }
+
+    IEnumerator FadeDamageText(GameObject _damageTextInstance)
+    {
+        float elapsedTime = 0f;
+        float initialSize = damageText.fontSize;
+        Debug.Log($"{charName}");
+        while (elapsedTime < duration && _damageTextInstance != null)
+        {
+            elapsedTime += Time.deltaTime;
+            damageText.fontSize = Mathf.Lerp(initialSize, 20f, elapsedTime / duration);
+
+            Vector3 screenPosition = mainCamera.WorldToScreenPoint(transform.position + (Vector3.down / 2f) + (Vector3.left * 1.4f));
+            _damageTextInstance.transform.position = screenPosition;
+
+            yield return null;
+        }
+    }
+
+
     public int NormalAttack(Player target, float value = 0.5f)
     {
+        TargetPos = target.startPos + target.transform.forward;
         Debug.Log($" {charName}의 NormalAttack의 공격력 {attackStat}");
         var player = target as Player;
         int dam = player.GetDamage(Mathf.FloorToInt(attackStat));
@@ -139,19 +214,38 @@ public class Enemy : Character
         return dam;
     }
 
-    public void SetPrevHpAndShield(int prevShieldAttack , int prevAttack)
+    public void SetPrevHpAndShield(int prevShieldAttack, int prevAttack)
     {
-        enemyHpBar.value -= prevAttack;
+        //enemyHpBar.value -= prevAttack;
         enemyShieldBar.value -= prevShieldAttack;
     }
 
-    public void SetPrevFinalSpeed()
+    public void SetPrevActionGauge()
     {
-        if(enemyShieldBar.value == 0)finalSpeed -= speedDebuff;
+        if (enemyShieldBar.value == 0) currentActionGauge -= ActionGaugeDebuff;
     }
-    public void ReturnPrevFinalSpeed()
+    public void ReturnPrevActionGauge()
     {
-        finalSpeed = speed;
+        if (shield == 0)
+        {
+            currentActionGauge += ActionGaugeDebuff;
+        }
+    }
+
+    public void SetOutLineActive()
+    {
+        gameObject.GetComponent<Outline>().enabled = true;
+    }
+
+    public void SetOutLineActiveFalse()
+    {
+        gameObject.GetComponent<Outline>().enabled = false;
+    }
+
+    private void SetEnemyNameText()
+    {
+
+        enemyNameText.text = charName;
     }
 
 }

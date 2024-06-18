@@ -33,6 +33,7 @@ public class DataManager : MonoBehaviour
     public class Player : Character
     {
         public ElementType elem;
+        public int[] reachableLevels;
     }
 
     [System.Serializable]

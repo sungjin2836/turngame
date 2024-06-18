@@ -1,0 +1,16 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "name": "Item 1",
+      "attributes": [
+        {
+          "itemType": 0,
+          "scope": 0,
+          "changeType": 1,
+          "value": 10
+        }
+      ]
+    }
+  ]
+}

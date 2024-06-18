@@ -1,4 +1,7 @@
+using System.Collections;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
@@ -7,7 +10,13 @@ public class UIManager : MonoBehaviour
     private GameObject turnOrderPanel;
 
     [SerializeField]
+    private GameObject PlayerTurnOrderPanel;
+
+    [SerializeField]
     private GameObject resultWindow;
+
+    [SerializeField]
+    private GameObject gameOverWindow;
 
     [SerializeField]
     private Image[] itemIndex;
@@ -16,6 +25,11 @@ public class UIManager : MonoBehaviour
 
     [SerializeField]
     private GameObject ItemPanel;
+
+    [SerializeField]
+    private RectTransform skillNameDisplayPanel;
+
+    private IEnumerator skillNameDisplayPanelHideCoroutine;
 
     private int itemCount = 5;
 
@@ -26,8 +40,11 @@ public class UIManager : MonoBehaviour
     private Slider enemyHpBar;
     [SerializeField]
     private Text turnOrderText;
+    [SerializeField]
+    private Text turnPlayersOrderText;
 
     Text[] turnTexts;
+    Text[] PlayersturnTexts;
     private int _hp;
     private int _shield;
     public int Hp
@@ -48,6 +65,7 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         resultWindow.SetActive(false);
+        gameOverWindow.SetActive(false);
     }
 
     public void InitTurnText(int num)
@@ -60,6 +78,16 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void InitTurnPlayerText(int num)
+    {
+        PlayersturnTexts = new Text[num];
+        for (int i = 0; i < num; i++)
+        {
+            PlayersturnTexts[i] = Instantiate(turnPlayersOrderText, PlayerTurnOrderPanel.transform.position, Quaternion.identity);
+            PlayersturnTexts[i].transform.SetParent(PlayerTurnOrderPanel.transform);
+        }
+    }
+
     public void TurnTextClear()
     {
         for (int i = 0;i < turnTexts.Length; i++)
@@ -67,9 +95,22 @@ public class UIManager : MonoBehaviour
             turnTexts[i].text = "";
         }
     }
-    public void TurnTextPrint(int num, string Name)
+    public void TurnPlayerTextClear()
+    {
+        for (int i = 0; i < PlayersturnTexts.Length; i++)
+        {
+            PlayersturnTexts[i].text = "";
+        }
+    }
+    public void TurnTextPrint(int num, string Name, int ActionPoint)
     {
         turnTexts[num].text = Name;
+        turnTexts[num].text += " "+ ActionPoint;
+    }
+
+    public void TurnPlayerTextPrint(int num, string Name)
+    {
+        PlayersturnTexts[num].text = Name;
     }
 
     public void SetMaxHealth(int health)
@@ -97,13 +138,13 @@ public class UIManager : MonoBehaviour
     {
         Debug.Log("InitItem");
         items = new Image[itemCount]; 
-        for (int i = 0; i < items.Length; i++)
+        for (int i = 0; i < itemCount; i++)
         {
             int itemNum = Random.Range(0, itemIndex.Length);
 
             items[i] = Instantiate(itemIndex[itemNum], ItemPanel.transform.position, Quaternion.identity);
-            items[i].transform.SetParent(ItemPanel.transform);
-            Debug.Log($"¾ÆÀÌÅÛ{i} {items[i]}");
+            items[i].transform.SetParent(ItemPanel.transform); // ItemPanel = ì „íˆ¬ê²°ê³¼ì°½
+            Debug.Log($"ì•„ì´í…œ{i} {items[i]}");
         }
     }
 
@@ -112,9 +153,40 @@ public class UIManager : MonoBehaviour
         Debug.Log("finish");
         resultWindow.SetActive(true);
         InitItem();
+
+        StartCoroutine(nameof(ExitToFieldScene));
+    }
+
+    private IEnumerator ExitToFieldScene()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        yield return new WaitForSeconds(1f);
+        SceneManager.LoadScene("FieldScene");
+    }
+
+    public void GameOver()
+    {
+        Debug.Log("GameOver");
+        gameOverWindow.SetActive(true);
     }
     
+    public void DisplaySkillName(string skillName)
+    {
+        skillNameDisplayPanel.gameObject.SetActive(true);
+        if (skillNameDisplayPanelHideCoroutine != null)
+        {
+            StopCoroutine(skillNameDisplayPanelHideCoroutine);
+        }
+        skillNameDisplayPanelHideCoroutine = HideGameObjectAfterSeconds(skillNameDisplayPanel, 4);
 
+        TextMeshProUGUI skillText = skillNameDisplayPanel.GetComponentInChildren<TextMeshProUGUI>();
+        skillText.text = skillName;
+        StartCoroutine(skillNameDisplayPanelHideCoroutine);
+    }
 
-
+    private IEnumerator HideGameObjectAfterSeconds(RectTransform target, int time)
+    {
+        yield return new WaitForSeconds(time);
+        target.gameObject.SetActive(false);
+    }
 }

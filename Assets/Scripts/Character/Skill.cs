@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using static SkillDataManager;
 
 public class Skill : MonoBehaviour
@@ -9,4 +9,5 @@ public class Skill : MonoBehaviour
     public float[] damageAttr2;
     public DamageType damageAttr2Type;
     public Range range;
+    public Distance distance;
 }
