@@ -16,7 +16,7 @@ public class PlayerInput : MonoBehaviour
     private static Dictionary<KeyAction, KeyCode> _keys = new();
 
     private KeyCode[] _defaultKeys =
-        { KeyCode.Q, KeyCode.E, KeyCode.LeftShift, KeyCode.F };
+        { KeyCode.Q, KeyCode.E, KeyCode.LeftShift, KeyCode.F, KeyCode.Escape };
 
     public Action OnNormalAttack;
     public Action OnBattleSkill;
@@ -40,7 +40,7 @@ public class PlayerInput : MonoBehaviour
     {
         for (int i = 0; i < Enum.GetValues(typeof(KeyAction)).Length; i++)
         {
-            _keys.Add((KeyAction)i, _defaultKeys[i]);
+            _keys.TryAdd((KeyAction)i, _defaultKeys[i]);
         }
     }
 

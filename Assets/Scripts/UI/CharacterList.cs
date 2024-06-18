@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(PlayerInput))]
 public class CharacterList : MonoBehaviour
 {
     private const int PANEL_COUNT = 2;
@@ -18,12 +20,15 @@ public class CharacterList : MonoBehaviour
 
     private static Action _onValueChanged;
 
+    private PlayerInput _input;
+
     [Serializable]
     private struct UIObject
     {
         [Serializable]
         public struct ListView
         {
+            public Button exitButton;
             public Transform content;
             public Button[] pageButtons;
             public Image[] panels;
@@ -63,6 +68,8 @@ public class CharacterList : MonoBehaviour
 
     private void Start()
     {
+        _input = GetComponent<PlayerInput>();
+
         InitializeUI();
         LoadCharacterList();
     }
@@ -127,6 +134,8 @@ public class CharacterList : MonoBehaviour
     {
         _onValueChanged += UpdateUI;
         _onValueChanged += WriteData;
+
+        uiObjects.view.exitButton.onClick.AddListener(ExitToFieldScene);
         uiObjects.details.levelUpButton.onClick.AddListener(() => AddExp(1000));
     }
 
@@ -134,6 +143,8 @@ public class CharacterList : MonoBehaviour
     {
         _onValueChanged -= UpdateUI;
         _onValueChanged -= WriteData;
+        
+        uiObjects.view.exitButton.onClick.RemoveAllListeners();
         uiObjects.details.levelUpButton.onClick.RemoveAllListeners();
     }
 
@@ -145,8 +156,8 @@ public class CharacterList : MonoBehaviour
         icon.GetCharacterData(id);
         
         icon.Data.level = level;
-        icon.Data.hp += (level - 1 * Character.STAT_HP);
-        icon.Data.attackStat += (level - 1 * Character.STAT_ATTACK);
+        icon.Data.hp += (level - 1) * Character.STAT_HP;
+        icon.Data.attackStat += (level - 1) * Character.STAT_ATTACK;
         
         _expPair.Add(icon.Data, exp);
 
@@ -214,5 +225,18 @@ public class CharacterList : MonoBehaviour
         FileInfo file = new(path);
         file.Directory.Create();
         File.WriteAllText(file.FullName, jsonData);
+    }
+
+    private void Update()
+    {
+        if (_input.Cancel)
+        {
+            ExitToFieldScene();
+        }
+    }
+
+    private void ExitToFieldScene()
+    {
+        SceneManager.LoadScene("FieldScene");
     }
 }
