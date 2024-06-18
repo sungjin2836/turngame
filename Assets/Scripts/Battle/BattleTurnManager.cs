@@ -222,7 +222,8 @@ public class BattleTurnManager : MonoBehaviour
             return;
         }
         Player p = TurnPlayers[0].GetComponent<Player>();
-        
+        uIManager.DisplaySkillName(p.normalAttack.skillName);
+
         Character charTarget = basicTarget.GetComponent<Character>();
         Enemy enemy = basicTarget.GetComponent<Enemy>();
 
@@ -244,7 +245,10 @@ public class BattleTurnManager : MonoBehaviour
         if (enemy.isDead == true)
         {
             enemies.Remove(basicTarget);
-            basicTarget.SetActive(false);
+
+            StartCoroutine(TargetDieOnesec(basicTarget));
+
+            //basicTarget.SetActive(false);
 
             if(enemies.Count > 0)
             {
@@ -269,6 +273,12 @@ public class BattleTurnManager : MonoBehaviour
         //Turn();
     }
 
+    IEnumerator TargetDieOnesec(GameObject _basicTarget)
+    {
+        yield return new WaitForSeconds(1.0f);
+        _basicTarget.SetActive(false);
+    }
+
     public void OnClickSkillAttack()
     {
         if (TurnPlayers.Count <= 0 )
@@ -277,6 +287,7 @@ public class BattleTurnManager : MonoBehaviour
             return;
         }
         Player p = TurnPlayers[0].GetComponent<Player>();
+        uIManager.DisplaySkillName(p.battleSkill.skillName);
 
         Character charTarget = basicTarget.GetComponent<Character>();
         Enemy EnemyTarget = basicTarget.GetComponent<Enemy>();
@@ -297,7 +308,8 @@ public class BattleTurnManager : MonoBehaviour
             if (EnemyTarget.isDead == true)
             {
                 enemies.Remove(basicTarget);
-                basicTarget.SetActive(false);
+                StartCoroutine(TargetDieOnesec(basicTarget));
+                //basicTarget.SetActive(false);
                 SetTurnOrder();
                 SetTurnPlayerGroup();
             }
@@ -324,7 +336,8 @@ public class BattleTurnManager : MonoBehaviour
             foreach (var enemy in enemiesToRemove)
             {
                 enemies.Remove(enemy);
-                enemy.SetActive(false);
+                StartCoroutine(TargetDieOnesec(enemy));
+                //enemy.SetActive(false);
             }
             if (enemies.Count > 0)
             {
@@ -358,7 +371,8 @@ public class BattleTurnManager : MonoBehaviour
             targets[i] = enemies[i].GetComponent<Character>();
         }
         Player healCharTarget = healTarget.GetComponent<Player>();
-        p.CooperativeSkillAttack(TurnPlayers, charTarget, targets, testPlayersData, healCharTarget);
+        CooperativeSkill finalCooperativeSkill = p.CooperativeSkillAttack(TurnPlayers, charTarget, targets, testPlayersData, healCharTarget);
+        uIManager.DisplaySkillName(finalCooperativeSkill.cooperativeSkillName);
 
         for (int i = 0; i < enemies.Count; i++)
         {
@@ -367,7 +381,8 @@ public class BattleTurnManager : MonoBehaviour
             _enemy.SetShield();
             if (_enemy.hp == 0)
             {
-                enemies[i].SetActive(false);
+                StartCoroutine(TargetDieOnesec(enemies[i]));
+                //enemies[i].SetActive(false);
                 SetTurnOrder();
                 SetTurnPlayerGroup();
             }
@@ -448,7 +463,8 @@ public class BattleTurnManager : MonoBehaviour
         {
             Debug.Log($"전투 승리 확인 {CheckDeadChar()}");
             IsFinishGame = true;
-            uIManager.FinishGame();
+            StartCoroutine(FinishGameOneSecLater());
+            //uIManager.FinishGame();
             return;
         }
         else
@@ -476,6 +492,12 @@ public class BattleTurnManager : MonoBehaviour
         }
         
         SetTurnOrder();
+    }
+
+    IEnumerator FinishGameOneSecLater()
+    {
+        yield return new WaitForSeconds(1f);
+        uIManager.FinishGame();
     }
 
     private void MonsterTurn(Character _turnPlayer)
