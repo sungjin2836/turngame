@@ -18,7 +18,7 @@ public class CharacterList : MonoBehaviour
     private readonly Dictionary<DataManager.Player, UserDataManager.OwnedCharacter> _ownedCharacters = new();
     private readonly Dictionary<Button, Image> _panelPair = new();
 
-    private int MaxExp => _currentCharacter.reachableLevels[_ownedCharacters[_currentCharacter].currentLevel];
+    private int MaxExp => _currentCharacter.reachableLevels[_ownedCharacters[_currentCharacter].currentLevel - 1];
 
     private static Action _onValueChanged;
 
@@ -167,7 +167,7 @@ public class CharacterList : MonoBehaviour
     private void AddExp(int value)
     {
         int newExp = _ownedCharacters[_currentCharacter].currentExp + value;
-        bool isMaxLevel = _currentCharacter.level >= _currentCharacter.reachableLevels.Length;
+        bool isMaxLevel = _ownedCharacters[_currentCharacter].currentLevel >= _currentCharacter.reachableLevels.Length;
         if (isMaxLevel) return;
 
         while (newExp >= MaxExp)
