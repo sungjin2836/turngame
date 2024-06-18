@@ -136,7 +136,7 @@ public class BattleTurnManager : MonoBehaviour
                     {
                         prevTarget.SetOutLineActiveFalse();
                         basicTarget = rayHit.collider.gameObject;
-                        BattleCamera.m_Enemy = basicTarget.transform;
+                        BattleCamera.instance.m_Enemy = basicTarget.transform;
                         //Debug.Log($" 타겟 이름 : {basicTarget.name}");
                         CheckElementChose(basicTarget, TurnPlayers[0]);
                         basicTarget.GetComponent<Enemy>().SetOutLineActive();
@@ -201,7 +201,7 @@ public class BattleTurnManager : MonoBehaviour
         for (int i = 0; i < TurnPlayers.Count; i++)
         {
             uIManager.TurnPlayerTextPrint(i, TurnPlayers[i].charName);
-            BattleCamera.MoveTo("Ready Camera", TurnPlayers[0].transform, basicTarget.transform);
+            BattleCamera.instance.MoveTo("Ready Camera", TurnPlayers[0].transform, basicTarget.transform);
         }
     }
 

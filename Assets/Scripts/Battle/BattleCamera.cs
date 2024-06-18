@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class BattleCamera : MonoBehaviour
 {
-    [SerializeField] private CinemachineVirtualCamera[] cameras;
-    private static readonly Dictionary<string, CinemachineVirtualCamera> VirtualCameras = new();
+    public static BattleCamera instance;
     
-    private static CinemachineVirtualCamera _camera;
+    [SerializeField] private CinemachineVirtualCamera[] cameras;
+    private readonly Dictionary<string, CinemachineVirtualCamera> _virtualCameras = new();
+    private CinemachineVirtualCamera _camera;
 
-    public static CinemachineVirtualCamera m_Camera
+    private CinemachineVirtualCamera m_Camera
     {
         get => _camera;
         set
@@ -25,43 +26,52 @@ public class BattleCamera : MonoBehaviour
         }
     }
 
-    private static Transform _player;
+    private Transform _player;
 
-    public static Transform m_Player
+    public Transform m_Player
     {
         set
         {
             _player = value;
-            m_Camera.Follow = _player.transform;
+            m_Camera.Follow = _player ? _player.transform : null;
         }
     }
 
-    private static Transform _enemy;
+    private Transform _enemy;
 
-    public static Transform m_Enemy
+    public Transform m_Enemy
     {
         get => _enemy;
         set
         {
             _enemy = value;
-            m_Camera.LookAt = _enemy.transform;
+            m_Camera.LookAt = _enemy ? _enemy.transform : null;
         }
     }
 
     private void Awake()
     {
-        foreach (var cam in cameras)
+        if (instance == null)
         {
-            VirtualCameras.Add(cam.name, cam);
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+        
+        foreach (CinemachineVirtualCamera cam in cameras)
+        {
+            _virtualCameras.TryAdd(cam.name, cam);
         }
 
         if (m_Camera == null) m_Camera = cameras[0];
     }
 
-    public static void MoveTo(string camera, Transform follow = null, Transform lookAt = null)
+    public void MoveTo(string cam, Transform follow = null, Transform lookAt = null)
     {
-        m_Camera = VirtualCameras[camera];
-        if (follow) m_Player = follow;
-        if (lookAt) m_Enemy = lookAt;
+        m_Camera = _virtualCameras[cam];
+        m_Player = follow;
+        m_Enemy = lookAt;
     }
 }

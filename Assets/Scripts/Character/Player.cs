@@ -37,9 +37,9 @@ public class Player : Character
         var userOwnedCharacter = LoadUserOwnedCharacter(id);
         charName = defaultPlayerData.charName;
         level = userOwnedCharacter.currentLevel;
-        maxHP = defaultPlayerData.hp + level * STAT_HP;
+        maxHP = defaultPlayerData.hp + (level - 1 * STAT_HP);
         speed = defaultPlayerData.speed;
-        attackStat = defaultPlayerData.attackStat + level * STAT_ATTACK;
+        attackStat = defaultPlayerData.attackStat + (level - 1 * STAT_ATTACK);
         element = defaultPlayerData.elem;
         actionGauge = Mathf.FloorToInt(10000 / defaultPlayerData.speed);
 
@@ -119,7 +119,7 @@ public class Player : Character
 
     public override int NormalAttack(Character target, float value = 0.5f)
     {
-        BattleCamera.MoveTo("Attack Camera", transform, target.transform);
+        BattleCamera.instance.MoveTo("Attack Camera", transform, target.transform);
         TargetPos = target.startPos + target.transform.forward;
         Debug.Log("NormalAttack의 공격력" + finalAttackStat);
         var enemy = target as Enemy;
@@ -135,7 +135,7 @@ public class Player : Character
 
     public virtual void BattleSkill(Character target)
     {
-        BattleCamera.MoveTo("Attack Camera", transform, target.transform);
+        BattleCamera.instance.MoveTo("Attack Camera", transform, target.transform);
         TargetPos = target.startPos + target.transform.forward;
         // 스킬
         var enemy = target as Enemy;
@@ -183,7 +183,7 @@ public class Player : Character
 
     public virtual void BattleSkill(Player target)
     {
-        BattleCamera.MoveTo("Heal Camera", target.transform, target.transform);
+        BattleCamera.instance.MoveTo("Heal Camera", target.transform, target.transform);
         TargetPos = transform.position + transform.up;
         int healamount = Mathf.FloorToInt(maxHP * battleSkill.damageAttr1[0]);
 
@@ -464,7 +464,7 @@ public class Player : Character
     protected override void TurnEnd()
     {
         base.TurnEnd();
-        BattleCamera.MoveTo("Ready Camera");
+        BattleCamera.instance.MoveTo("Ready Camera");
     }
 
     private void SetColor(Image _image)
