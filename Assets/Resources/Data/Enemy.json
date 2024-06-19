@@ -9,8 +9,9 @@
       "attackStat": 21,
       "shield": 30,
       "elem": [
-        2,
-        4
+        1,
+        2
+        
       ]
     },
     {
